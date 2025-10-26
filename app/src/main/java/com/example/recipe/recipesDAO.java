@@ -13,9 +13,9 @@ public interface recipesDAO{
     List<Recipes> getRecipes();
 
     @Insert
-    void add(Recipes recipe);
+    long add(Recipes recipe);
 
     @Query("DELETE FROM recipes WHERE id = :id")
-    void remove(int id);
+    void remove(long id);
 
 }

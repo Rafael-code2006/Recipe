@@ -28,8 +28,9 @@ public class Recipes {
     }
 
     public int getId() {
-        return id;
+        return this.id;
     }
+
 
     public String getName() {
         return name;
@@ -38,4 +39,6 @@ public class Recipes {
     public String getDescription() {
         return description;
     }
+
+
 }

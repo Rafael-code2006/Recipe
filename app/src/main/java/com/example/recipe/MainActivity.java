@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 
 import androidx.activity.EdgeToEdge;
@@ -63,8 +64,10 @@ public class MainActivity extends AppCompatActivity {
                                 public void onClick(DialogInterface dialog, int which) {
                                     int position = viewHolder.getAdapterPosition();
                                     Recipes recipe = recipes.get(position);
+                                    long id = getIntent().getLongExtra("RecipeId", -1);
                                     if (recipe != null) {
-                                        recipes.remove(recipe);
+                                    recipeDataBase.recipesDAO().remove(id);
+                                        Log.d("DB_TEST", "Удален рецепт под номером : "+position +"     id: " + id);
                                     }
                                     showRecipes();
                                 }
@@ -89,6 +92,11 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+    }
+
     private void initVies(){
         RecyclerViewRecipes = findViewById(R.id.RecyclerViewRecipes);
         floatingActionButton = findViewById(R.id.floatingActionButton);
@@ -97,7 +105,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void showRecipes(){
-        adapterRecipes.setRecipes(recipes);
+        adapterRecipes.setRecipes(recipeDataBase.recipesDAO().getRecipes());
     }
 
 
@@ -113,8 +121,9 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-    public static Intent newIntent(Context context){
+    public static Intent newIntent(Context context, long id){
         Intent intent = new Intent(context, MainActivity.class);
+        intent.putExtra("RecipeId", id);
         return intent;
     }
 }
