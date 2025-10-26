@@ -33,17 +33,7 @@ public class AddRecipe extends AppCompatActivity {
         RecipeSaveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!EditTextRecipe.getText().toString().isEmpty()) {
-                    setRecipe();
-                    Intent intent = MainActivity.newIntent(AddRecipe.this);
-                    startActivity(intent);
-                }else
-                    if(EditTextRecipe.getText().toString().isEmpty()){
-                    Toast.makeText(AddRecipe.this, "Введите название рецепта", Toast.LENGTH_SHORT).show();
-                }
-                    else {
-                        Toast.makeText(AddRecipe.this, "Введите состав", Toast.LENGTH_SHORT).show();
-                    }
+                FieldCheck();
             }
         });
 
@@ -59,12 +49,32 @@ public class AddRecipe extends AppCompatActivity {
 
     private void setRecipe(){
         String text = EditTextRecipe.getText().toString().trim();
-        if(!text.isEmpty()) {
-            Recipes recipes = new Recipes(text);
+        String description = edit_recipe_description.getText().toString();
+        if(!text.isEmpty() && !description.isEmpty()) {
+            Recipes recipes = new Recipes(text, description);
             recipeDataBase.recipesDAO().add(recipes);
-            Log.d("DB_TEST", "Рецепт добавлен в базу");
+            Log.d("DB_TEST", "Рецепт добавлен в базу :" + description);
         }
         }
+        private void FieldCheck(){
+            if(!EditTextRecipe.getText().toString().isEmpty() && !edit_recipe_description.getText().toString().isEmpty()) {
+                setRecipe();
+                Intent intent = MainActivity.newIntent(AddRecipe.this);
+                startActivity(intent);
+            }else
+            if(EditTextRecipe.getText().toString().isEmpty() && edit_recipe_description.getText().toString().isEmpty()){
+                Toast.makeText(AddRecipe.this, "Введите все данные", Toast.LENGTH_SHORT).show();
+            }
+            else
+            if(EditTextRecipe.getText().toString().isEmpty()){
+                Toast.makeText(AddRecipe.this, "Введите название рецепта", Toast.LENGTH_SHORT).show();
+            }
+            else
+            if(edit_recipe_description.getText().toString().isEmpty()){
+                Toast.makeText(AddRecipe.this, "Введите состав", Toast.LENGTH_SHORT).show();
+            }
+        }
+
     private void InitVies(){
         EditTextRecipe = findViewById(R.id.EditTextRecipe);
         edit_recipe_description = findViewById(R.id.edit_recipe_description);

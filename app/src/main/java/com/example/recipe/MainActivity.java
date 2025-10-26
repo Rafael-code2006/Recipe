@@ -39,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
         initVies();
         RecyclerViewRecipes.setAdapter(adapterRecipes);
         for(int i=0; i<20; i++){
-            Recipes recipe = new Recipes(i, "Recipe: "+i);
+            Recipes recipe = new Recipes(i, "Recipe: "+i, "Siii");
             recipes.add(recipe);
         }
         showRecipes();
