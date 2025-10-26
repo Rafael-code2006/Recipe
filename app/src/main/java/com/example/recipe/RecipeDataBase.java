@@ -1,4 +1,27 @@
 package com.example.recipe;
 
-public class RecipeDataBase {
+import android.app.Application;
+
+import androidx.room.Database;
+import androidx.room.Room;
+import androidx.room.RoomDatabase;
+
+@Database(entities = {Recipes.class}, version = 1, exportSchema = false)
+public abstract class RecipeDataBase extends RoomDatabase{
+
+    private static final String DB_NAME = "recipe.db";
+
+    private static RecipeDataBase instance = null;
+    public static RecipeDataBase getInstance(Application app){
+        if(instance == null){
+            instance = Room.databaseBuilder(
+                    app,
+                    RecipeDataBase.class,
+                    DB_NAME
+            ).allowMainThreadQueries().build();
+        }
+        return instance;
+    }
+
+    public abstract recipesDAO recipesDAO();
 }

@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Recipe</string>
+    <string name="text_my_recipes">My Recipes</string>
+    <string name="text_string_format">%s</string>
 </resources>

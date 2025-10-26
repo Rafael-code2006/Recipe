@@ -1,4 +1,21 @@
 package com.example.recipe;
 
-public interface recipesDAO {
+import androidx.room.Dao;
+import androidx.room.Insert;
+import androidx.room.Query;
+
+import java.util.List;
+
+@Dao
+public interface recipesDAO{
+
+    @Query("SELECT * FROM recipes")
+    List<Recipes> getRecipes();
+
+    @Insert
+    void add(Recipes recipe);
+
+    @Query("DELETE FROM recipes WHERE id = :id")
+    void remove(int id);
+
 }

@@ -2,4 +2,12 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="background_main">#E4E4E4</color>
+    <color name="background_floatingButton">#DBDBDB</color>
+    <color name="background_button_item_recipe">#F8F7F7</color>
+
+
+
+
+
 </resources>
