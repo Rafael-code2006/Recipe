@@ -63,12 +63,8 @@ public class MainActivity extends AppCompatActivity {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
                                     int position = viewHolder.getAdapterPosition();
-                                    Recipes recipe = recipes.get(position);
-                                    long id = getIntent().getLongExtra("RecipeId", -1);
-                                    if (recipe != null) {
-                                    recipeDataBase.recipesDAO().remove(id);
-                                        Log.d("DB_TEST", "Удален рецепт под номером : "+position +"     id: " + id);
-                                    }
+                                    Recipes recipe = adapterRecipes.getRecipeOnClickListener().get(position);
+                                    recipeDataBase.recipesDAO().remove(recipe.getId());
                                     showRecipes();
                                 }
                             })
