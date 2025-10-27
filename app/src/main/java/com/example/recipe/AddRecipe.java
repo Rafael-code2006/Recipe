@@ -32,6 +32,8 @@ public class AddRecipe extends AppCompatActivity {
         setContentView(R.layout.activity_add_recipe);
         InitVies();
 
+        
+
         RecipeSaveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -54,14 +56,14 @@ public class AddRecipe extends AppCompatActivity {
         String description = edit_recipe_description.getText().toString();
         if(!text.isEmpty() && !description.isEmpty()) {
             Recipes recipes = new Recipes(text, description);
-            RecipeId = recipeDataBase.recipesDAO().add(recipes);
+            recipeDataBase.recipesDAO().add(recipes);
             Log.d("DB_TEST", "Рецепт добавлен в базу :" + description);
         }
         }
         private void FieldCheck(){
             if(!EditTextRecipe.getText().toString().isEmpty() && !edit_recipe_description.getText().toString().isEmpty()) {
                 setRecipe();
-                Intent intent = MainActivity.newIntent(AddRecipe.this, RecipeId);
+                Intent intent = MainActivity.newIntent(AddRecipe.this);
                 startActivity(intent);
             }else
             if(EditTextRecipe.getText().toString().isEmpty() && edit_recipe_description.getText().toString().isEmpty()){

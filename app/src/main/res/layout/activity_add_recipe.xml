@@ -13,18 +13,22 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="70dp"
+        android:fontFamily="@font/adamina"
         android:gravity="center"
         android:text="Create Recipe"
-        android:textSize="30dp"
+        android:textColor="@color/my_textView_gray"
+        android:textSize="40sp"
         app:layout_constraintTop_toTopOf="@id/main" />
 
     <EditText
         style="@style/Widget.Material3.AutoCompleteTextView.OutlinedBox"
         android:id="@+id/EditTextRecipe"
         android:layout_width="match_parent"
-        android:layout_height="55dp"
+        android:layout_height="62dp"
         android:layout_margin="30dp"
-        android:background="@color/white"
+        android:background="@drawable/textview_border"
+        android:textColorHint="#DCDCDC"
+        android:textColor="#DCDCDC"
         android:gravity="left"
         android:hint="Name"
 
@@ -42,13 +46,14 @@
         android:layout_width="match_parent"
         android:layout_height="220dp"
         android:layout_margin="30dp"
-        android:background="@color/white"
+        android:background="@drawable/rounded_textview"
+        android:textColorHint="#DCDCDC"
+        android:textColor="#DCDCDC"
         android:gravity="top"
         android:hint="Description"
         android:inputType="textMultiLine"
         android:maxLines="5"
         android:padding="12dp"
-        android:textColor="@android:color/black"
         android:textSize="16sp"
         app:layout_constraintTop_toBottomOf="@+id/EditTextRecipe"
         tools:layout_editor_absoluteX="20dp" />
@@ -59,8 +64,9 @@
         android:layout_height="wrap_content"
         android:layout_margin="25dp"
         android:layout_marginTop="164dp"
-        android:backgroundTint="@color/black"
+        android:backgroundTint="@color/my_textView_gray"
         android:text="Save"
+        android:textColor="#DCDCDC"
         app:layout_constraintTop_toBottomOf="@id/edit_recipe_description"
         tools:layout_editor_absoluteX="34dp" />
 

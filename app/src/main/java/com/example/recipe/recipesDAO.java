@@ -12,8 +12,11 @@ public interface recipesDAO{
     @Query("SELECT * FROM recipes")
     List<Recipes> getRecipes();
 
+    @Query("SELECT * FROM recipes WHERE id = :id")
+    Recipes getRecipe(int id);
+
     @Insert
-    long add(Recipes recipe);
+    void add(Recipes recipe);
 
     @Query("DELETE FROM recipes WHERE id = :id")
     void remove(long id);

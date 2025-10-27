@@ -19,8 +19,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-import java.util.ArrayList;
-import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -30,7 +28,6 @@ public class MainActivity extends AppCompatActivity {
 
     private RecipeDataBase recipeDataBase;
 
-    private List<Recipes> recipes = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,12 +36,16 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         initVies();
         RecyclerViewRecipes.setAdapter(adapterRecipes);
-        for(int i=0; i<20; i++){
-            Recipes recipe = new Recipes(i, "Recipe: "+i, "Siii");
-            recipes.add(recipe);
-        }
         showRecipes();
         onClickFloatingButton();
+        adapterRecipes.setRecipeOnClickListener(new AdapterRecipes.RecipeOnClickListener() {
+            @Override
+            public void OnClickRecipe(Recipes recipe) {
+                int idRecipe = recipe.getId();
+                Intent intent = RecipeShow.newIntent(MainActivity.this, idRecipe);
+                startActivity(intent);
+            }
+        });
 
         // Swipe
         {
@@ -117,9 +118,8 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-    public static Intent newIntent(Context context, long id){
+    public static Intent newIntent(Context context){
         Intent intent = new Intent(context, MainActivity.class);
-        intent.putExtra("RecipeId", id);
         return intent;
     }
 }
