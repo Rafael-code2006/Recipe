@@ -15,6 +15,9 @@ public interface recipesDAO{
     @Query("SELECT * FROM recipes WHERE id = :id")
     Recipes getRecipe(int id);
 
+    @Query("UPDATE recipes SET name = :name, description = :description WHERE id = :id")
+    void changeRecipe(int id, String name, String description);
+
     @Insert
     void add(Recipes recipe);
 
