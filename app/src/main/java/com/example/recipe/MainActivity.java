@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.View;
 
@@ -19,8 +21,12 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.util.List;
+
 
 public class MainActivity extends AppCompatActivity {
+
+    private Handler handler = new Handler(Looper.getMainLooper());
 
     private FloatingActionButton floatingActionButton;
     private RecyclerView RecyclerViewRecipes;
@@ -65,8 +71,19 @@ public class MainActivity extends AppCompatActivity {
                                 public void onClick(DialogInterface dialog, int which) {
                                     int position = viewHolder.getAdapterPosition();
                                     Recipes recipe = adapterRecipes.getRecipeOnClickListener().get(position);
-                                    recipeDataBase.recipesDAO().remove(recipe.getId());
-                                    showRecipes();
+                                    Thread thread = new Thread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            recipeDataBase.recipesDAO().remove(recipe.getId());
+                                            handler.post(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    showRecipes();
+                                                }
+                                            });
+                                        }
+                                    });
+                                    thread.start();
                                 }
                             })
                             .setNegativeButton("Отмена", new DialogInterface.OnClickListener() {
@@ -102,7 +119,20 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void showRecipes(){
-        adapterRecipes.setRecipes(recipeDataBase.recipesDAO().getRecipes());
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                List<Recipes> recipes = recipeDataBase.recipesDAO().getRecipes();
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        adapterRecipes.setRecipes(recipes);
+                    }
+                });
+            }
+        });
+        thread.start();
+
     }
 
 

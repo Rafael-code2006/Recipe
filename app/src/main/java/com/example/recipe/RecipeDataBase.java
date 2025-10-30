@@ -18,7 +18,7 @@ public abstract class RecipeDataBase extends RoomDatabase{
                     app,
                     RecipeDataBase.class,
                     DB_NAME
-            ).allowMainThreadQueries().build();
+            ).build();
         }
         return instance;
     }

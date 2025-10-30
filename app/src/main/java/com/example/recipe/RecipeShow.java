@@ -6,6 +6,8 @@ import static android.view.View.VISIBLE;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -20,6 +22,9 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 public class RecipeShow extends AppCompatActivity {
+
+    private Handler handler = new Handler(Looper.getMainLooper());
+    private RecipeCallback recipeCallback;
 
     private RecipeDataBase recipeDataBase;
 
@@ -61,32 +66,35 @@ public class RecipeShow extends AppCompatActivity {
         EditRecipeShow = findViewById(R.id.EditRecipeShow);
     }
 
-    private void setTitleRecipe(){
-        Recipes recipe = getRecipeById();
-        RecipeTextViewShow.setText(recipe.getName());
-        Log.d("ShowRecipeTest", "name: " + recipe.getName());
-        RecipeDiscriptionTVShow.setText(recipe.getDescription());
-        Log.d("ShowRecipeTest", "dicription: " + recipe.getDescription());
-    }
 
-    private void onClickEditButton(){
+    private void onClickEditButton() {
         RecipeEditButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // SetVisibility для view обьектов
-                {
-                    ScrollDiscription.setVisibility(INVISIBLE);
-                    RecipeTextViewShow.setVisibility(INVISIBLE);
-                    EditRecipeDiscription.setVisibility(VISIBLE);
-                    RecipeEditButton.setVisibility(INVISIBLE);
-                    EditRecipeShow.setVisibility(VISIBLE);
-                    RecipeSaveButton.setVisibility(VISIBLE);
-                }
+                // Скрываем и показываем нужные элементы
+                ScrollDiscription.setVisibility(INVISIBLE);
+                RecipeTextViewShow.setVisibility(INVISIBLE);
+                EditRecipeDiscription.setVisibility(VISIBLE);
+                RecipeEditButton.setVisibility(INVISIBLE);
+                EditRecipeShow.setVisibility(VISIBLE);
+                RecipeSaveButton.setVisibility(VISIBLE);
 
-                Recipes recipe = getRecipeById();
-                EditRecipeShow.setText(recipe.getName());
-                EditRecipeDiscription.setText(recipe.getDescription());
-                Log.d("RafaTest", recipe.getName() + "   " + recipe.getDescription());
+                // Получаем ID рецепта из интента
+                int position = getIntent().getIntExtra("IdRecipe", 0);
+
+                // Асинхронно загружаем рецепт
+                getRecipeByIdAsync(position, new RecipeCallback() {
+                    @Override
+                    public void onRecipeLoaded(Recipes recipe) {
+                        if (recipe != null) {
+                            EditRecipeShow.setText(recipe.getName());
+                            EditRecipeDiscription.setText(recipe.getDescription());
+                            Log.d("RafaTest", recipe.getName() + "   " + recipe.getDescription());
+                        } else {
+                            Log.d("RafaTest", "Рецепт не найден");
+                        }
+                    }
+                });
             }
         });
     }
@@ -108,21 +116,54 @@ public class RecipeShow extends AppCompatActivity {
                 String name = EditRecipeShow.getText().toString().trim();
                 String description = EditRecipeDiscription.getText().toString();
                 int position = getIntent().getIntExtra("IdRecipe", 0);
-                recipeDataBase.recipesDAO().changeRecipe(position, name, description);
-                Intent intent = MainActivity.newIntent(RecipeShow.this);
-                startActivity(intent);
+                Thread thread = new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        recipeDataBase.recipesDAO().changeRecipe(position, name, description);
+                        handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                Intent intent = MainActivity.newIntent(RecipeShow.this);
+                                startActivity(intent);
+                            }
+                        });
+                    }
+                });
             }
         });
     }
 
 
-    private Recipes getRecipeById(){
+    private void setTitleRecipe() {
         int position = getIntent().getIntExtra("IdRecipe", 0);
-        Recipes recipe = recipeDataBase.recipesDAO().getRecipe(position);
-        if(recipe != null) {
-            return recipe;
-        }
-        return null;
+
+        getRecipeByIdAsync(position, new RecipeCallback() {
+            @Override
+            public void onRecipeLoaded(Recipes recipe) {
+                if (recipe != null) {
+                    RecipeTextViewShow.setText(recipe.getName());
+                    Log.d("ShowRecipeTest", "name: " + recipe.getName());
+
+                    RecipeDiscriptionTVShow.setText(recipe.getDescription());
+                    Log.d("ShowRecipeTest", "description: " + recipe.getDescription());
+                } else {
+                    Log.d("ShowRecipeTest", "Рецепт не найден");
+                }
+            }
+        });
+    }
+
+    public void getRecipeByIdAsync(int id, RecipeCallback callback) {
+        new Thread(() -> {
+            Recipes recipe = recipeDataBase.recipesDAO().getRecipe(id);
+            handler.post(() -> {
+                if (recipe != null) {
+                    callback.onRecipeLoaded(recipe);
+                } else {
+                    callback.onRecipeLoaded(null); // или обработай ошибку
+                }
+            });
+        }).start();
     }
 
 

@@ -56,7 +56,13 @@ public class AddRecipe extends AppCompatActivity {
         String description = edit_recipe_description.getText().toString();
         if(!text.isEmpty() && !description.isEmpty()) {
             Recipes recipes = new Recipes(text, description);
-            recipeDataBase.recipesDAO().add(recipes);
+            Thread thread = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    recipeDataBase.recipesDAO().add(recipes);
+                }
+            });
+            thread.start();
             Log.d("DB_TEST", "Рецепт добавлен в базу :" + description);
         }
         }
