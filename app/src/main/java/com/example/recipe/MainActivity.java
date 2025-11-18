@@ -16,6 +16,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -32,7 +34,7 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView RecyclerViewRecipes;
     private AdapterRecipes adapterRecipes;
 
-    private RecipeDataBase recipeDataBase;
+    private MainViewModel mainViewModel;
 
 
     @Override
@@ -40,64 +42,17 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
-        initVies();
-        RecyclerViewRecipes.setAdapter(adapterRecipes);
-        showRecipes();
-        onClickFloatingButton();
-        adapterRecipes.setRecipeOnClickListener(new AdapterRecipes.RecipeOnClickListener() {
-            @Override
-            public void OnClickRecipe(Recipes recipe) {
-                int idRecipe = recipe.getId();
-                Intent intent = RecipeShow.newIntent(MainActivity.this, idRecipe);
-                startActivity(intent);
-            }
-        });
 
-        // Swipe
-        {
-            ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT | ItemTouchHelper.LEFT) {
-                @Override
-                public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
-                    return false;
-                }
+        initVies(); // Инициализация
 
-                @Override
-                public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
-                    new AlertDialog.Builder(MainActivity.this)
-                            .setTitle("Удалить рецепт")
-                            .setMessage("Вы уверены, что хотите удалить этот рецепт?")
-                            .setPositiveButton("Удалить", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    int position = viewHolder.getAdapterPosition();
-                                    Recipes recipe = adapterRecipes.getRecipeOnClickListener().get(position);
-                                    Thread thread = new Thread(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            recipeDataBase.recipesDAO().remove(recipe.getId());
-                                            handler.post(new Runnable() {
-                                                @Override
-                                                public void run() {
-                                                    showRecipes();
-                                                }
-                                            });
-                                        }
-                                    });
-                                    thread.start();
-                                }
-                            })
-                            .setNegativeButton("Отмена", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    int position = viewHolder.getAdapterPosition();
-                                    adapterRecipes.notifyItemChanged(position);
-                                }
-                            })
-                            .show();
-                }
-            });
-            itemTouchHelper.attachToRecyclerView(RecyclerViewRecipes);
-        }
+        showRecipes(); // Показщ
+
+        onClickFloatingButton(); // Клик кнопки добавления
+
+        ClickButton(); // Клик кнопок
+
+        Swipe(); // Swipe
+
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
@@ -115,24 +70,62 @@ public class MainActivity extends AppCompatActivity {
         RecyclerViewRecipes = findViewById(R.id.RecyclerViewRecipes);
         floatingActionButton = findViewById(R.id.floatingActionButton);
         adapterRecipes = new AdapterRecipes();
-        recipeDataBase = RecipeDataBase.getInstance(getApplication());
+        RecyclerViewRecipes.setAdapter(adapterRecipes);
+        mainViewModel = new ViewModelProvider(this).get(MainViewModel.class);
+    }
+
+    private void ClickButton(){
+        adapterRecipes.setRecipeOnClickListener(new AdapterRecipes.RecipeOnClickListener() {
+            @Override
+            public void OnClickRecipe(Recipes recipe) {
+                int idRecipe = recipe.getId();
+                Intent intent = RecipeShow.newIntent(MainActivity.this, idRecipe);
+                startActivity(intent);
+            }
+        });
+    }
+
+    private void Swipe(){
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT | ItemTouchHelper.LEFT) {
+            @Override
+            public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
+                return false;
+            }
+
+            @Override
+            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+                new AlertDialog.Builder(MainActivity.this)
+                        .setTitle("Удалить рецепт")
+                        .setMessage("Вы уверены, что хотите удалить этот рецепт?")
+                        .setPositiveButton("Удалить", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                int position = viewHolder.getAdapterPosition();
+                                Recipes recipe = adapterRecipes.getRecipeOnClickListener().get(position);
+                                mainViewModel.remove(recipe);
+                                showRecipes();
+                            }
+                        })
+                        .setNegativeButton("Отмена", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                int position = viewHolder.getAdapterPosition();
+                                adapterRecipes.notifyItemChanged(position);
+                            }
+                        })
+                        .show();
+            }
+        });
+        itemTouchHelper.attachToRecyclerView(RecyclerViewRecipes);
     }
 
     private void showRecipes(){
-        Thread thread = new Thread(new Runnable() {
+        mainViewModel.getRecipes().observe(this, new Observer<List<Recipes>>() {
             @Override
-            public void run() {
-                List<Recipes> recipes = recipeDataBase.recipesDAO().getRecipes();
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        adapterRecipes.setRecipes(recipes);
-                    }
-                });
+            public void onChanged(List<Recipes> recipes) {
+                adapterRecipes.setRecipes(recipes);
             }
         });
-        thread.start();
-
     }
 
 
