@@ -1,4 +1,5 @@
 package com.example.recipe;
+// cd /d/1AndroidStudioProjects/Recipe
 
 import android.view.LayoutInflater;
 import android.view.View;

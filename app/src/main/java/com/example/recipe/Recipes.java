@@ -1,5 +1,5 @@
 package com.example.recipe;
-
+// cd /d/1AndroidStudioProjects/Recipe
 
 import androidx.room.Entity;
 import androidx.room.Ignore;
