@@ -15,26 +15,22 @@ import java.util.List;
 public class AdapterRecipes extends RecyclerView.Adapter<AdapterRecipes.RecipesViewHolder> {
 
     private RecipeOnClickListener recipeOnClickListener;
-    private OnItemTextView onItemTextView;
 
     private List<Recipes> recipes = new ArrayList<>();
 
     public void setRecipes(List<Recipes> recipes) {
         this.recipes = recipes;
         notifyDataSetChanged();
-    }
+    } // Добавляем рецепты
 
     public ArrayList<Recipes> getRecipeOnClickListener() {
         return new ArrayList<Recipes>(recipes);
-    }
+    } // Получаем коллекцию рецептов
 
     public void setRecipeOnClickListener(RecipeOnClickListener recipeOnClickListener) {
         this.recipeOnClickListener = recipeOnClickListener;
-    }
+    }  // Переопреляем интерфейс, добавляем кликер на рецепт
 
-    public void setOnItemTextView(OnItemTextView onItemTextView) {
-        this.onItemTextView = onItemTextView;
-    }
 
     @NonNull
     @Override
@@ -44,7 +40,7 @@ public class AdapterRecipes extends RecyclerView.Adapter<AdapterRecipes.RecipesV
                 parent,
                 false);
         return new RecipesViewHolder(view);
-    }
+    }  // Создание View
 
     @Override
     public void onBindViewHolder(@NonNull RecipesViewHolder holder, int position) {
@@ -58,17 +54,14 @@ public class AdapterRecipes extends RecyclerView.Adapter<AdapterRecipes.RecipesV
                 if(recipeOnClickListener != null) {
                     recipeOnClickListener.OnClickRecipe(recipe);
                 }
-                if(onItemTextView != null){
-                    onItemTextView.onItemTextView(holder.getAdapterPosition());
-                }
             }
         });
-    }
+    }  // Визуал нашего view
 
     @Override
     public int getItemCount() {
         return recipes.size();
-    }
+    } // Количество рецептов
 
     class RecipesViewHolder extends RecyclerView.ViewHolder{
         private Button ButtonRecypes;
@@ -76,13 +69,9 @@ public class AdapterRecipes extends RecyclerView.Adapter<AdapterRecipes.RecipesV
             super(itemView);
             ButtonRecypes = itemView.findViewById(R.id.ButtonRecypes);
         }
-    }
+    } // Класс хранит в себе все view из item
 
     public interface RecipeOnClickListener{
         void OnClickRecipe(Recipes recipe);
-    }
-
-    public interface OnItemTextView{
-        void onItemTextView(int position);
-    }
+    } // Интерфес на клик рецепта
 }

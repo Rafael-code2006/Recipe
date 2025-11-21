@@ -4,25 +4,27 @@ import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
-@Entity
+@Entity(tableName = "descriptions")
 public class Descriptions {
 
     @PrimaryKey(autoGenerate = true)
-    private int id_description;
-    private String name;
+    int id_description;
+    private String name_description;
     private String type;
     private float weight;
 
     public Descriptions(int id_description, String name, String type, float weight) {
         this.id_description = id_description;
-        this.name = name;
+        this.name_description = name;
         this.type = type;
         this.weight = weight;
     }
 
+    public Descriptions(){};
+
     @Ignore
     public Descriptions(String name, String type, float weight) {
-        this.name = name;
+        this.name_description = name;
         this.type = type;
         this.weight = weight;
     }
@@ -32,8 +34,8 @@ public class Descriptions {
         return id_description;
     }
 
-    public String getName() {
-        return name;
+    public String getName_description() {
+        return name_description;
     }
 
     public String getType() {
@@ -44,8 +46,8 @@ public class Descriptions {
         return weight;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setName_description(String name_description) {
+        this.name_description = name_description;
     }
 
     public void setType(String type) {

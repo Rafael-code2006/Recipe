@@ -24,6 +24,5 @@ public abstract class RecipeDataBase extends RoomDatabase{
     }
 
     public abstract recipesDAO recipesDAO();
-
     public abstract DescriptionDao descriptionDao();
 }

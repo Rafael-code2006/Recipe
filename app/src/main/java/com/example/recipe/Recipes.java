@@ -5,27 +5,26 @@ import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
-@Entity
+@Entity(tableName = "recipes")
 public class Recipes {
 
     @PrimaryKey(autoGenerate = true)
     private int id;
     private String name;
-    private String description;
+    private long id_description;
 
 
 
-    public Recipes(int id, String name, String description) {
+    public Recipes(int id, String name, long id_description) {
         this.id = id;
         this.name = name;
-        this.description = description;
+        this.id_description = id_description;
     }
 
     @Ignore
-    public Recipes(String name, String discription) {
-        this.id = 0;
+    public Recipes(String name, long id_description) {
         this.name = name;
-        this.description = discription;
+        this.id_description = id_description;
     }
 
     public int getId() {
@@ -37,8 +36,8 @@ public class Recipes {
         return name;
     }
 
-    public String getDescription() {
-        return description;
+    public long getId_description() {
+        return id_description;
     }
 
     public void setId(int id) {
@@ -49,7 +48,7 @@ public class Recipes {
         this.name = name;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setId_description(long id_description) {
+        this.id_description = id_description;
     }
 }

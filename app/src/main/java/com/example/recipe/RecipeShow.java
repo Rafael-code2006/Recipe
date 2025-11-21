@@ -88,8 +88,8 @@ public class RecipeShow extends AppCompatActivity {
                     public void onRecipeLoaded(Recipes recipe) {
                         if (recipe != null) {
                             EditRecipeShow.setText(recipe.getName());
-                            EditRecipeDiscription.setText(recipe.getDescription());
-                            Log.d("RafaTest", recipe.getName() + "   " + recipe.getDescription());
+                            //EditRecipeDiscription.setText(recipe.getId_description());
+                            Log.d("RafaTest", recipe.getName() + "   " + recipe.getId_description());
                         } else {
                             Log.d("RafaTest", "Рецепт не найден");
                         }
@@ -119,7 +119,7 @@ public class RecipeShow extends AppCompatActivity {
                 Thread thread = new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        recipeDataBase.recipesDAO().changeRecipe(position, name, description);
+                        //recipeDataBase.recipesDAO().changeRecipe(position, name, description);
                         handler.post(new Runnable() {
                             @Override
                             public void run() {
@@ -144,8 +144,8 @@ public class RecipeShow extends AppCompatActivity {
                     RecipeTextViewShow.setText(recipe.getName());
                     Log.d("ShowRecipeTest", "name: " + recipe.getName());
 
-                    RecipeDiscriptionTVShow.setText(recipe.getDescription());
-                    Log.d("ShowRecipeTest", "description: " + recipe.getDescription());
+                    //RecipeDiscriptionTVShow.setText(recipe.getId_description());
+                    Log.d("ShowRecipeTest", "description: " + recipe.getId_description());
                 } else {
                     Log.d("ShowRecipeTest", "Рецепт не найден");
                 }
