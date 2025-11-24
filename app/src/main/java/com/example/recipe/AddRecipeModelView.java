@@ -3,6 +3,7 @@ package com.example.recipe;
 import android.annotation.SuppressLint;
 import android.app.Application;
 import android.os.Looper;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
@@ -26,8 +27,6 @@ public class AddRecipeModelView extends AndroidViewModel {
 
     private RecipeDataBase recipeDataBase = RecipeDataBase.getInstance(getApplication());
 
-    private android.os.Handler handler = new android.os.Handler(Looper.getMainLooper());
-
     private MutableLiveData<Boolean> shouldCloseScreen = new MutableLiveData<>();
 
     private CompositeDisposable compositeDisposable = new CompositeDisposable();
@@ -44,20 +43,11 @@ public class AddRecipeModelView extends AndroidViewModel {
             .subscribe(new Action() {
                 @Override
                 public void run() throws Throwable {
+                    Log.d("ViewModelTest", "Добавлен обьект: " + recipe.getId());
                     shouldCloseScreen.setValue(true);
                 }
             });
    compositeDisposable.add(disposable);
-    }
-
-    private ExecutorService executor = Executors.newSingleThreadExecutor();
-
-    public void addDescriptionAsync(Descriptions description, Consumer<Long> callback) {
-        executor.execute(() -> {
-            long id = recipeDataBase.descriptionDao().insertDescription(description);
-            // вернём результат в UI-поток
-            handler.post(() -> callback.accept(id));
-        });
     }
 
 

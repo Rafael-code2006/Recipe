@@ -8,21 +8,16 @@ import androidx.room.Query;
 import java.util.List;
 
 import io.reactivex.rxjava3.core.Completable;
+import io.reactivex.rxjava3.core.Single;
 
 @Dao
 public interface recipesDAO{
 
     @Query("SELECT * FROM recipes")
-    LiveData<List<Recipes>> getRecipes();
+    Single<List<Recipes>> getRecipes();
 
     @Query("SELECT * FROM recipes WHERE id = :id")
     Recipes getRecipe(int id);
-
-    @Query("SELECT r.name AS recipe_name, d.name_description, d.type, d.weight " +
-            "FROM recipes r INNER JOIN descriptions d " +
-            "ON r.id_description = d.id_description")
-    LiveData<List<RecipeWithDescription>> getRecipesWithDetails();
-
 
     @Insert
     Completable add(Recipes recipe);
