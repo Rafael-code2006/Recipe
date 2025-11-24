@@ -48,7 +48,7 @@ public class MainViewModel extends AndroidViewModel {
 
     public void remove(Recipes recipe){
       Disposable disposableRemove = recipeDataBase.recipesDAO().remove(recipe.getId())
-                .observeOn(Schedulers.io())
+                .subscribeOn(Schedulers.io())
                 .subscribe();
       compositeDisposable.add(disposableRemove);
         refreshList();

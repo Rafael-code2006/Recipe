@@ -108,17 +108,22 @@ public class AddRecipe extends AppCompatActivity {
     Descriptions description = new Descriptions(name_description, type, weight);
     Log.d("setRecipe" , String.valueOf(description.getId_description()));
 
-    Thread thread = new Thread(new Runnable() {
-        @Override
-        public void run() {
-            long descId = addRecipeModelView.addDescription(description);
-            Log.d("setRecipe" , "id desc: " + descId);
-            Recipes recipes = new Recipes(text, 5);
-            Log.d("setRecipe" , String.valueOf(recipes.getId_description()));
-            addRecipeModelView.addRecipe(recipes);
-        }
-    });
-    thread.start();
+        Recipes recipes = new Recipes(text, 5);
+
+        setRecipeRX(text, recipes, description)
+                .subscribeOn(Schedulers.io())
+                .subscribe();
+}
+
+private Completable setRecipeRX(String text, Recipes recipes, Descriptions description){
+        return Completable.fromAction(new Action() {
+            @Override
+            public void run() throws Throwable {
+                long descId = addRecipeModelView.addDescription(description);
+                Recipes recipes = new Recipes(text, 5);
+                addRecipeModelView.addRecipe(recipes);
+            }
+        });
 }
 
     private void FieldCheck() {
