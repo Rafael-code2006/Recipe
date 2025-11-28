@@ -10,22 +10,19 @@ public class Descriptions {
     @PrimaryKey(autoGenerate = true)
     int id_description;
     private String name_description;
-    private String type;
     private float weight;
 
-    public Descriptions(int id_description, String name, String type, float weight) {
+    public Descriptions(int id_description, String name, float weight) {
         this.id_description = id_description;
         this.name_description = name;
-        this.type = type;
         this.weight = weight;
     }
 
     public Descriptions(){};
 
     @Ignore
-    public Descriptions(String name, String type, float weight) {
+    public Descriptions(String name, float weight) {
         this.name_description = name;
-        this.type = type;
         this.weight = weight;
     }
 
@@ -38,9 +35,6 @@ public class Descriptions {
         return name_description;
     }
 
-    public String getType() {
-        return type;
-    }
 
     public float getWeight() {
         return weight;
@@ -49,10 +43,7 @@ public class Descriptions {
     public void setName_description(String name_description) {
         this.name_description = name_description;
     }
-
-    public void setType(String type) {
-        this.type = type;
-    }
+    
 
     public void setWeight(float weight) {
         this.weight = weight;

@@ -105,10 +105,15 @@ public class AddRecipe extends AppCompatActivity {
     Log.d("setRecipe" , type);
     float weight = Float.parseFloat(editTextWeight.getText().toString().trim());
     Log.d("setRecipe" , String.valueOf(weight));
-    Descriptions description = new Descriptions(name_description, type, weight);
+    Descriptions description = new Descriptions(name_description, weight);
     Log.d("setRecipe" , String.valueOf(description.getId_description()));
 
         Recipes recipes = new Recipes(text, 5);
+
+        RecipeWithDescription recipe = new RecipeWithDescription(
+                recipes.getName(),
+                description.getName_description(),
+                description.getWeight());
 
         setRecipeRX(text, recipes, description)
                 .subscribeOn(Schedulers.io())

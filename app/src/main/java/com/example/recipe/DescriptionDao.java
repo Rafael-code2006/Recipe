@@ -8,13 +8,14 @@ import androidx.room.Query;
 import java.util.List;
 
 import io.reactivex.rxjava3.core.Completable;
+import io.reactivex.rxjava3.core.Single;
 
 @Dao
 public interface DescriptionDao{
 
 
     @Query("SELECT * FROM descriptions")
-    LiveData<List<Descriptions>>getDescriptions();
+    Single<List<Descriptions>> getDescriptions();
 
 
     @Query("SELECT * FROM descriptions WHERE id_description = :id_description")

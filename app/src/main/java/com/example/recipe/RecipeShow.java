@@ -3,15 +3,18 @@ package com.example.recipe;
 import static android.view.View.INVISIBLE;
 import static android.view.View.VISIBLE;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
@@ -20,31 +23,37 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class RecipeShow extends AppCompatActivity {
 
     private Handler handler = new Handler(Looper.getMainLooper());
-    private RecipeCallback recipeCallback;
 
     private RecipeDataBase recipeDataBase;
 
-    private TextView RecipeTextViewShow, RecipeDiscriptionTVShow;
+    private TextView RecipeTextViewShow;
 
-    private ScrollView ScrollDiscription;
 
     private Button RecipeEditButton, RecipeSaveButton;
 
-    private EditText EditRecipeDiscription, EditRecipeShow;
+    private LinearLayout linearLayoutDescription;
+
+    private TextView TextViewName_descr, TextViewWeight, TextViewType;
+
+    private RecipeShowViewModel recipeShowViewModel;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_recipe_show);
-        initVies();
-        setTitleRecipe();
-        onClickEditButton();
-        onClickSaveButton();
+        initVies(); // Инициализация
+        setTitleRecipe(); //
 
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
@@ -56,101 +65,44 @@ public class RecipeShow extends AppCompatActivity {
 
     private void initVies(){
         recipeDataBase = RecipeDataBase.getInstance(getApplication());
-        ScrollDiscription = findViewById(R.id.ScrollDiscription);
         RecipeTextViewShow = findViewById(R.id.RecipeTextViewShow);
-        RecipeDiscriptionTVShow = findViewById(R.id.RecipeDiscriptionTVShow);
         RecipeEditButton = findViewById(R.id.RecipeEditButton);
         RecipeSaveButton = findViewById(R.id.RecipeSaveButton);
-        EditRecipeDiscription = findViewById(R.id.EditRecipeDiscription);
         RecipeSaveButton = findViewById(R.id.RecipeSaveButton);
-        EditRecipeShow = findViewById(R.id.EditRecipeShow);
+        linearLayoutDescription = findViewById(R.id.LinearLayoutShowRecipes);
+        recipeShowViewModel = new ViewModelProvider(this).get(RecipeShowViewModel.class);
     }
 
 
-    private void onClickEditButton() {
-        RecipeEditButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Скрываем и показываем нужные элементы
-                ScrollDiscription.setVisibility(INVISIBLE);
-                RecipeTextViewShow.setVisibility(INVISIBLE);
-                EditRecipeDiscription.setVisibility(VISIBLE);
-                RecipeEditButton.setVisibility(INVISIBLE);
-                EditRecipeShow.setVisibility(VISIBLE);
-                RecipeSaveButton.setVisibility(VISIBLE);
-
-                // Получаем ID рецепта из интента
-                int position = getIntent().getIntExtra("IdRecipe", 0);
-
-                // Асинхронно загружаем рецепт
-                getRecipeByIdAsync(position, new RecipeCallback() {
-                    @Override
-                    public void onRecipeLoaded(Recipes recipe) {
-                        if (recipe != null) {
-                            EditRecipeShow.setText(recipe.getName());
-                            //EditRecipeDiscription.setText(recipe.getId_description());
-                            Log.d("RafaTest", recipe.getName() + "   " + recipe.getId_description());
-                        } else {
-                            Log.d("RafaTest", "Рецепт не найден");
-                        }
-                    }
-                });
-            }
-        });
-    }
-
-    private void onClickSaveButton(){
-
-        // SetVisibility для view обьектов
-        {
-            ScrollDiscription.setVisibility(VISIBLE);
-            RecipeTextViewShow.setVisibility(VISIBLE);
-            EditRecipeDiscription.setVisibility(INVISIBLE);
-            RecipeEditButton.setVisibility(VISIBLE);
-            EditRecipeShow.setVisibility(INVISIBLE);
-            RecipeSaveButton.setVisibility(INVISIBLE);
-        }
-        RecipeSaveButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String name = EditRecipeShow.getText().toString().trim();
-                String description = EditRecipeDiscription.getText().toString();
-                int position = getIntent().getIntExtra("IdRecipe", 0);
-                Thread thread = new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        //recipeDataBase.recipesDAO().changeRecipe(position, name, description);
-                        handler.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                Intent intent = MainActivity.newIntent(RecipeShow.this);
-                                startActivity(intent);
-                            }
-                        });
-                    }
-                });
-            }
-        });
-    }
 
 
     private void setTitleRecipe() {
+        recipeShowViewModel.refreshRecipes();
+        recipeShowViewModel.getDesriptions();
         int position = getIntent().getIntExtra("IdRecipe", 0);
-
-        getRecipeByIdAsync(position, new RecipeCallback() {
+        recipeShowViewModel.getRecipes().observe(this, new Observer<List<Recipes>>() {
             @Override
-            public void onRecipeLoaded(Recipes recipe) {
-                if (recipe != null) {
-                    RecipeTextViewShow.setText(recipe.getName());
-                    Log.d("ShowRecipeTest", "name: " + recipe.getName());
-
-                    //RecipeDiscriptionTVShow.setText(recipe.getId_description());
-                    Log.d("ShowRecipeTest", "description: " + recipe.getId_description());
-                } else {
-                    Log.d("ShowRecipeTest", "Рецепт не найден");
+            public void onChanged(List<Recipes> recipes) {
+                for(Recipes obj : recipes){
+                    if(obj.getId() == position){
+                        RecipeTextViewShow.setText(obj.getName());
+                        recipeShowViewModel.getDesriptions().observe(RecipeShow.this, new Observer<List<Descriptions>>() {
+                            @Override
+                            public void onChanged(List<Descriptions> descriptions) {
+                                for(Descriptions objDesc : descriptions) {
+                                    if (obj.getId_description() == objDesc.getId_description()){
+                                        showDescriptions(
+                                                objDesc.getName_description(),
+                                                objDesc.getWeight());
+                                    }
+                                }
+                            }
+                        });
+                    }
                 }
             }
         });
+
     }
 
     public void getRecipeByIdAsync(int id, RecipeCallback callback) {
@@ -166,10 +118,24 @@ public class RecipeShow extends AppCompatActivity {
         }).start();
     }
 
+    @SuppressLint("MissingInflatedId")
+    private void showDescriptions(
+            String name_description,
+            float weight
+    ){
+        View view = getLayoutInflater().inflate(R.layout.descriptions_show_item, linearLayoutDescription, false);
+        TextViewName_descr = view.findViewById(R.id.TextViewName_descr);
+        TextViewName_descr.setText(name_description);
+        TextViewWeight = view.findViewById(R.id.TextViewWeight);
+        TextViewWeight.setText(String.valueOf(weight));
+        TextViewType = view.findViewById(R.id.TextViewType);
+        linearLayoutDescription.addView(view);
+    }
 
-    public static Intent newIntent(Context context, int id){
+
+    public static Intent newIntent(Context context, int id_Recipe){
         Intent intent = new Intent(context, RecipeShow.class);
-        intent.putExtra("IdRecipe", id);
+        intent.putExtra("IdRecipe", id_Recipe);
         return intent;
     }
 }
