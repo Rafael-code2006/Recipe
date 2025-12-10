@@ -24,6 +24,7 @@ import androidx.lifecycle.ViewModelProvider;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import io.reactivex.rxjava3.annotations.NonNull;
 import io.reactivex.rxjava3.core.Completable;
@@ -72,7 +73,6 @@ public class AddRecipe extends AppCompatActivity {
 
     private void InitViews() {
         editTextRecipe = findViewById(R.id.EditTextRecipe);
-        edit_recipe_description = findViewById(R.id.EditTextIngredient);
         RecipeSaveButton = findViewById(R.id.RecipeSaveButton);
         linearLayoutDescription = findViewById(R.id.linearLayoutDescription);
         floatingActionButton = findViewById(R.id.floatingActionButton);
@@ -92,66 +92,71 @@ public class AddRecipe extends AppCompatActivity {
         RecipeSaveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                FieldCheck(); // пока сохраняет только название и описание рецепта
+                if(editTextRecipe.getText().toString().isEmpty()){
+                    Toast.makeText(AddRecipe.this, "Введите название рецепта", Toast.LENGTH_SHORT).show();
+                } else{
+                    setRecipe();
+                   Intent intent = MainActivity.getIntent(AddRecipe.this);
+                   startActivity(intent);
+                }
             }
         });
     }
+
+
     private void setRecipe() {
-    String text = editTextRecipe.getText().toString().trim();
-    Log.d("setRecipe" , text);
-    String name_description = editTextIngredient.getText().toString();
-    Log.d("setRecipe" , name_description);
-    String type = spinnerWeight.getSelectedItem().toString();
-    Log.d("setRecipe" , type);
-    float weight = Float.parseFloat(editTextWeight.getText().toString().trim());
-    Log.d("setRecipe" , String.valueOf(weight));
-    Descriptions description = new Descriptions(name_description, weight);
-    Log.d("setRecipe" , String.valueOf(description.getId_description()));
+        String text = editTextRecipe.getText().toString().trim();
+        Recipes recipe = new Recipes(text);
 
-        Recipes recipes = new Recipes(text, 5);
+        addRecipeModelView.addRecipe(recipe);
 
-        RecipeWithDescription recipe = new RecipeWithDescription(
-                recipes.getName(),
-                description.getName_description(),
-                description.getWeight());
-
-        setRecipeRX(text, recipes, description)
-                .subscribeOn(Schedulers.io())
-                .subscribe();
-}
-
-private Completable setRecipeRX(String text, Recipes recipes, Descriptions description){
-        return Completable.fromAction(new Action() {
+        addRecipeModelView.getIdRecipes().observe(this, new Observer<Long>() {
             @Override
-            public void run() throws Throwable {
-                long descId = addRecipeModelView.addDescription(description);
-                Recipes recipes = new Recipes(text, 5);
-                addRecipeModelView.addRecipe(recipes);
-            }
-        });
-}
+            public void onChanged(Long recipeId) {
+                if (recipeId == null) return;
 
-    private void FieldCheck() {
-        if (!editTextRecipe.getText().toString().isEmpty()) {
-            setRecipe();
-            addRecipeModelView.getShouldCloseScreen().observe(this, new Observer<Boolean>() {
-                @Override
-                public void onChanged(Boolean close) {
-                    if (close) {
-                        finish();
+                List<Descriptions> listDescriptions = new ArrayList<>();
+
+                for (int i = 0; i < linearLayoutDescription.getChildCount(); i++) {
+                    View item = linearLayoutDescription.getChildAt(i);
+
+                    EditText nameIngredient = item.findViewById(R.id.EditTextNameIngredient);
+                    EditText weightIngredient = item.findViewById(R.id.EditTextWeight);
+
+                    String name = nameIngredient.getText().toString().trim();
+                    String weightText = weightIngredient.getText().toString().trim();
+
+                    if (name.isEmpty() || weightText.isEmpty()) continue;
+
+                    try {
+                        float weight = Float.parseFloat(weightText);
+                        Descriptions descriptions = new Descriptions(recipeId, name, weight);
+                        addRecipeModelView.addDescription(descriptions);
+                        listDescriptions.add(descriptions);
+                        Log.d("AddRecipe1", "Ингредиент: " + name + ", вес: " + weight + " добавлен");
+                    } catch (NumberFormatException e) {
+                        Toast.makeText(AddRecipe.this, "Ошибка формата веса", Toast.LENGTH_SHORT).show();
                     }
                 }
-            });
-        }
+
+                if (!listDescriptions.isEmpty()) {
+                    RecipeIngredient recipeIngredient = new RecipeIngredient(recipeId, listDescriptions);
+
+                    for(Descriptions x : listDescriptions){
+                        Log.d("AddRecipe1", "Добавлен в рецепт: "+ recipeIngredient.getRecipe_id() + x.getName());
+                    }
+                }
+
+                // чтобы не подписываться бесконечно
+                addRecipeModelView.getIdRecipes().removeObserver(this);
+            }
+        });
     }
 
 
     private void showDescriptions() {
-        View view = getLayoutInflater().inflate(R.layout.description_item, linearLayoutDescription, false);
-        editTextIngredient = view.findViewById(R.id.EditTextIngredient);
-        spinnerWeight = view.findViewById(R.id.SpinnerWeight);
-        editTextWeight = view.findViewById(R.id.EditTextWeight);
-        linearLayoutDescription.addView(view); // просто добавляет блок на экран
+        View view = getLayoutInflater().inflate(R.layout.ingredient_item, linearLayoutDescription, false);
+        linearLayoutDescription.addView(view);
     }
 
     public static Intent newIntent(Context context) {

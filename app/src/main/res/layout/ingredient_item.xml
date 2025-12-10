@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/linearLayout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="50dp"
+    android:orientation="horizontal">
+    <!-- Название ингредиента -->
+    <EditText
+        android:id="@+id/EditTextNameIngredient"
+        android:layout_width="180dp"
+        android:layout_height="wrap_content"
+        android:hint="Ingredient"
+        android:minHeight="48dp" />
+
+    <!-- Вес -->
+    <EditText
+        android:id="@+id/EditTextWeight"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:hint="Weight"
+        android:inputType="numberDecimal"
+        android:minHeight="48dp" />
+
+    <!-- Единица измерения -->
+    <Spinner
+        android:id="@+id/SpinnerUnit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:entries="@array/ingredients_unit"
+        android:minHeight="48dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:hint="Unit"/>
+
+</LinearLayout>

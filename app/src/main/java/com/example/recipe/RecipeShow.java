@@ -77,7 +77,7 @@ public class RecipeShow extends AppCompatActivity {
 
 
     private void setTitleRecipe() {
-        recipeShowViewModel.refreshRecipes();
+      /*  recipeShowViewModel.refreshRecipes();
         recipeShowViewModel.getDesriptions();
         int position = getIntent().getIntExtra("IdRecipe", 0);
         recipeShowViewModel.getRecipes().observe(this, new Observer<List<Recipes>>() {
@@ -116,6 +116,7 @@ public class RecipeShow extends AppCompatActivity {
                 }
             });
         }).start();
+       */
     }
 
     @SuppressLint("MissingInflatedId")
@@ -133,7 +134,7 @@ public class RecipeShow extends AppCompatActivity {
     }
 
 
-    public static Intent newIntent(Context context, int id_Recipe){
+    public static Intent newIntent(Context context, long id_Recipe){
         Intent intent = new Intent(context, RecipeShow.class);
         intent.putExtra("IdRecipe", id_Recipe);
         return intent;

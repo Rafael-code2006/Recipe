@@ -9,25 +9,22 @@ import androidx.room.PrimaryKey;
 public class Recipes {
 
     @PrimaryKey(autoGenerate = true)
-    private int id;
+    private long id;
     private String name;
-    private long id_description;
 
 
 
-    public Recipes(int id, String name, long id_description) {
+    public Recipes(long id, String name) {
         this.id = id;
         this.name = name;
-        this.id_description = id_description;
     }
 
     @Ignore
-    public Recipes(String name, long id_description) {
+    public Recipes(String name) {
         this.name = name;
-        this.id_description = id_description;
     }
 
-    public int getId() {
+    public long getId() {
         return this.id;
     }
 
@@ -36,19 +33,12 @@ public class Recipes {
         return name;
     }
 
-    public long getId_description() {
-        return id_description;
-    }
 
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void setId_description(long id_description) {
-        this.id_description = id_description;
+    @Override
+    public String toString() {
+        return "Recipes{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                '}';
     }
 }

@@ -45,7 +45,7 @@ public class MainActivity extends AppCompatActivity {
 
         initVies(); // Инициализация
 
-        showRecipes(); // Показщ
+        showRecipes(); // Показ
 
         onClickFloatingButton(); // Клик кнопки добавления
 
@@ -79,7 +79,7 @@ public class MainActivity extends AppCompatActivity {
         adapterRecipes.setRecipeOnClickListener(new AdapterRecipes.RecipeOnClickListener() {
             @Override
             public void OnClickRecipe(Recipes recipe) {
-                int idRecipe = recipe.getId();
+                long idRecipe = recipe.getId();
                 Intent intent = RecipeShow.newIntent(MainActivity.this, idRecipe);
                 startActivity(intent);
             }
@@ -124,6 +124,7 @@ public class MainActivity extends AppCompatActivity {
         mainViewModel.getRecipes().observe(this, new Observer<List<Recipes>>() {
             @Override
             public void onChanged(List<Recipes> recipes) {
+                Log.d("MainActivity1", recipes.toString());
                 adapterRecipes.setRecipes(recipes);
             }
         });
@@ -142,7 +143,7 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-    public static Intent newIntent(Context context){
+    public static Intent getIntent(Context context){
         Intent intent = new Intent(context, MainActivity.class);
         return intent;
     }

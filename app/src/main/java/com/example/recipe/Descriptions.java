@@ -1,0 +1,48 @@
+package com.example.recipe;
+
+import androidx.room.Entity;
+import androidx.room.Ignore;
+import androidx.room.PrimaryKey;
+
+@Entity(tableName = "descriptions")
+public class Descriptions {
+
+    @PrimaryKey(autoGenerate = true)
+    long id_description;
+    long recipe_id;
+    private String name;
+    private float weight;
+
+
+    public Descriptions(long id_description, long recipe_id, String name, float weight) {
+        this.id_description = id_description;
+        this.recipe_id = recipe_id;
+        this.name = name;
+        this.weight = weight;
+    }
+
+    @Ignore
+    public Descriptions(long recipe_id, String name, float weight) {
+        this.recipe_id = recipe_id;
+        this.name = name;
+        this.weight = weight;
+    }
+
+
+    public long getId_description() {
+        return id_description;
+    }
+
+    public long getRecipe_id() {
+        return recipe_id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public float getWeight() {
+        return weight;
+    }
+}
+

@@ -18,6 +18,10 @@ public interface DescriptionDao{
     Single<List<Descriptions>> getDescriptions();
 
 
+    @Query("SELECT * FROM descriptions WHERE recipe_id = :recipe_id")
+    Single<List<Descriptions>> getDescriptionWithRecipe(int recipe_id);
+
+
     @Query("SELECT * FROM descriptions WHERE id_description = :id_description")
     Descriptions getDescription(int id_description);
 
@@ -25,7 +29,10 @@ public interface DescriptionDao{
     Completable remove(int id_description);
 
     @Insert
-    long insertDescription(Descriptions description);
+    Completable insertDescription(Descriptions description);
+
+
+
 
 
 }

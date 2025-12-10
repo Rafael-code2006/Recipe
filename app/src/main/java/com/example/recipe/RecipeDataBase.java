@@ -7,13 +7,13 @@ import androidx.room.Room;
 import androidx.room.RoomDatabase;
 
 @Database(entities = {Recipes.class, Descriptions.class}, version = 2, exportSchema = false)
-public abstract class RecipeDataBase extends RoomDatabase{
+public abstract class RecipeDataBase extends RoomDatabase {
 
     private static final String DB_NAME = "recipe.db";
-
     private static RecipeDataBase instance = null;
-    public static RecipeDataBase getInstance(Application app){
-        if(instance == null){
+
+    public static synchronized RecipeDataBase getInstance(Application app) {
+        if (instance == null) {
             instance = Room.databaseBuilder(
                     app,
                     RecipeDataBase.class,
