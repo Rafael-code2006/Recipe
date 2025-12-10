@@ -43,7 +43,7 @@ public class Descriptions {
     public void setName_description(String name_description) {
         this.name_description = name_description;
     }
-    
+
 
     public void setWeight(float weight) {
         this.weight = weight;
