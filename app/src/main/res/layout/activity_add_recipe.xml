@@ -125,13 +125,15 @@
         android:id="@+id/floatingActionButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="20dp"
-        android:backgroundTint="@color/background_main"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="30dp"
         android:clickable="true"
         android:contentDescription="@string/app_name"
-        app:srcCompat="@drawable/ic_add_recipe"
         app:layout_constraintBottom_toTopOf="@id/RecipeSaveButton"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintEnd_toEndOf="parent"
+        app:backgroundTint="@color/fab_background"
+        app:srcCompat="@drawable/ic_add_recipe"
+        app:tint="@android:color/white" />
 
     <!-- Кнопка Save закреплена внизу -->
     <Button
@@ -139,7 +141,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="25dp"
-        android:backgroundTint="@color/my_textView_gray"
+        app:backgroundTint="@color/my_button_background"
         android:text="Save"
         android:textColor="#DCDCDC"
         app:layout_constraintBottom_toBottomOf="parent"

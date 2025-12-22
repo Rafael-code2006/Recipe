@@ -7,6 +7,7 @@
     <color name="background_button_item_recipe">#F8F7F7</color>
     <color name="my_textView_gray">#FFFFFF</color>
     <color name="fab_background">#021C8A</color>
+    <color name="my_button_background">#1928A0</color>
     <color name="my_frame">#122261</color>
     <color name="my_count_ingredients">#0ABD02</color>
     <color name="my_recipes_background">#233687</color>
