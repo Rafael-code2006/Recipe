@@ -21,6 +21,8 @@ public class RecipeShowViewModel extends AndroidViewModel {
     private RecipeDataBase recipeDataBase = RecipeDataBase.getInstance(getApplication());
 
     private MutableLiveData<List<Recipes>> recipes = new MutableLiveData<>();
+
+    private MutableLiveData<Recipes> recipe = new MutableLiveData<>();
     private MutableLiveData<List<Descriptions>> descriptions = new MutableLiveData<>();
 
     private CompositeDisposable compositeDisposable = new CompositeDisposable();
@@ -33,33 +35,63 @@ public class RecipeShowViewModel extends AndroidViewModel {
         return recipes;
     }
 
+    public LiveData<Recipes> getRecipe() {
+        return recipe;
+    }
+
     public LiveData<List<Descriptions>> getDesriptions(){
         return descriptions;
     }
 
-    public void refreshDescriptions(){
-        Disposable disposable = recipeDataBase.descriptionDao().getDescriptions()
+    public void refreshDescriptions(long recipe_id){
+        Disposable disposable = recipeDataBase.descriptionDao().getDescriptionWithRecipe(recipe_id)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Consumer<List<Descriptions>>() {
                     @Override
-                    public void accept(List<Descriptions> descriptionsForShow) throws Throwable {
-                        descriptions.setValue(descriptionsForShow);
+                    public void accept(List<Descriptions> getDescriptions) throws Throwable {
+                        descriptions.setValue(getDescriptions);
                     }
                 });
     }
+    public void refreshRecipes(Recipes recipes){
+        Disposable disposableRefresh =
+                recipeDataBase
+                   .descriptionDao()
+                        .getDescriptionWithRecipe(recipes.getId())
+                        .doOnError(new Consumer<Throwable>() {
+                            @Override
+                            public void accept(Throwable throwable) throws Throwable {
+                                Log.d("RecipeShowViewModel1", throwable.getMessage().toString());
+                            }
+                        })
+                                .subscribeOn(Schedulers.io())
+                                        .observeOn(AndroidSchedulers.mainThread())
+                                                .subscribe(new Consumer<List<Descriptions>>() {
+                                                    @Override
+                                                    public void accept(List<Descriptions> descriptions) throws Throwable {
 
-    public void refreshRecipes(){
-        Disposable disposableRefresh = recipeDataBase.recipesDAO().getRecipes()
+                                                    }
+                                                });
+        compositeDisposable.add(disposableRefresh);
+    }
+
+    public void loadRecipe(long recipe_id){
+        recipeDataBase.recipesDAO().getRecipe(recipe_id)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Consumer<List<Recipes>>() {
+                .doOnError(new Consumer<Throwable>() {
                     @Override
-                    public void accept(List<Recipes> recipesForDB) throws Throwable {
-                        recipes.setValue(recipesForDB);
+                    public void accept(Throwable throwable) throws Throwable {
+                        Log.d("RecipeShowViewModel1", throwable.getMessage());
+                    }
+                })
+                .subscribe(new Consumer<Recipes>() {
+                    @Override
+                    public void accept(Recipes getRecipe) throws Throwable {
+                        recipe.setValue(getRecipe);
                     }
                 });
-        compositeDisposable.add(disposableRefresh);
     }
 
     @Override

@@ -5,55 +5,51 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background_main"
+    android:adjustViewBounds="true"
+    android:background="@drawable/my_background"
+    android:scaleType="centerCrop"
     tools:context=".MainActivity">
 
-
+    <!-- Заголовок -->
     <TextView
         android:id="@+id/main_RecipeTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="350dp"
+        android:layout_height="62dp"
         android:layout_marginTop="50dp"
-        android:fontFamily="@font/adamina"
-        android:gravity="center"
+        android:fontFamily="@font/archivo_black"
+        android:gravity="left"
         android:text="@string/text_my_recipes"
-        android:textColor="@color/my_textView_gray"
+        android:textColor="@color/my_text_view_back"
         android:textSize="40sp"
-        app:layout_constraintBottom_toTopOf="@+id/RecyclerViewRecipes"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-
+    <!-- Список рецептов -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/RecyclerViewRecipes"
-        android:layout_width="388dp"
-        android:layout_height="600dp"
-        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/main_RecipeTextView"
-        tools:listitem="@layout/recipes_item">
+        app:layout_constraintTop_toBottomOf="@id/main_RecipeTextView"
+        tools:listitem="@layout/recipes_item" />
 
-
-    </androidx.recyclerview.widget.RecyclerView>
-
+    <!-- Кнопка закреплена внизу и не скроллится -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/floatingActionButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="20dp"
         android:layout_marginBottom="60dp"
-        android:backgroundTint="@color/background_main"
         android:clickable="true"
         android:contentDescription="@string/app_name"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:srcCompat="@drawable/ic_add_recipe" />
-
+        app:backgroundTint="@color/fab_background"
+        app:srcCompat="@drawable/ic_add_recipe"
+        app:tint="@android:color/white" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,96 +1,76 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
+    tools:context=".RecipeShow"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background_main"
-    tools:context=".RecipeShow">
+    android:fillViewport="true">
 
-    <TextView
-        android:id="@+id/YourRecipeTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="50dp"
-        android:fontFamily="@font/adamina"
-        android:gravity="center"
-        android:text="Your recipe"
-        android:textColor="@color/my_textView_gray"
-        android:textSize="40sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/RecipeTextViewShow"
-        android:layout_width="300dp"
-        android:layout_height="70dp"
-        android:text="Recipe"
-        android:textSize="28sp"
-        android:gravity="center"
-        android:layout_marginTop="30dp"
-        android:background="@drawable/textview_border"
-        android:textColor="#DCDCDC"
-        app:layout_constraintTop_toBottomOf="@id/YourRecipeTextView"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        />
-    <EditText
-        android:id="@+id/EditRecipeShow"
-        android:layout_width="300dp"
-        android:layout_height="70dp"
-        android:hint="input name"
-        android:textColorHint="#DCDCDC"
-        android:textSize="28sp"
-        android:paddingTop="15dp"
-        android:paddingStart="10dp"
-        android:gravity="left"
-        android:layout_marginTop="30dp"
-        android:background="@drawable/textview_border"
-        android:textColor="#CCCBCB"
-        android:visibility="invisible"
-        app:layout_constraintTop_toBottomOf="@id/YourRecipeTextView"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        />
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="250dp"
-        android:orientation="vertical"
-        android:id="@+id/LinearLayoutShowRecipes"
-        app:layout_constraintTop_toBottomOf="@id/RecipeTextViewShow"
-        app:layout_constraintBottom_toTopOf="@id/RecipeEditButton">
-
-    </LinearLayout>
-
-
-    <Button
-        android:id="@+id/RecipeEditButton"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="25dp"
-        android:layout_marginTop="164dp"
-        android:backgroundTint="@color/my_textView_gray"
-        android:text="Edit"
-        android:visibility="visible"
-        android:textColor="#DCDCDC"
-        app:layout_constraintTop_toBottomOf="@id/LinearLayoutShowRecipes"
-        tools:layout_editor_absoluteX="34dp" />
+        android:id="@+id/main"
+        android:background="@drawable/my_background">
 
-    <Button
-        android:id="@+id/RecipeSaveButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="25dp"
-        android:layout_marginTop="164dp"
-        android:backgroundTint="@color/my_textView_gray"
-        android:text="Save"
-        android:textColor="#DCDCDC"
-        android:visibility="invisible"
-        app:layout_constraintTop_toBottomOf="@id/LinearLayoutShowRecipes"
-        tools:layout_editor_absoluteX="34dp" />
+        <TextView
+            android:id="@+id/YourRecipeTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="50dp"
+            android:fontFamily="@font/adamina"
+            android:gravity="center"
+            android:text="Your recipe"
+            android:textColor="@color/my_textView_gray"
+            android:textSize="40sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
+        <TextView
+            android:id="@+id/RecipeTextViewShow"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:text="Recipe"
+            android:textSize="28sp"
+            android:gravity="center"
+            android:layout_marginTop="30dp"
+            android:background="@drawable/textview_border"
+            android:textColor="#DCDCDC"
+            app:layout_constraintTop_toBottomOf="@id/YourRecipeTextView"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <EditText
+            android:id="@+id/EditRecipeShow"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:hint="input name"
+            android:textColorHint="#DCDCDC"
+            android:textSize="28sp"
+            android:paddingTop="15dp"
+            android:paddingStart="10dp"
+            android:gravity="left"
+            android:layout_marginTop="30dp"
+            android:background="@drawable/textview_border"
+            android:textColor="#CCCBCB"
+            android:visibility="invisible"
+            app:layout_constraintTop_toBottomOf="@id/YourRecipeTextView"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/RecyclerViewRecipes"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginTop = "20dp"
+            android:nestedScrollingEnabled="false"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:layout_constraintTop_toBottomOf="@id/RecipeTextViewShow"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            tools:listitem="@layout/recipes_item" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>

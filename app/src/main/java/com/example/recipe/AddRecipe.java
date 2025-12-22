@@ -140,6 +140,11 @@ public class AddRecipe extends AppCompatActivity {
                 }
 
                 if (!listDescriptions.isEmpty()) {
+                    int count_ingredient = 0;
+                    for(Descriptions x : listDescriptions){
+                        count_ingredient += 1;
+                    }
+                    recipe.setIngredient_count(count_ingredient);
                     RecipeIngredient recipeIngredient = new RecipeIngredient(recipeId, listDescriptions);
 
                     for(Descriptions x : listDescriptions){

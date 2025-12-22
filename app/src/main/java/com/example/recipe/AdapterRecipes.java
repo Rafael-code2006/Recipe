@@ -1,12 +1,12 @@
 package com.example.recipe;
-// cd /d/1AndroidStudioProjects/Recipe
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
@@ -14,64 +14,97 @@ import java.util.List;
 
 public class AdapterRecipes extends RecyclerView.Adapter<AdapterRecipes.RecipesViewHolder> {
 
-    private RecipeOnClickListener recipeOnClickListener;
 
+
+    private CountIngredients countIngredients;
+
+    public void setCountIngredients(CountIngredients countIngredients) {
+        this.countIngredients = countIngredients;
+    }
+
+    private RecipeOnClickListener recipeOnClickListener;
     private List<Recipes> recipes = new ArrayList<>();
 
+    private Recipes selectedRecipe;
+
+    public void setSelectedRecipe(Recipes recipe) {
+        this.selectedRecipe = recipe;
+    }
+
+    public Recipes getSelectedRecipe() {
+        return selectedRecipe;
+    }
+
+    // Устанавливаем список рецептов
     public void setRecipes(List<Recipes> recipes) {
         this.recipes = recipes;
         notifyDataSetChanged();
-    } // Добавляем рецепты
+    }
 
-    public ArrayList<Recipes> getRecipeOnClickListener() {
-        return new ArrayList<Recipes>(recipes);
-    } // Получаем коллекцию рецептов
+    // Получаем список рецептов
+    public List<Recipes> getRecipes() {
+        return new ArrayList<>(recipes);
+    }
 
+    // Устанавливаем обработчик клика
     public void setRecipeOnClickListener(RecipeOnClickListener recipeOnClickListener) {
         this.recipeOnClickListener = recipeOnClickListener;
-    }  // Переопреляем интерфейс, добавляем кликер на рецепт
-
+    }
 
     @NonNull
     @Override
     public RecipesViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(
-                R.layout.recipes_item,
-                parent,
-                false);
+        View view = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.recipes_item, parent, false);
         return new RecipesViewHolder(view);
-    }  // Создание View
+    }
 
     @Override
     public void onBindViewHolder(@NonNull RecipesViewHolder holder, int position) {
         Recipes recipe = recipes.get(position);
-        holder.ButtonRecypes.setText(recipe.getName());
 
+        // Название рецепта
+        holder.recipeTitle.setText(recipe.getName());
 
-        holder.ButtonRecypes.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(recipeOnClickListener != null) {
-                    recipeOnClickListener.OnClickRecipe(recipe);
-                }
+        holder.ingredientsCount.setText(String.valueOf(recipe.getIngredient_count()));
+
+        if(countIngredients != null){
+            countIngredients.OnClickRecipe(recipe);
+        }
+
+        // Обработка клика
+        holder.recipeCard.setOnClickListener(v -> {
+            if (recipeOnClickListener != null) {
+                recipeOnClickListener.OnClickRecipe(recipe);
             }
         });
-    }  // Визуал нашего view
+    }
 
     @Override
     public int getItemCount() {
         return recipes.size();
-    } // Количество рецептов
+    }
 
-    class RecipesViewHolder extends RecyclerView.ViewHolder{
-        private Button ButtonRecypes;
+    // ViewHolder
+    static class RecipesViewHolder extends RecyclerView.ViewHolder {
+        private final TextView recipeTitle;
+        private final TextView ingredientsCount;
+        private final ConstraintLayout recipeCard;
+
         public RecipesViewHolder(@NonNull View itemView) {
             super(itemView);
-            ButtonRecypes = itemView.findViewById(R.id.ButtonRecypes);
+            recipeTitle = itemView.findViewById(R.id.recipeTitle);
+            recipeCard = itemView.findViewById(R.id.recipeCard);
+            ingredientsCount = itemView.findViewById(R.id.ingredientsCount);
         }
-    } // Класс хранит в себе все view из item
+    }
 
-    public interface RecipeOnClickListener{
+    // Интерфейс для клика
+    public interface RecipeOnClickListener {
         void OnClickRecipe(Recipes recipe);
-    } // Интерфес на клик рецепта
+    }
+
+    private interface CountIngredients{
+        int OnClickRecipe(Recipes recipe);
+    }
 }

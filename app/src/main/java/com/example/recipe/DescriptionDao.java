@@ -19,11 +19,11 @@ public interface DescriptionDao{
 
 
     @Query("SELECT * FROM descriptions WHERE recipe_id = :recipe_id")
-    Single<List<Descriptions>> getDescriptionWithRecipe(int recipe_id);
+    Single<List<Descriptions>> getDescriptionWithRecipe(long recipe_id);
 
 
     @Query("SELECT * FROM descriptions WHERE id_description = :id_description")
-    Descriptions getDescription(int id_description);
+    Single<List<Descriptions>> getDescription(int id_description);
 
     @Query("DELETE FROM descriptions WHERE id_description = :id_description")
     Completable remove(int id_description);

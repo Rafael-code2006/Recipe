@@ -3,6 +3,7 @@ package com.example.recipe;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.nfc.Tag;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -27,6 +28,8 @@ import java.util.List;
 
 
 public class MainActivity extends AppCompatActivity {
+
+    private static final String TAG = "MainActivity1";
 
     private Handler handler = new Handler(Looper.getMainLooper());
 
@@ -61,12 +64,6 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        mainViewModel.refreshList();
-    }
-
     private void initVies(){
         RecyclerViewRecipes = findViewById(R.id.RecyclerViewRecipes);
         floatingActionButton = findViewById(R.id.floatingActionButton);
@@ -86,48 +83,84 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void Swipe(){
-        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT | ItemTouchHelper.LEFT) {
-            @Override
-            public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
-                return false;
-            }
+    private void Swipe() {
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(
+                new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT | ItemTouchHelper.LEFT) {
+                    @Override
+                    public boolean onMove(@NonNull RecyclerView recyclerView,
+                                          @NonNull RecyclerView.ViewHolder viewHolder,
+                                          @NonNull RecyclerView.ViewHolder target) {
+                        return false;
+                    }
 
-            @Override
-            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
-                new AlertDialog.Builder(MainActivity.this)
-                        .setTitle("Удалить рецепт")
-                        .setMessage("Вы уверены, что хотите удалить этот рецепт?")
-                        .setPositiveButton("Удалить", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                int position = viewHolder.getAdapterPosition();
-                                Recipes recipe = adapterRecipes.getRecipeOnClickListener().get(position);
-                                mainViewModel.remove(recipe);
-                                showRecipes();
-                            }
-                        })
-                        .setNegativeButton("Отмена", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                int position = viewHolder.getAdapterPosition();
-                                adapterRecipes.notifyItemChanged(position);
-                            }
-                        })
-                        .show();
-            }
-        });
+                    @Override
+                    public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+                        int position = viewHolder.getAdapterPosition();
+                        Recipes recipe = adapterRecipes.getRecipes().get(position); // список из адаптера
+
+                        new AlertDialog.Builder(MainActivity.this)
+                                .setTitle("Удалить рецепт")
+                                .setMessage("Вы уверены, что хотите удалить этот рецепт?")
+                                .setPositiveButton("Удалить", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        // удаляем из ViewModel
+                                        mainViewModel.remove(recipe);
+                                    }
+                                })
+                                .setNegativeButton("Отмена", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        // возвращаем элемент на место
+                                        adapterRecipes.notifyItemChanged(position);
+                                    }
+                                })
+                                .show();
+                    }
+                });
         itemTouchHelper.attachToRecyclerView(RecyclerViewRecipes);
     }
 
-    private void showRecipes(){
+    @Override
+    protected void onResume() {
+        super.onResume();
+        showRecipes();
+    }
+
+    private void showRecipes() {
         mainViewModel.getRecipes().observe(this, new Observer<List<Recipes>>() {
             @Override
             public void onChanged(List<Recipes> recipes) {
-                Log.d("MainActivity1", recipes.toString());
+                Log.d(TAG, recipes.toString());
+
                 adapterRecipes.setRecipes(recipes);
+                adapterRecipes.setRecipeOnClickListener(recipe -> {
+                    mainViewModel.getCountDescripton(recipe); // запускаем подсчёт
+                    adapterRecipes.setSelectedRecipe(recipe); // сохраняем выбранный рецепт
+                });
+
+              // Подписка на результат — один раз
+                mainViewModel.getCount_ingredients().observe(MainActivity.this, count -> {
+                    Recipes selected = adapterRecipes.getSelectedRecipe();
+                    if (selected != null) {
+                        selected.setIngredient_count(count);
+                        adapterRecipes.notifyDataSetChanged();
+                    }
+                });
+
+                adapterRecipes.setRecipeOnClickListener(new AdapterRecipes.RecipeOnClickListener() {
+                    @Override
+                    public void OnClickRecipe(Recipes recipe) {
+                       Intent intent = RecipeShow.newIntent(MainActivity.this, recipe.getId());
+                       startActivity(intent);
+                    }
+                });
+
             }
         });
+
+
+
     }
 
 
@@ -140,8 +173,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
-
-
 
     public static Intent getIntent(Context context){
         Intent intent = new Intent(context, MainActivity.class);

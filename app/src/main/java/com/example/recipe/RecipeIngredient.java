@@ -7,10 +7,11 @@ import androidx.room.PrimaryKey;
 import java.util.List;
 
 
+@Entity(tableName = "recipe_ingredient")
 public class RecipeIngredient {
 
+    @NonNull
     private long recipe_id;
-
     private List<Descriptions> descriptions;
 
     public RecipeIngredient(long recipe_id, List<Descriptions> descriptions) {

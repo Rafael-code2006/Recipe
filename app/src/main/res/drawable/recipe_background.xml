@@ -3,16 +3,16 @@
     <!-- при нажатии -->
     <item android:state_pressed="true">
         <shape android:shape="rectangle">
-            <solid android:color="#192151" />
-            <corners android:radius="12dp" />
+            <solid android:color="#2E4DF4" />
+            <corners android:radius="10dp" />
         </shape>
     </item>
 
     <!-- по умолчанию -->
     <item>
         <shape android:shape="rectangle">
-            <solid android:color="#0A1030" />
-            <corners android:radius="12dp" />
+            <solid android:color="@color/my_recipes_background" />
+            <corners android:radius="10dp" />
         </shape>
     </item>
 </selector>

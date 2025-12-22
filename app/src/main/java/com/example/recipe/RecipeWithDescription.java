@@ -6,6 +6,7 @@ public class RecipeWithDescription {
     private float weight;
 
 
+
     public RecipeWithDescription(String name, String name_description, float weight) {
         this.name = name;
         this.name_description = name_description;

@@ -11,6 +11,8 @@ public class Recipes {
     @PrimaryKey(autoGenerate = true)
     private long id;
     private String name;
+    @Ignore
+    private int ingredient_count;
 
 
 
@@ -33,6 +35,16 @@ public class Recipes {
         return name;
     }
 
+
+    @Ignore
+    public int getIngredient_count() {
+        return ingredient_count;
+    }
+
+    @Ignore
+    public void setIngredient_count(int ingredient_count) {
+        this.ingredient_count = ingredient_count;
+    }
 
     @Override
     public String toString() {
