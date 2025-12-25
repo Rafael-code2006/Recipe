@@ -33,11 +33,22 @@ import java.util.List;
 
 public class RecipeShow extends AppCompatActivity {
 
-    private RecipeDataBase recipeDataBase;
+    // TextView
     private TextView RecipeTextViewShow;
-    private RecipeShowAdapter recipeShowAdapter;
-    private RecipeShowViewModel recipeShowViewModel;
+    private TextView textViewInstructionContent;
+
+
+    // RecyclerView
     private RecyclerView RecyclerViewRecipes;
+
+
+    // Adapter
+    private RecipeShowAdapter recipeShowAdapter;
+
+
+    // ViewModel
+    private RecipeShowViewModel recipeShowViewModel;
+
 
 
     @Override
@@ -45,11 +56,10 @@ public class RecipeShow extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_recipe_show);
-        initVies(); // Инициализация
-        showDescription();
-        RecyclerViewRecipes.setLayoutManager(new LinearLayoutManager(this));
-        RecyclerViewRecipes.setAdapter(recipeShowAdapter);
 
+        initVies(); // Инициализация
+
+        showDescription(); // Показ ингридиентов
 
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
@@ -60,24 +70,32 @@ public class RecipeShow extends AppCompatActivity {
     }
 
     private void initVies(){
-        recipeDataBase = RecipeDataBase.getInstance(getApplication());
         RecipeTextViewShow = findViewById(R.id.RecipeTextViewShow);
         recipeShowViewModel = new ViewModelProvider(this).get(RecipeShowViewModel.class);
-        RecyclerViewRecipes = findViewById(R.id.RecyclerViewRecipes);
+        RecyclerViewRecipes = findViewById(R.id.RecyclerViewIngredients);
         recipeShowAdapter = new RecipeShowAdapter();
+        textViewInstructionContent = findViewById(R.id.TextViewInstructionContent);
+        RecyclerViewRecipes.setLayoutManager(new LinearLayoutManager(this)); // Установка LayoutManager
+        RecyclerViewRecipes.setAdapter(recipeShowAdapter); // Установка адаптера
     }
 
     private void showDescription(){
-        long recipe_id = getIntent().getLongExtra("IdRecipe", 0);
-        recipeShowViewModel.loadRecipe(recipe_id);
+        long recipe_id = getIntent().getLongExtra("IdRecipe", 0); // Берем рецепт из intent
+        recipeShowViewModel.loadRecipe(recipe_id); // Загружаем рецепт по id
+
+        // Возврат рецепта из базы
         recipeShowViewModel.getRecipe().observe(this, new Observer<Recipes>() {
             @Override
             public void onChanged(Recipes recipes) {
-                RecipeTextViewShow.setText(recipes.getName());
+                RecipeTextViewShow.setText(recipes.getName()); // Задаем имя рецепта
+                textViewInstructionContent.setText(recipes.getInsctruction()); // Задаем его инструкцию
             }
         });
 
+        // Загружаем ингридиенты по id рецепта
         recipeShowViewModel.refreshDescriptions(recipe_id);
+
+        // Возврат коллекции ингридиентов
         recipeShowViewModel.getDesriptions().observe(this, new Observer<List<Descriptions>>() {
             @Override
             public void onChanged(List<Descriptions> descriptions) {
@@ -86,8 +104,6 @@ public class RecipeShow extends AppCompatActivity {
         });
 
     }
-
-
 
 
     public static Intent newIntent(Context context, long id_Recipe){

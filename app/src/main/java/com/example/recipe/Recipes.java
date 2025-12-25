@@ -11,19 +11,22 @@ public class Recipes {
     @PrimaryKey(autoGenerate = true)
     private long id;
     private String name;
+    private String insctruction;
     @Ignore
     private int ingredient_count;
 
 
 
-    public Recipes(long id, String name) {
+    public Recipes(long id, String name, String insctruction) {
         this.id = id;
         this.name = name;
+        this.insctruction = insctruction;
     }
 
     @Ignore
-    public Recipes(String name) {
+    public Recipes(String name, String insctruction) {
         this.name = name;
+        this.insctruction = insctruction;
     }
 
     public long getId() {
@@ -35,6 +38,9 @@ public class Recipes {
         return name;
     }
 
+    public String getInsctruction() {
+        return insctruction;
+    }
 
     @Ignore
     public int getIngredient_count() {
@@ -49,8 +55,10 @@ public class Recipes {
     @Override
     public String toString() {
         return "Recipes{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
+                "\nid=" + id +
+                "\n, name='" + name + '\'' +
+                "\n, insctruction='" + insctruction + '\'' +
+                "\n, ingredient_count=" + ingredient_count +
                 '}';
     }
 }

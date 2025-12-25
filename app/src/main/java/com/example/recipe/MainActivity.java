@@ -3,17 +3,23 @@ package com.example.recipe;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.drawable.Drawable;
 import android.nfc.Tag;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 import android.view.View;
+import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -24,6 +30,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.util.HashMap;
 import java.util.List;
 
 
@@ -31,12 +38,20 @@ public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "MainActivity1";
 
-    private Handler handler = new Handler(Looper.getMainLooper());
 
+    // FloatingActionButton
     private FloatingActionButton floatingActionButton;
+
+
+    // RecyclerView
     private RecyclerView RecyclerViewRecipes;
+
+
+    // Adapter
     private AdapterRecipes adapterRecipes;
 
+
+    // ViewModel
     private MainViewModel mainViewModel;
 
 
@@ -47,6 +62,23 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         initVies(); // Инициализация
+
+       adapterRecipes.setCountIngredients(new AdapterRecipes.CountIngredients() {
+           @Override
+           public void CountIngredients(Recipes recipe, TextView targetView) {
+               mainViewModel.loadIngredients(recipe);
+               mainViewModel.getCountIngredients().observe(MainActivity.this, new Observer<HashMap<Recipes, Integer>>() {
+                   @Override
+                   public void onChanged(HashMap<Recipes, Integer> map) {
+                       Integer counter = map.get(recipe);
+                       if(counter != null){
+                           targetView.setText(String.valueOf(counter));
+                       }
+                   }
+               });
+
+           }
+       });
 
         showRecipes(); // Показ
 
@@ -64,7 +96,7 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void initVies(){
+    private void initVies() {
         RecyclerViewRecipes = findViewById(R.id.RecyclerViewRecipes);
         floatingActionButton = findViewById(R.id.floatingActionButton);
         adapterRecipes = new AdapterRecipes();
@@ -72,10 +104,11 @@ public class MainActivity extends AppCompatActivity {
         mainViewModel = new ViewModelProvider(this).get(MainViewModel.class);
     }
 
-    private void ClickButton(){
+    private void ClickButton() {
         adapterRecipes.setRecipeOnClickListener(new AdapterRecipes.RecipeOnClickListener() {
             @Override
             public void OnClickRecipe(Recipes recipe) {
+                Log.d("Rafa", "ClickButton сработал");
                 long idRecipe = recipe.getId();
                 Intent intent = RecipeShow.newIntent(MainActivity.this, idRecipe);
                 startActivity(intent);
@@ -84,69 +117,92 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void Swipe() {
-        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(
-                new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT | ItemTouchHelper.LEFT) {
-                    @Override
-                    public boolean onMove(@NonNull RecyclerView recyclerView,
-                                          @NonNull RecyclerView.ViewHolder viewHolder,
-                                          @NonNull RecyclerView.ViewHolder target) {
-                        return false;
+        ItemTouchHelper.SimpleCallback simpleCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
+            @Override
+            public boolean onMove(@NonNull RecyclerView recyclerView,
+                                  @NonNull RecyclerView.ViewHolder viewHolder,
+                                  @NonNull RecyclerView.ViewHolder target) {
+                return false;
+            }
+
+            @Override
+            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+                Log.d("Rafa", "Swipe сработал");
+                int position = viewHolder.getBindingAdapterPosition(); // Получаем позицию рецепта
+
+
+                // Если позиция существует
+                if (position != RecyclerView.NO_POSITION) {
+                    Recipes recipeDB = adapterRecipes.getRecipes().get(position); // Берем рецепт по позиции из адаптера
+
+                    adapterRecipes.notifyItemChanged(position); // Указываем перепроверить позицию
+
+                    // Диалог подтверждения
+                    new AlertDialog.Builder(MainActivity.this)
+                            .setTitle("Удалить рецепт")
+                            .setMessage("Вы уверены, что хотите удалить этот рецепт?")
+                            .setPositiveButton("Удалить", (dialog, which) -> {
+                                mainViewModel.remove(recipeDB); // Удаляем из базы
+                                adapterRecipes.removeRecipe(position); // Удаляем из адаптера
+                            })
+                            .setNegativeButton("Отмена", (dialog, which) -> {
+                                adapterRecipes.notifyItemChanged(position); // Указываем перепроверить позицию
+                            })
+                            .show();
+                }
+            }
+
+            @Override
+            public void onChildDraw(@NonNull Canvas c,
+                                    @NonNull RecyclerView recyclerView,
+                                    @NonNull RecyclerView.ViewHolder viewHolder,
+                                    float dX, float dY,
+                                    int actionState, boolean isCurrentlyActive) {
+                super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
+
+                View itemView = viewHolder.itemView;
+                Paint paint = new Paint();
+                paint.setColor(Color.RED);
+
+                if (dX < 0) { // свайп влево
+                    // фон
+                    c.drawRect((float) itemView.getRight() + dX,
+                            (float) itemView.getTop(),
+                            (float) itemView.getRight(),
+                            (float) itemView.getBottom(), paint);
+
+                    // иконка мусорки
+                    Drawable icon = ContextCompat.getDrawable(recyclerView.getContext(), R.drawable.ic_delete);
+                    if (icon != null) {
+                        int iconMargin = (itemView.getHeight() - icon.getIntrinsicHeight()) / 2;
+                        int iconTop = itemView.getTop() + iconMargin;
+                        int iconLeft = itemView.getRight() - iconMargin - icon.getIntrinsicWidth();
+                        int iconRight = itemView.getRight() - iconMargin;
+                        int iconBottom = iconTop + icon.getIntrinsicHeight();
+
+                        icon.setBounds(iconLeft, iconTop, iconRight, iconBottom);
+                        icon.draw(c);
                     }
+                }
+            }
+        };
 
-                    @Override
-                    public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
-                        int position = viewHolder.getAdapterPosition();
-                        Recipes recipe = adapterRecipes.getRecipes().get(position); // список из адаптера
-
-                        new AlertDialog.Builder(MainActivity.this)
-                                .setTitle("Удалить рецепт")
-                                .setMessage("Вы уверены, что хотите удалить этот рецепт?")
-                                .setPositiveButton("Удалить", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        // удаляем из ViewModel
-                                        mainViewModel.remove(recipe);
-                                    }
-                                })
-                                .setNegativeButton("Отмена", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        // возвращаем элемент на место
-                                        adapterRecipes.notifyItemChanged(position);
-                                    }
-                                })
-                                .show();
-                    }
-                });
-        itemTouchHelper.attachToRecyclerView(RecyclerViewRecipes);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        showRecipes();
+        new ItemTouchHelper(simpleCallback).attachToRecyclerView(RecyclerViewRecipes);
     }
 
     private void showRecipes() {
+
+        // Подписываемся на коллекцию рецептов из базы
         mainViewModel.getRecipes().observe(this, new Observer<List<Recipes>>() {
             @Override
             public void onChanged(List<Recipes> recipes) {
-                Log.d(TAG, recipes.toString());
 
-                adapterRecipes.setRecipes(recipes);
-                adapterRecipes.setRecipeOnClickListener(recipe -> {
-                    mainViewModel.getCountDescripton(recipe); // запускаем подсчёт
-                    adapterRecipes.setSelectedRecipe(recipe); // сохраняем выбранный рецепт
-                });
+                adapterRecipes.setRecipes(recipes); // Добавляем коллекцию в адаптер
+                adapterRecipes.setRecipeOnClickListener(recipe -> {// Запускаем подсчёт
+                adapterRecipes.setSelectedRecipe(recipe); // Сохраняем выбранный рецепт в адаптер
+            });
 
-              // Подписка на результат — один раз
-                mainViewModel.getCount_ingredients().observe(MainActivity.this, count -> {
-                    Recipes selected = adapterRecipes.getSelectedRecipe();
-                    if (selected != null) {
-                        selected.setIngredient_count(count);
-                        adapterRecipes.notifyDataSetChanged();
-                    }
-                });
+
 
                 adapterRecipes.setRecipeOnClickListener(new AdapterRecipes.RecipeOnClickListener() {
                     @Override
@@ -163,11 +219,11 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-
     private void onClickFloatingButton(){
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Log.d("Rafa", "onClickButtonFloating сработал");
                 Intent intent = AddRecipe.newIntent(MainActivity.this);
                 startActivity(intent);
             }

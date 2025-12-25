@@ -1,76 +1,145 @@
-<?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".RecipeShow"
+    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fillViewport="true">
+    android:background="@drawable/my_background">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <!-- Верхняя часть -->
+    <TextView
+        android:id="@+id/YourRecipeTextView"
+        android:layout_width="350dp"
+        android:layout_height="30dp"
+        android:layout_marginTop="30dp"
+        android:fontFamily="@font/archivo_black"
+        android:gravity="left"
+        android:text="Recipe"
+        android:textColor="@color/my_recipes_background"
+        android:textSize="20sp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <TextView
+        android:id="@+id/RecipeTextViewShow"
+        android:layout_width="350dp"
+        android:layout_height="62dp"
+        android:fontFamily="@font/archivo_black"
+        android:gravity="left"
+        android:text="Recipe"
+        android:textColor="@color/my_text_view_back"
+        android:textSize="40sp"
+        app:layout_constraintTop_toBottomOf="@id/YourRecipeTextView"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:shadowColor="#000000"
+        android:shadowDx="2"
+        android:shadowDy="2"
+        android:shadowRadius="4"/>
+
+    <View
+        android:id="@+id/lineUnderText"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/main"
-        android:background="@drawable/my_background">
+        android:layout_height="1dp"
+        android:background="#888888"
+        app:layout_constraintTop_toBottomOf="@id/RecipeTextViewShow"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
 
-        <TextView
-            android:id="@+id/YourRecipeTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="50dp"
-            android:fontFamily="@font/adamina"
-            android:gravity="center"
-            android:text="Your recipe"
-            android:textColor="@color/my_textView_gray"
-            android:textSize="40sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+    <!-- Скроллируемая часть -->
+    <ScrollView
+        android:id="@+id/scrollContent"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:fillViewport="true"
+        app:layout_constraintTop_toBottomOf="@id/lineUnderText"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent">
 
-        <TextView
-            android:id="@+id/RecipeTextViewShow"
-            android:layout_width="300dp"
-            android:layout_height="wrap_content"
-            android:text="Recipe"
-            android:textSize="28sp"
-            android:gravity="center"
-            android:layout_marginTop="30dp"
-            android:background="@drawable/textview_border"
-            android:textColor="#DCDCDC"
-            app:layout_constraintTop_toBottomOf="@id/YourRecipeTextView"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
-
-        <EditText
-            android:id="@+id/EditRecipeShow"
-            android:layout_width="300dp"
-            android:layout_height="wrap_content"
-            android:hint="input name"
-            android:textColorHint="#DCDCDC"
-            android:textSize="28sp"
-            android:paddingTop="15dp"
-            android:paddingStart="10dp"
-            android:gravity="left"
-            android:layout_marginTop="30dp"
-            android:background="@drawable/textview_border"
-            android:textColor="#CCCBCB"
-            android:visibility="invisible"
-            app:layout_constraintTop_toBottomOf="@id/YourRecipeTextView"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/RecyclerViewRecipes"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:layout_marginTop = "20dp"
-            android:nestedScrollingEnabled="false"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            app:layout_constraintTop_toBottomOf="@id/RecipeTextViewShow"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            tools:listitem="@layout/recipes_item" />
+            android:paddingBottom="40dp">
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
-</ScrollView>
+            <androidx.cardview.widget.CardView
+                android:id="@+id/CardViewRecipeImage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:layout_gravity="center"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="8dp"
+                app:cardUseCompatPadding="true"
+                app:cardBackgroundColor="@android:color/transparent">
+
+                <ImageView
+                    android:id="@+id/RecipeImageView"
+                    android:layout_width="350dp"
+                    android:layout_height="190dp"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/steak"
+                    android:background="@drawable/rounded_image"
+                    android:clipToOutline="true"/>
+            </androidx.cardview.widget.CardView>
+
+            <TextView
+                android:id="@+id/TextViewIngredients"
+                android:layout_width="350dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="20dp"
+                android:fontFamily="@font/bakbak_one"
+                android:text="Ingredients"
+                android:textColor="@color/my_text_view_show"
+                android:textSize="23sp"
+                android:textStyle="bold"
+                android:shadowColor="#000000"
+                android:shadowDx="2"
+                android:shadowDy="2"
+                android:shadowRadius="4"/>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/RecyclerViewIngredients"
+                android:layout_width="350dp"
+                android:layout_height="wrap_content"
+                android:nestedScrollingEnabled="false"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                tools:listitem="@layout/show_ingredient_item"
+                android:layout_gravity="center"/>
+
+            <TextView
+                android:id="@+id/TextViewInstruction"
+                android:layout_width="350dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="20dp"
+                android:fontFamily="@font/bakbak_one"
+                android:text="Instruction"
+                android:textColor="@color/my_text_view_show"
+                android:textSize="23sp"
+                android:textStyle="bold"
+                android:shadowColor="#000000"
+                android:shadowDx="2"
+                android:shadowDy="2"
+                android:shadowRadius="4"/>
+
+            <TextView
+                android:id="@+id/TextViewInstructionContent"
+                android:layout_width="350dp"
+                android:layout_height="wrap_content"
+                android:minHeight="200dp"
+                android:paddingTop="17dp"
+                android:textStyle="bold"
+                android:gravity="top|start"
+                android:textColor="@color/white"
+                android:textSize="15sp"
+                android:lineSpacingExtra="6dp"
+                android:layout_gravity="center"
+                tools:text="ajdjawodaw\nkjaslsdjawidj\naissdjawijdaw\naiwhdjaiwhdiawd\kawwjdiawjdiawjdiawj\naiwjdiawjdaiwjdaw\naikwkdjawihdjaw9id\naiwdjawoida"/>
+        </LinearLayout>
+    </ScrollView>
+</androidx.constraintlayout.widget.ConstraintLayout>

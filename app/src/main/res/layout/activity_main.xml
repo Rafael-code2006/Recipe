@@ -25,16 +25,27 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <View
+        android:id="@+id/lineUnderText"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#888888"
+        app:layout_constraintTop_toBottomOf="@id/main_RecipeTextView"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+
     <!-- Список рецептов -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/RecyclerViewRecipes"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:layout_marginBottom="30dp"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/main_RecipeTextView"
+        app:layout_constraintTop_toBottomOf="@id/lineUnderText"
         tools:listitem="@layout/recipes_item" />
 
     <!-- Кнопка закреплена внизу и не скроллится -->

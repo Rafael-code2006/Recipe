@@ -13,12 +13,18 @@ import java.util.List;
 
 public class RecipeShowAdapter extends RecyclerView.Adapter<RecipeShowAdapter.RecipeShowViewHolder> {
 
+
+    // ArrayList
     private List<Descriptions> descriptions = new ArrayList<>();
 
+
+    // Setters
     public void setDescriptions(List<Descriptions> descriptions) {
         this.descriptions = descriptions;
         notifyDataSetChanged();
     }
+
+
 
     @NonNull
     @Override
@@ -52,9 +58,9 @@ public class RecipeShowAdapter extends RecyclerView.Adapter<RecipeShowAdapter.Re
 
         public RecipeShowViewHolder(@NonNull View itemView) {
             super(itemView);
-            TxtViewNameDescription = itemView.findViewById(R.id.TxtViewNameDescription);
-            TxtViewWeight = itemView.findViewById(R.id.TxtViewWeight);
-            TxtViewWeightType = itemView.findViewById(R.id.TxtViewWeightType);
+            TxtViewNameDescription = itemView.findViewById(R.id.ingredientText);
+            TxtViewWeight = itemView.findViewById(R.id.ingredientWeight);
+            TxtViewWeightType = itemView.findViewById(R.id.ingredientWeightType);
         }
     }
 }

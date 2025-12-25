@@ -16,40 +16,46 @@ public class AdapterRecipes extends RecyclerView.Adapter<AdapterRecipes.RecipesV
 
 
 
-    private CountIngredients countIngredients;
+    // ArrayList
+    private List<Recipes> recipes = new ArrayList<>();
 
+
+    //Interface object
+    private CountIngredients countIngredients;
+    private RecipeOnClickListener recipeOnClickListener;
+
+
+    // Recipes
+    private Recipes selectedRecipe;
+
+
+    // Setters
     public void setCountIngredients(CountIngredients countIngredients) {
         this.countIngredients = countIngredients;
     }
-
-    private RecipeOnClickListener recipeOnClickListener;
-    private List<Recipes> recipes = new ArrayList<>();
-
-    private Recipes selectedRecipe;
-
     public void setSelectedRecipe(Recipes recipe) {
         this.selectedRecipe = recipe;
     }
-
-    public Recipes getSelectedRecipe() {
-        return selectedRecipe;
-    }
-
-    // Устанавливаем список рецептов
     public void setRecipes(List<Recipes> recipes) {
         this.recipes = recipes;
         notifyDataSetChanged();
     }
-
-    // Получаем список рецептов
-    public List<Recipes> getRecipes() {
-        return new ArrayList<>(recipes);
-    }
-
-    // Устанавливаем обработчик клика
     public void setRecipeOnClickListener(RecipeOnClickListener recipeOnClickListener) {
         this.recipeOnClickListener = recipeOnClickListener;
     }
+
+
+    // Getters
+    public Recipes getSelectedRecipe() {
+        return selectedRecipe;
+    }
+    public List<Recipes> getRecipes() {
+        return recipes;
+    }
+
+
+
+
 
     @NonNull
     @Override
@@ -69,7 +75,8 @@ public class AdapterRecipes extends RecyclerView.Adapter<AdapterRecipes.RecipesV
         holder.ingredientsCount.setText(String.valueOf(recipe.getIngredient_count()));
 
         if(countIngredients != null){
-            countIngredients.OnClickRecipe(recipe);
+            Recipes recipeCounter = recipes.get(position);
+            countIngredients.CountIngredients(recipeCounter, holder.ingredientsCount);
         }
 
         // Обработка клика
@@ -85,7 +92,13 @@ public class AdapterRecipes extends RecyclerView.Adapter<AdapterRecipes.RecipesV
         return recipes.size();
     }
 
-    // ViewHolder
+
+    public void updateIngredientCount(long recipeId, int count) {
+        // найти рецепт по id и обновить поле count
+        notifyDataSetChanged();
+    }
+
+
     static class RecipesViewHolder extends RecyclerView.ViewHolder {
         private final TextView recipeTitle;
         private final TextView ingredientsCount;
@@ -99,12 +112,24 @@ public class AdapterRecipes extends RecyclerView.Adapter<AdapterRecipes.RecipesV
         }
     }
 
-    // Интерфейс для клика
+
+    // Interface
     public interface RecipeOnClickListener {
         void OnClickRecipe(Recipes recipe);
     }
-
-    private interface CountIngredients{
-        int OnClickRecipe(Recipes recipe);
+    public interface CountIngredients{
+        void CountIngredients(Recipes recipe, TextView targetView);
     }
+
+
+    // Удаление рецепта по его id из адаптера
+    public void removeRecipe(int position) {
+        if (position >= 0 && position < recipes.size()) {
+            recipes.remove(position);
+            notifyItemRemoved(position);
+            notifyItemRangeChanged(position, recipes.size() - position);
+        }
+    }
+
+
 }

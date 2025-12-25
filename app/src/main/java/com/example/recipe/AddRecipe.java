@@ -1,5 +1,6 @@
 package com.example.recipe;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -14,19 +15,23 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.ItemTouchHelper;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
-import io.reactivex.rxjava3.annotations.NonNull;
 import io.reactivex.rxjava3.core.Completable;
 import io.reactivex.rxjava3.core.CompletableObserver;
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
@@ -36,19 +41,27 @@ import io.reactivex.rxjava3.schedulers.Schedulers;
 
 public class AddRecipe extends AppCompatActivity {
 
-    private EditText editTextRecipe, edit_recipe_description;
+    private static final String TAG = "AddRecipe1";
+
+
+    // EditText
+    private EditText editTextRecipe;
+    private EditText editTextInsctructionRecipe;
+
+
+    // Button
     private Button RecipeSaveButton;
 
-    private AddRecipeModelView addRecipeModelView;
 
-    private LinearLayout linearLayoutDescription;
-
+    // FloatingActionButton
     private FloatingActionButton floatingActionButton;
 
+    // LinearLayout
+    private LinearLayout linearLayoutDescription;
 
-    private EditText editTextIngredient;
-    private Spinner spinnerWeight;
-    private EditText editTextWeight;
+
+    // ViewModel
+    private AddRecipeModelView addRecipeModelView;
 
 
 
@@ -60,7 +73,7 @@ public class AddRecipe extends AppCompatActivity {
 
         InitViews(); // Инициализация
 
-        FloatingClickButton(); // Нажатие кнопки добавления состава
+        FloatingClickButton(); // Добавление поле для ингридиента
 
         SaveButtonClick(); // Нажатие кнопки сохранения рецепта
 
@@ -71,22 +84,39 @@ public class AddRecipe extends AppCompatActivity {
         });
     }
 
+
     private void InitViews() {
         editTextRecipe = findViewById(R.id.EditTextRecipe);
         RecipeSaveButton = findViewById(R.id.RecipeSaveButton);
         linearLayoutDescription = findViewById(R.id.linearLayoutDescription);
         floatingActionButton = findViewById(R.id.floatingActionButton);
         addRecipeModelView = new ViewModelProvider(this).get(AddRecipeModelView.class);
+        editTextInsctructionRecipe = findViewById(R.id.EditTextInsctructionRecipe);
     }
 
     private void FloatingClickButton(){
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showDescriptions(); // просто добавляет поля на экран
+                showDescriptions();
             }
         });
     }
+
+    private void showDescriptions() {
+        View view = getLayoutInflater().inflate(R.layout.ingredient_item, linearLayoutDescription, false);
+        Button test = view.findViewById(R.id.ButtonDelete);
+        test.setId(View.generateViewId());
+
+        test.setOnClickListener(v -> {
+            int clickedId = v.getId();
+            Toast.makeText(this, "Удален id: " + clickedId, Toast.LENGTH_SHORT).show();
+            linearLayoutDescription.removeView((View) v.getParent());
+        });
+
+        linearLayoutDescription.addView(view);
+    }
+
 
     private void SaveButtonClick(){
         RecipeSaveButton.setOnClickListener(new View.OnClickListener() {
@@ -103,12 +133,15 @@ public class AddRecipe extends AppCompatActivity {
         });
     }
 
-
     private void setRecipe() {
+
+        // Создание рецепта
         String text = editTextRecipe.getText().toString().trim();
-        Recipes recipe = new Recipes(text);
+        String insctruction = editTextInsctructionRecipe.getText().toString();
+        Recipes recipe = new Recipes(text, insctruction);
 
         addRecipeModelView.addRecipe(recipe);
+
 
         addRecipeModelView.getIdRecipes().observe(this, new Observer<Long>() {
             @Override
@@ -117,6 +150,8 @@ public class AddRecipe extends AppCompatActivity {
 
                 List<Descriptions> listDescriptions = new ArrayList<>();
 
+
+                // Добавление ингридиентов из LinearLayout
                 for (int i = 0; i < linearLayoutDescription.getChildCount(); i++) {
                     View item = linearLayoutDescription.getChildAt(i);
 
@@ -145,11 +180,6 @@ public class AddRecipe extends AppCompatActivity {
                         count_ingredient += 1;
                     }
                     recipe.setIngredient_count(count_ingredient);
-                    RecipeIngredient recipeIngredient = new RecipeIngredient(recipeId, listDescriptions);
-
-                    for(Descriptions x : listDescriptions){
-                        Log.d("AddRecipe1", "Добавлен в рецепт: "+ recipeIngredient.getRecipe_id() + x.getName());
-                    }
                 }
 
                 // чтобы не подписываться бесконечно
@@ -158,11 +188,6 @@ public class AddRecipe extends AppCompatActivity {
         });
     }
 
-
-    private void showDescriptions() {
-        View view = getLayoutInflater().inflate(R.layout.ingredient_item, linearLayoutDescription, false);
-        linearLayoutDescription.addView(view);
-    }
 
     public static Intent newIntent(Context context) {
         return new Intent(context, AddRecipe.class);

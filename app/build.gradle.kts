@@ -46,6 +46,7 @@ dependencies {
     implementation("io.reactivex.rxjava3:rxandroid:3.0.2")
     implementation("io.reactivex.rxjava3:rxjava:3.1.5")
 
+    implementation("com.google.android.material:material:1.10.0")
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)

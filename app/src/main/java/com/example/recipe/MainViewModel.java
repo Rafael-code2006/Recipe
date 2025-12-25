@@ -2,7 +2,6 @@ package com.example.recipe;
 
 import android.annotation.SuppressLint;
 import android.app.Application;
-import android.util.EventLogTags;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -10,6 +9,7 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import java.util.HashMap;
 import java.util.List;
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
@@ -22,52 +22,53 @@ public class MainViewModel extends AndroidViewModel {
 
     private static final String TAG = "MainViewModel1";
 
-    private MutableLiveData<Integer> count_ingredients = new MutableLiveData<>();
 
-    public LiveData<Integer> getCount_ingredients() {
-        return count_ingredients;
-    }
-
+    // DataBase
     private RecipeDataBase recipeDataBase = RecipeDataBase.getInstance(getApplication());
+
+
+    // MutableLiveData
 
     private MutableLiveData<List<Recipes>> recipes = new MutableLiveData<>();
 
+    private MutableLiveData<List<Descriptions>> descriptions = new MutableLiveData<>();
+
+    private MutableLiveData<HashMap<Recipes, Integer>> countIngredients = new MutableLiveData<>();
+
+
+    // CompositeDisposable
     private CompositeDisposable compositeDisposable = new CompositeDisposable();
 
 
+
+    // Getters
+
+
+    public LiveData<HashMap<Recipes, Integer>> getCountIngredients() {
+        return countIngredients;
+    }
+
+    public LiveData<List<Descriptions>> getDescriptions() {
+        return descriptions;
+    }
+
+
+
+    // Конструктор
     public MainViewModel(@NonNull Application application) {
         super(application);
         refreshList();
     }
 
+
+    // Возврат коллекции рецептов
     public LiveData<List<Recipes>> getRecipes(){
         Log.d("ViewModelTest", "Количество обьектов: ");
         return recipes;
     }
 
-    @SuppressLint("CheckResult")
-    public void getCountDescripton(Recipes recipe){
-        recipeDataBase.descriptionDao().getDescriptionWithRecipe(recipe.getId())
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Consumer<List<Descriptions>>() {
-                    @Override
-                    public void accept(List<Descriptions> descriptions) throws Throwable {
-                        int count = 0;
-                        for(Descriptions x : descriptions){
-                            count +=1;
-                        }
-                        Log.d(TAG, "Колво: " + count);
-                        count_ingredients.setValue(count);
-                    }
-                }, new Consumer<Throwable>() {
-                    @Override
-                    public void accept(Throwable throwable) throws Throwable {
-                        Log.d(TAG, throwable.getMessage().toString());
-                    }
-                });
-    }
 
+    // Обновление списка рецептов в recipes
     public void refreshList(){
         Disposable disposableRefresh = recipeDataBase.recipesDAO().getRecipes()
                 .subscribeOn(Schedulers.io())
@@ -75,19 +76,53 @@ public class MainViewModel extends AndroidViewModel {
                 .subscribe(new Consumer<List<Recipes>>() {
                     @Override
                     public void accept(List<Recipes> recipesForDB) throws Throwable {
+                        Log.d(TAG, "countRecipe: " + recipesForDB.size());
                         recipes.setValue(recipesForDB);
                     }
                 });
         compositeDisposable.add(disposableRefresh);
     }
 
+
+    // Удаление рецепта по его id
     public void remove(Recipes recipe){
       Disposable disposableRemove = recipeDataBase.recipesDAO().remove(recipe.getId())
                 .subscribeOn(Schedulers.io())
                 .subscribe();
       compositeDisposable.add(disposableRemove);
-        refreshList();
     }
+
+
+    public void loadIngredients(Recipes recipes){
+        Disposable disposable = recipeDataBase.descriptionDao().getDescriptionForRecipe(recipes.getId())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Consumer<List<Descriptions>>() {
+                    @Override
+                    public void accept(List<Descriptions> getDescriptions) throws Throwable {
+                        int count = getDescriptions.size();
+
+                        HashMap<Recipes, Integer> map = countIngredients.getValue();
+
+                        if(map == null){
+                           map = new HashMap<>();
+                        }
+
+                        map.put(recipes, count);
+
+                        countIngredients.setValue(map);
+                    }
+                }, new Consumer<Throwable>() {
+                    @Override
+                    public void accept(Throwable throwable) throws Throwable {
+                        Log.d(TAG, throwable.getMessage().toString());
+                    }
+                });
+        compositeDisposable.add(disposable);
+    }
+
+
+
 
     @Override
     protected void onCleared() {

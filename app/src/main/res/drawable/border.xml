@@ -3,5 +3,5 @@
     android:shape="rectangle">
     <solid android:color="@android:color/transparent"/> <!-- фон -->
     <stroke android:width="2dp" android:color="@color/my_frame"/> <!-- рамка -->
-    <corners android:radius="1dp"/> <!-- скругление углов -->
+    <corners android:radius="10dp"/> <!-- скругление углов -->
 </shape>

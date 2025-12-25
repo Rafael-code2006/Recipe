@@ -1,6 +1,5 @@
 package com.example.recipe;
 // cd /d/1AndroidStudioProjects/Recipe
-import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
 import androidx.room.Insert;
 import androidx.room.Query;
@@ -13,23 +12,24 @@ import io.reactivex.rxjava3.core.Single;
 @Dao
 public interface DescriptionDao{
 
+    @Insert
+    Completable add(Descriptions description);
+
+    @Query("DELETE FROM descriptions WHERE id_description = :id_description")
+    Completable remove(long id_description);
 
     @Query("SELECT * FROM descriptions")
     Single<List<Descriptions>> getDescriptions();
 
-
     @Query("SELECT * FROM descriptions WHERE recipe_id = :recipe_id")
-    Single<List<Descriptions>> getDescriptionWithRecipe(long recipe_id);
-
+    Single<List<Descriptions>> getDescriptionForRecipe(long recipe_id);
 
     @Query("SELECT * FROM descriptions WHERE id_description = :id_description")
-    Single<List<Descriptions>> getDescription(int id_description);
+    Single<Descriptions> getDescription(long id_description);
 
-    @Query("DELETE FROM descriptions WHERE id_description = :id_description")
-    Completable remove(int id_description);
 
-    @Insert
-    Completable insertDescription(Descriptions description);
+
+
 
 
 

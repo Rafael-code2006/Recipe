@@ -1,3 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
+    <!-- Стиль для скруглённого изображения -->
+    <style name="RoundedImageStyle">
+        <!-- Тип углов -->
+        <item name="cornerFamily">rounded</item>
+        <!-- Радиус скругления -->
+        <item name="cornerSize">12dp</item>
+        <!-- Опционально: рамка вокруг изображения -->
+        <item name="strokeColor">@android:color/darker_gray</item>
+        <item name="strokeWidth">2dp</item>
+    </style>
+
+    <!-- Стиль для карточек (CardView) -->
+    <style name="RecipeCardStyle">
+        <item name="cardCornerRadius">12dp</item>
+        <item name="cardElevation">8dp</item>
+        <item name="cardUseCompatPadding">true</item>
+        <item name="android:background">@android:color/transparent</item>
+    </style>
+
+    <dimen name="padding_small">4dp</dimen>
+    <dimen name="padding_medium">8dp</dimen>
+    <dimen name="padding_large">16dp</dimen>
+
+    <dimen name="text_small">12sp</dimen>
+    <dimen name="text_medium">16sp</dimen>
+    <dimen name="text_large">20sp</dimen>
+
+
+    <!-- Стиль для текстовых полей -->
+    <style name="RecipeEditTextStyle">
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textColorHint">#979595</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:fontFamily">@font/bakbak_one</item>
+        <item name="android:paddingStart">12dp</item>
+        <item name="android:paddingTop">8dp</item>
+        <item name="android:paddingBottom">8dp</item>
+    </style>
+
+    <!-- Стиль для заголовков -->
+    <style name="RecipeTitleTextStyle">
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:fontFamily">@font/archivo_black</item>
+    </style>
+
 </resources>

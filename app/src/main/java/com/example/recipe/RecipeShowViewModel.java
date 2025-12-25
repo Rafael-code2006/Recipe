@@ -1,5 +1,6 @@
 package com.example.recipe;
 
+import android.annotation.SuppressLint;
 import android.app.Application;
 import android.util.Log;
 
@@ -18,33 +19,46 @@ import io.reactivex.rxjava3.schedulers.Schedulers;
 
 public class RecipeShowViewModel extends AndroidViewModel {
 
+    private static final String TAG = "RecipeShowViewModel1";
+
+
+    // DataBase
     private RecipeDataBase recipeDataBase = RecipeDataBase.getInstance(getApplication());
 
-    private MutableLiveData<List<Recipes>> recipes = new MutableLiveData<>();
 
+    // MutableLiveData
+    private MutableLiveData<List<Recipes>> recipes = new MutableLiveData<>();
     private MutableLiveData<Recipes> recipe = new MutableLiveData<>();
     private MutableLiveData<List<Descriptions>> descriptions = new MutableLiveData<>();
 
-    private CompositeDisposable compositeDisposable = new CompositeDisposable();
-    public RecipeShowViewModel(@NonNull Application application) {
-        super(application);
-    }
 
+    // CompositeDisposable
+    private CompositeDisposable compositeDisposable = new CompositeDisposable();
+
+
+    // Getters
     public LiveData<List<Recipes>> getRecipes(){
         Log.d("ViewModelTest", "Количество обьектов: ");
         return recipes;
     }
-
     public LiveData<Recipes> getRecipe() {
         return recipe;
     }
-
     public LiveData<List<Descriptions>> getDesriptions(){
         return descriptions;
     }
 
+
+    // Конструктор
+    public RecipeShowViewModel(@NonNull Application application) {
+        super(application);
+    }
+
+
+
+    // Обновление списка ингридиентов по id рецепта
     public void refreshDescriptions(long recipe_id){
-        Disposable disposable = recipeDataBase.descriptionDao().getDescriptionWithRecipe(recipe_id)
+        Disposable disposable = recipeDataBase.descriptionDao().getDescriptionForRecipe(recipe_id)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Consumer<List<Descriptions>>() {
@@ -54,28 +68,10 @@ public class RecipeShowViewModel extends AndroidViewModel {
                     }
                 });
     }
-    public void refreshRecipes(Recipes recipes){
-        Disposable disposableRefresh =
-                recipeDataBase
-                   .descriptionDao()
-                        .getDescriptionWithRecipe(recipes.getId())
-                        .doOnError(new Consumer<Throwable>() {
-                            @Override
-                            public void accept(Throwable throwable) throws Throwable {
-                                Log.d("RecipeShowViewModel1", throwable.getMessage().toString());
-                            }
-                        })
-                                .subscribeOn(Schedulers.io())
-                                        .observeOn(AndroidSchedulers.mainThread())
-                                                .subscribe(new Consumer<List<Descriptions>>() {
-                                                    @Override
-                                                    public void accept(List<Descriptions> descriptions) throws Throwable {
 
-                                                    }
-                                                });
-        compositeDisposable.add(disposableRefresh);
-    }
 
+    // Возврат рецепта по id
+    @SuppressLint("CheckResult")
     public void loadRecipe(long recipe_id){
         recipeDataBase.recipesDAO().getRecipe(recipe_id)
                 .subscribeOn(Schedulers.io())
@@ -93,6 +89,8 @@ public class RecipeShowViewModel extends AndroidViewModel {
                     }
                 });
     }
+
+
 
     @Override
     protected void onCleared() {

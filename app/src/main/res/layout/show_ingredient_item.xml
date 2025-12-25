@@ -1,64 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
+    android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:minHeight="80dp"
+    android:minHeight="30dp"
     android:orientation="horizontal"
-    android:layout_margin="20dp"
-    android:gravity="center"
-    android:paddingTop="7dp"
-    android:paddingStart="10dp"
-    android:background="@drawable/description_background"
-    xmlns:tools="http://schemas.android.com/tools">
+    android:layout_marginTop="5dp"
+    android:gravity="center_vertical">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+    <!-- Серый кружок -->
+    <TextView
+        android:id="@+id/bulletDot"
+        android:layout_width="8dp"
+        android:layout_height="8dp"
+        android:background="@drawable/bullet_circle"
+        android:layout_marginEnd="12dp" />
 
-        <!-- Название -->
-        <TextView
-            android:id="@+id/TxtViewNameDescription"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:textColor="#DCDCDC"
-            android:textSize="20sp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/TxtViewWeight"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            tools:text="Пельмени" />
+    <!-- Название ингредиента -->
+    <TextView
+        android:id="@+id/ingredientText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:maxWidth="230dp"
+        android:textStyle="bold"
+        android:text="Eggplants"
+        android:textColor="#FFFFFF"
+        android:textSize="18sp" />
 
-        <!-- Вес -->
-        <TextView
-            android:id="@+id/TxtViewWeight"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:gravity="right"
-            android:textColor="#DCDCDC"
-            android:textSize="20sp"
-            android:paddingEnd="8dp"
-            app:layout_constraintStart_toEndOf="@id/TxtViewNameDescription"
-            app:layout_constraintEnd_toStartOf="@id/TxtViewWeightType"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            tools:text="10.2" />
-
-        <!-- Тип веса -->
-        <TextView
-            android:id="@+id/TxtViewWeightType"
-            android:layout_width="50dp"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:textColor="#DCDCDC"
-            android:textSize="20sp"
-            android:text="кг"
-            app:layout_constraintStart_toEndOf="@id/TxtViewWeight"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    <!-- Вес + тип -->
+    <TextView
+        android:id="@+id/ingredientWeight"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="500"
+        android:textStyle="bold"
+        android:textColor="#FFFFFF"
+        android:textSize="18sp"
+        android:layout_marginStart="10dp"
+        android:gravity="end" />
+    <TextView
+        android:id="@+id/ingredientWeightType"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="5dp"
+        android:textStyle="bold"
+        android:text="g"
+        android:textColor="#FFFFFF"
+        android:textSize="18sp"
+        android:gravity="end" />
 
 </LinearLayout>

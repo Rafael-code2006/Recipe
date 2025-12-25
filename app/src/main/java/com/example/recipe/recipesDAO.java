@@ -14,15 +14,16 @@ import io.reactivex.rxjava3.core.Single;
 @Dao
 public interface recipesDAO {
 
+    @Insert
+    long add(Recipes recipe);
+
+    @Query("DELETE FROM recipes WHERE id = :id")
+    Completable remove(long id);
     @Query("SELECT * FROM recipes")
     Single<List<Recipes>> getRecipes();
 
     @Query("SELECT * FROM recipes WHERE id = :id")
     Single<Recipes> getRecipe(long id);
 
-    @Insert
-    long add(Recipes recipe);
 
-    @Query("DELETE FROM recipes WHERE id = :id")
-    Completable remove(long id);
 }
