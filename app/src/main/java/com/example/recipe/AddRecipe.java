@@ -111,7 +111,22 @@ public class AddRecipe extends AppCompatActivity {
     private void showDescriptions() {
         View view = getLayoutInflater().inflate(R.layout.ingredient_item, linearLayoutDescription, false);
         Button test = view.findViewById(R.id.ButtonDelete);
+        Spinner spinnerUnit = view.findViewById(R.id.SpinnerUnit);
+        TextView UnitTextView = view.findViewById(R.id.TextViewUnit);
         test.setId(View.generateViewId());
+
+        spinnerUnit.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                String unit = parent.getSelectedItem().toString();
+                UnitTextView.setText(unit);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
 
         test.setOnClickListener(v -> {
             int clickedId = v.getId();
