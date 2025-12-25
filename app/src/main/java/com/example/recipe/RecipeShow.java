@@ -1,21 +1,12 @@
 package com.example.recipe;
 
-import static android.view.View.INVISIBLE;
-import static android.view.View.VISIBLE;
-
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.ScrollView;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
@@ -25,10 +16,8 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class RecipeShow extends AppCompatActivity {
@@ -38,12 +27,9 @@ public class RecipeShow extends AppCompatActivity {
     private TextView textViewInstructionContent;
 
 
-    // RecyclerView
-    private RecyclerView RecyclerViewRecipes;
+    // LinearLayout
+    private LinearLayout linearLayout;
 
-
-    // Adapter
-    private RecipeShowAdapter recipeShowAdapter;
 
 
     // ViewModel
@@ -59,7 +45,8 @@ public class RecipeShow extends AppCompatActivity {
 
         initVies(); // Инициализация
 
-        showDescription(); // Показ ингридиентов
+        showRecipe(); // Показ ингридиентов
+
 
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
@@ -72,39 +59,58 @@ public class RecipeShow extends AppCompatActivity {
     private void initVies(){
         RecipeTextViewShow = findViewById(R.id.RecipeTextViewShow);
         recipeShowViewModel = new ViewModelProvider(this).get(RecipeShowViewModel.class);
-        RecyclerViewRecipes = findViewById(R.id.RecyclerViewIngredients);
-        recipeShowAdapter = new RecipeShowAdapter();
         textViewInstructionContent = findViewById(R.id.TextViewInstructionContent);
-        RecyclerViewRecipes.setLayoutManager(new LinearLayoutManager(this)); // Установка LayoutManager
-        RecyclerViewRecipes.setAdapter(recipeShowAdapter); // Установка адаптера
+        linearLayout = findViewById(R.id.ingredientsContainer);
     }
 
-    private void showDescription(){
-        long recipe_id = getIntent().getLongExtra("IdRecipe", 0); // Берем рецепт из intent
-        recipeShowViewModel.loadRecipe(recipe_id); // Загружаем рецепт по id
-
-        // Возврат рецепта из базы
+    private void showRecipe() {
+        long recipe_id = getIntent().getLongExtra("IdRecipe", 0);
+        recipeShowViewModel.loadRecipe(recipe_id);
         recipeShowViewModel.getRecipe().observe(this, new Observer<Recipes>() {
             @Override
             public void onChanged(Recipes recipes) {
-                RecipeTextViewShow.setText(recipes.getName()); // Задаем имя рецепта
-                textViewInstructionContent.setText(recipes.getInsctruction()); // Задаем его инструкцию
+                RecipeTextViewShow.setText(recipes.getName());
+                textViewInstructionContent.setText(recipes.getInsctruction());
             }
         });
-
-        // Загружаем ингридиенты по id рецепта
         recipeShowViewModel.refreshDescriptions(recipe_id);
 
-        // Возврат коллекции ингридиентов
         recipeShowViewModel.getDesriptions().observe(this, new Observer<List<Descriptions>>() {
             @Override
             public void onChanged(List<Descriptions> descriptions) {
-                recipeShowAdapter.setDescriptions(descriptions);
+                // очищаем контейнер, чтобы не дублировать элементы при обновлении
+                linearLayout.removeAllViews();
+
+                for (Descriptions x : descriptions) {
+                    View view = LayoutInflater.from(RecipeShow.this).inflate(
+                            R.layout.show_ingredient_item,
+                            linearLayout,
+                            false
+                    );
+
+                    TextView nameIngredient = view.findViewById(R.id.ingredientText);
+                    TextView weightIngredient = view.findViewById(R.id.ingredientWeight);
+                    TextView unitIngredient = view.findViewById(R.id.ingredientWeightType);
+
+                    nameIngredient.setText(x.getName());
+                    float weight = x.getWeight();
+                    Log.d("testTest", ""+weight);
+                    String unit = "g";
+
+                    if (weight >= 1000) {
+                        weight = weight / 1000;
+                        unit = "kg";
+                    }
+
+                    weightIngredient.setText(String.valueOf(weight));
+                    unitIngredient.setText(unit);
+
+                    // вот этого не хватало!
+                    linearLayout.addView(view);
+                }
             }
         });
-
     }
-
 
     public static Intent newIntent(Context context, long id_Recipe){
         Intent intent = new Intent(context, RecipeShow.class);
