@@ -6,6 +6,5 @@
     <string-array name="ingredients_unit">
         <item>kg</item>
         <item>g</item>
-        <item>lb</item>
     </string-array>
 </resources>

@@ -40,10 +40,15 @@ public class RecipeShowAdapter extends RecyclerView.Adapter<RecipeShowAdapter.Re
     public void onBindViewHolder(@NonNull RecipeShowViewHolder holder, int position) {
 
         Descriptions description = descriptions.get(position);
-
         holder.TxtViewNameDescription.setText(description.getName());
-        holder.TxtViewWeight.setText(String.valueOf(description.getWeight()));
-
+        String unit = "g";
+        float weight = description.getWeight();
+        unit = (weight >= 1000) ? "kg" : unit;
+        if(weight >= 1000){
+            weight = weight/1000;
+        }
+        holder.TxtViewWeight.setText(String.valueOf(weight));
+        holder.ingredientWeightType.setText(unit);
     }
 
     @Override
@@ -54,13 +59,14 @@ public class RecipeShowAdapter extends RecyclerView.Adapter<RecipeShowAdapter.Re
     class RecipeShowViewHolder extends RecyclerView.ViewHolder{
         private TextView TxtViewNameDescription;
         private TextView TxtViewWeight;
-        private TextView TxtViewWeightType;
+
+        private TextView ingredientWeightType;
 
         public RecipeShowViewHolder(@NonNull View itemView) {
             super(itemView);
             TxtViewNameDescription = itemView.findViewById(R.id.ingredientText);
             TxtViewWeight = itemView.findViewById(R.id.ingredientWeight);
-            TxtViewWeightType = itemView.findViewById(R.id.ingredientWeightType);
+            ingredientWeightType = itemView.findViewById(R.id.ingredientWeightType);
         }
     }
 }

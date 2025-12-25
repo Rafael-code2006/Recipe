@@ -15,6 +15,7 @@ import java.util.List;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
 import io.reactivex.rxjava3.disposables.Disposable;
+import io.reactivex.rxjava3.functions.Action;
 import io.reactivex.rxjava3.functions.Consumer;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 
@@ -90,6 +91,18 @@ public class MainViewModel extends AndroidViewModel {
                 .subscribeOn(Schedulers.io())
                 .subscribe();
       compositeDisposable.add(disposableRemove);
+    }
+
+    public void removeDescriptionForRecipe(Recipes recipe){
+        Disposable disposable = recipeDataBase.descriptionDao().removeForRecipe(recipe.getId())
+                .subscribeOn(Schedulers.io())
+                .doOnError(new Consumer<Throwable>() {
+                    @Override
+                    public void accept(Throwable throwable) throws Throwable {
+                        Log.d(TAG, throwable.getMessage().toString());
+                    }
+                })
+                .subscribe();
     }
 
 

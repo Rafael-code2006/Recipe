@@ -63,22 +63,7 @@ public class MainActivity extends AppCompatActivity {
 
         initVies(); // Инициализация
 
-       adapterRecipes.setCountIngredients(new AdapterRecipes.CountIngredients() {
-           @Override
-           public void CountIngredients(Recipes recipe, TextView targetView) {
-               mainViewModel.loadIngredients(recipe);
-               mainViewModel.getCountIngredients().observe(MainActivity.this, new Observer<HashMap<Recipes, Integer>>() {
-                   @Override
-                   public void onChanged(HashMap<Recipes, Integer> map) {
-                       Integer counter = map.get(recipe);
-                       if(counter != null){
-                           targetView.setText(String.valueOf(counter));
-                       }
-                   }
-               });
 
-           }
-       });
 
         showRecipes(); // Показ
 
@@ -143,6 +128,7 @@ public class MainActivity extends AppCompatActivity {
                             .setMessage("Вы уверены, что хотите удалить этот рецепт?")
                             .setPositiveButton("Удалить", (dialog, which) -> {
                                 mainViewModel.remove(recipeDB); // Удаляем из базы
+                                mainViewModel.removeDescriptionForRecipe(recipeDB); // Удаляем все ингридиенты
                                 adapterRecipes.removeRecipe(position); // Удаляем из адаптера
                             })
                             .setNegativeButton("Отмена", (dialog, which) -> {
@@ -202,6 +188,24 @@ public class MainActivity extends AppCompatActivity {
                 adapterRecipes.setSelectedRecipe(recipe); // Сохраняем выбранный рецепт в адаптер
             });
 
+
+                // Счетчик ингридиентов для рецепта
+                adapterRecipes.setCountIngredients(new AdapterRecipes.CountIngredients() {
+                    @Override
+                    public void CountIngredients(Recipes recipe, TextView targetView) {
+                        mainViewModel.loadIngredients(recipe);
+                        mainViewModel.getCountIngredients().observe(MainActivity.this, new Observer<HashMap<Recipes, Integer>>() {
+                            @Override
+                            public void onChanged(HashMap<Recipes, Integer> map) {
+                                Integer counter = map.get(recipe);
+                                if(counter != null){
+                                    targetView.setText(String.valueOf(counter));
+                                }
+                            }
+                        });
+
+                    }
+                });
 
 
                 adapterRecipes.setRecipeOnClickListener(new AdapterRecipes.RecipeOnClickListener() {

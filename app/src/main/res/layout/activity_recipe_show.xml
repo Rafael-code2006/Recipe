@@ -25,19 +25,21 @@
     <TextView
         android:id="@+id/RecipeTextViewShow"
         android:layout_width="350dp"
-        android:layout_height="62dp"
-        android:fontFamily="@font/archivo_black"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/open_sans_light"
         android:gravity="left"
-        android:text="Recipe"
-        android:textColor="@color/my_text_view_back"
-        android:textSize="40sp"
-        app:layout_constraintTop_toBottomOf="@id/YourRecipeTextView"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:minHeight="62dp"
+        android:maxHeight="200dp"
         android:shadowColor="#000000"
         android:shadowDx="2"
         android:shadowDy="2"
-        android:shadowRadius="4"/>
+        android:shadowRadius="4"
+        android:text="Recipe"
+        android:textColor="@color/my_text_view_back"
+        android:textSize="40sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/YourRecipeTextView" />
 
     <View
         android:id="@+id/lineUnderText"
@@ -95,7 +97,7 @@
                 android:fontFamily="@font/bakbak_one"
                 android:text="Ingredients"
                 android:textColor="@color/my_text_view_show"
-                android:textSize="23sp"
+                android:textSize="28sp"
                 android:textStyle="bold"
                 android:shadowColor="#000000"
                 android:shadowDx="2"
@@ -116,11 +118,11 @@
                 android:layout_width="350dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:layout_marginTop="20dp"
-                android:fontFamily="@font/bakbak_one"
+                android:layout_marginTop="60dp"
                 android:text="Instruction"
                 android:textColor="@color/my_text_view_show"
-                android:textSize="23sp"
+                android:textSize="28sp"
+                android:fontFamily="@font/bakbak_one"
                 android:textStyle="bold"
                 android:shadowColor="#000000"
                 android:shadowDx="2"
@@ -136,10 +138,10 @@
                 android:textStyle="bold"
                 android:gravity="top|start"
                 android:textColor="@color/white"
-                android:textSize="15sp"
+                android:textSize="18sp"
                 android:lineSpacingExtra="6dp"
                 android:layout_gravity="center"
-                tools:text="ajdjawodaw\nkjaslsdjawidj\naissdjawijdaw\naiwhdjaiwhdiawd\kawwjdiawjdiawjdiawj\naiwjdiawjdaiwjdaw\naikwkdjawihdjaw9id\naiwdjawoida"/>
+              />
         </LinearLayout>
     </ScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>

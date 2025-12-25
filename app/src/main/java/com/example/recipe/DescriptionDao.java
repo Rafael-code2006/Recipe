@@ -18,6 +18,9 @@ public interface DescriptionDao{
     @Query("DELETE FROM descriptions WHERE id_description = :id_description")
     Completable remove(long id_description);
 
+    @Query("DELETE FROM descriptions WHERE recipe_id = :id_recipe")
+    Completable removeForRecipe(long id_recipe);
+
     @Query("SELECT * FROM descriptions")
     Single<List<Descriptions>> getDescriptions();
 

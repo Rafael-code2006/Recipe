@@ -60,6 +60,10 @@ public class AddRecipe extends AppCompatActivity {
     private LinearLayout linearLayoutDescription;
 
 
+    // Spinner
+    private Spinner SpinnerUnit;
+
+
     // ViewModel
     private AddRecipeModelView addRecipeModelView;
 
@@ -92,6 +96,7 @@ public class AddRecipe extends AppCompatActivity {
         floatingActionButton = findViewById(R.id.floatingActionButton);
         addRecipeModelView = new ViewModelProvider(this).get(AddRecipeModelView.class);
         editTextInsctructionRecipe = findViewById(R.id.EditTextInsctructionRecipe);
+        SpinnerUnit = findViewById(R.id.SpinnerUnit);
     }
 
     private void FloatingClickButton(){
@@ -110,7 +115,6 @@ public class AddRecipe extends AppCompatActivity {
 
         test.setOnClickListener(v -> {
             int clickedId = v.getId();
-            Toast.makeText(this, "Удален id: " + clickedId, Toast.LENGTH_SHORT).show();
             linearLayoutDescription.removeView((View) v.getParent());
         });
 
@@ -157,6 +161,7 @@ public class AddRecipe extends AppCompatActivity {
 
                     EditText nameIngredient = item.findViewById(R.id.EditTextNameIngredient);
                     EditText weightIngredient = item.findViewById(R.id.EditTextWeight);
+                    Spinner spinnerUnit = item.findViewById(R.id.SpinnerUnit);
 
                     String name = nameIngredient.getText().toString().trim();
                     String weightText = weightIngredient.getText().toString().trim();
@@ -165,6 +170,14 @@ public class AddRecipe extends AppCompatActivity {
 
                     try {
                         float weight = Float.parseFloat(weightText);
+                        String spinnerValue = spinnerUnit.getSelectedItem().toString();
+
+                        if(spinnerValue.equals("kg")){
+                            weight = weight * 1000f;
+                        } else
+                            if(spinnerValue.equals("lb")){
+                                weight = weight * 453.59237f;
+                            }
                         Descriptions descriptions = new Descriptions(recipeId, name, weight);
                         addRecipeModelView.addDescription(descriptions);
                         listDescriptions.add(descriptions);

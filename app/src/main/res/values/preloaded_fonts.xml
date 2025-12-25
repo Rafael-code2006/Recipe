@@ -8,5 +8,9 @@
         <item>@font/anton</item>
         <item>@font/archivo_black</item>
         <item>@font/bakbak_one</item>
+        <item>@font/montserrat_alternates_thin</item>
+        <item>@font/open_sans_bold</item>
+        <item>@font/open_sans_light</item>
+        <item>@font/roboto_thin</item>
     </array>
 </resources>

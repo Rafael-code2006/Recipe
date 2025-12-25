@@ -93,12 +93,6 @@ public class AdapterRecipes extends RecyclerView.Adapter<AdapterRecipes.RecipesV
     }
 
 
-    public void updateIngredientCount(long recipeId, int count) {
-        // найти рецепт по id и обновить поле count
-        notifyDataSetChanged();
-    }
-
-
     static class RecipesViewHolder extends RecyclerView.ViewHolder {
         private final TextView recipeTitle;
         private final TextView ingredientsCount;
