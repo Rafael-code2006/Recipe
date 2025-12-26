@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -27,6 +28,8 @@ public class RecipeShow extends AppCompatActivity {
     private TextView textViewInstructionContent;
 
 
+    // Button
+    private Button EditButton;
 
 
     // LinearLayout
@@ -44,11 +47,12 @@ public class RecipeShow extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_recipe_show);
-
+        long recipe_id = getIntent().getLongExtra("IdRecipe", 0);
         initVies(); // Инициализация
 
-        showRecipe(); // Показ ингридиентов
+        showRecipe(recipe_id); // Показ ингридиентов
 
+        EditButtonClick(recipe_id); // Слушатель клика на редактирование
 
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
@@ -60,13 +64,13 @@ public class RecipeShow extends AppCompatActivity {
 
     private void initVies(){
         RecipeTextViewShow = findViewById(R.id.RecipeTextViewShow);
+        EditButton = findViewById(R.id.RecipeEditButton);
         recipeShowViewModel = new ViewModelProvider(this).get(RecipeShowViewModel.class);
         textViewInstructionContent = findViewById(R.id.TextViewInstructionContent);
         linearLayout = findViewById(R.id.ingredientsContainer);
     }
 
-    private void showRecipe() {
-        long recipe_id = getIntent().getLongExtra("IdRecipe", 0);
+    private void showRecipe(long recipe_id) {
         recipeShowViewModel.loadRecipe(recipe_id);
         recipeShowViewModel.getRecipe().observe(this, new Observer<Recipes>() {
             @Override
@@ -108,6 +112,16 @@ public class RecipeShow extends AppCompatActivity {
                     // вот этого не хватало!
                     linearLayout.addView(view);
                 }
+            }
+        });
+    }
+
+    private void EditButtonClick(long recipe_id){
+        EditButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = EditRecipe.getIntent(RecipeShow.this, recipe_id);
+                startActivity(intent);
             }
         });
     }
