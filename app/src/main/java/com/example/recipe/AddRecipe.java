@@ -187,13 +187,11 @@ public class AddRecipe extends AppCompatActivity {
                         float weight = Float.parseFloat(weightText);
                         String spinnerValue = spinnerUnit.getSelectedItem().toString();
 
-                        if(spinnerValue.equals("kg")){
+                        if(spinnerValue.equals("кг") || spinnerValue.equals("л")){
                             weight = weight * 1000f;
-                        } else
-                            if(spinnerValue.equals("lb")){
-                                weight = weight * 453.59237f;
-                            }
-                        Descriptions descriptions = new Descriptions(recipeId, name, weight);
+                        }
+
+                        Descriptions descriptions = new Descriptions(recipeId, name, weight, spinnerValue);
                         addRecipeModelView.addDescription(descriptions);
                         listDescriptions.add(descriptions);
                         Log.d("AddRecipe1", "Ингредиент: " + name + ", вес: " + weight + " добавлен");

@@ -96,16 +96,14 @@ public class RecipeShow extends AppCompatActivity {
 
                     nameIngredient.setText(x.getName());
                     float weight = x.getWeight();
-                    Log.d("testTest", ""+weight);
-                    String unit = "g";
+                    String unit = x.getUnit();
 
-                    if (weight >= 1000) {
+                    if (unit.equals("кг") || unit.equals("л")) {
                         weight = weight / 1000;
-                        unit = "kg";
                     }
 
                     weightIngredient.setText(String.valueOf(weight));
-                    unitIngredient.setText(unit);
+                    unitIngredient.setText(x.getUnit());
 
                     // вот этого не хватало!
                     linearLayout.addView(view);

@@ -13,19 +13,23 @@ public class Descriptions {
     private String name;
     private float weight;
 
+    private String unit;
 
-    public Descriptions(long id_description, long recipe_id, String name, float weight) {
+
+    public Descriptions(long id_description, long recipe_id, String name, float weight, String unit) {
         this.id_description = id_description;
         this.recipe_id = recipe_id;
         this.name = name;
         this.weight = weight;
+        this.unit = unit;
     }
 
     @Ignore
-    public Descriptions(long recipe_id, String name, float weight) {
+    public Descriptions(long recipe_id, String name, float weight, String unit) {
         this.recipe_id = recipe_id;
         this.name = name;
         this.weight = weight;
+        this.unit = unit;
     }
 
 
@@ -43,6 +47,10 @@ public class Descriptions {
 
     public float getWeight() {
         return weight;
+    }
+
+    public String getUnit() {
+        return unit;
     }
 }
 
