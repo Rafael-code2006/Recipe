@@ -1,8 +1,10 @@
-package com.example.recipe;
+package com.example.recipe.database;
 // cd /d/1AndroidStudioProjects/Recipe
 import androidx.room.Dao;
 import androidx.room.Insert;
 import androidx.room.Query;
+
+import com.example.recipe.model.Descriptions;
 
 import java.util.List;
 

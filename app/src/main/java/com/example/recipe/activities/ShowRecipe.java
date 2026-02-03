@@ -1,9 +1,8 @@
-package com.example.recipe;
+package com.example.recipe.activities;
 
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -17,11 +16,17 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.recipe.MainRecipeHelper;
+import com.example.recipe.adapters.AdapterRecipes;
+import com.example.recipe.model.Descriptions;
+import com.example.recipe.R;
+import com.example.recipe.viewmodel.RecipeShowViewModel;
+import com.example.recipe.model.Recipes;
 
 import java.util.List;
 
-public class RecipeShow extends AppCompatActivity {
+public class ShowRecipe extends AppCompatActivity {
 
     // TextView
     private TextView RecipeTextViewShow;
@@ -39,7 +44,6 @@ public class RecipeShow extends AppCompatActivity {
 
     // ViewModel
     private RecipeShowViewModel recipeShowViewModel;
-
 
 
     @Override
@@ -88,7 +92,7 @@ public class RecipeShow extends AppCompatActivity {
                 linearLayout.removeAllViews();
 
                 for (Descriptions x : descriptions) {
-                    View view = LayoutInflater.from(RecipeShow.this).inflate(
+                    View view = LayoutInflater.from(ShowRecipe.this).inflate(
                             R.layout.show_ingredient_item,
                             linearLayout,
                             false
@@ -120,14 +124,14 @@ public class RecipeShow extends AppCompatActivity {
         EditButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = EditRecipe.getIntent(RecipeShow.this, recipe_id);
+                Intent intent = EditRecipe.getIntent(ShowRecipe.this, recipe_id);
                 startActivity(intent);
             }
         });
     }
 
     public static Intent newIntent(Context context, long id_Recipe){
-        Intent intent = new Intent(context, RecipeShow.class);
+        Intent intent = new Intent(context, ShowRecipe.class);
         intent.putExtra("IdRecipe", id_Recipe);
         return intent;
     }

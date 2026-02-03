@@ -1,4 +1,4 @@
-package com.example.recipe;
+package com.example.recipe.viewmodel;
 
 import android.annotation.SuppressLint;
 import android.app.Application;
@@ -8,6 +8,10 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
+
+import com.example.recipe.model.Descriptions;
+import com.example.recipe.model.Recipes;
+import com.example.recipe.database.RecipeDataBase;
 
 import java.util.List;
 

@@ -8,7 +8,7 @@
     android:adjustViewBounds="true"
     android:background="@drawable/my_background"
     android:scaleType="centerCrop"
-    tools:context=".MainActivity">
+    tools:context=".activities.MainActivity">
 
     <!-- Заголовок -->
     <TextView

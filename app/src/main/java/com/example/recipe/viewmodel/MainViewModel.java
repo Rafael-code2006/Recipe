@@ -1,6 +1,5 @@
-package com.example.recipe;
+package com.example.recipe.viewmodel;
 
-import android.annotation.SuppressLint;
 import android.app.Application;
 import android.util.Log;
 
@@ -9,13 +8,16 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import com.example.recipe.model.Descriptions;
+import com.example.recipe.model.Recipes;
+import com.example.recipe.database.RecipeDataBase;
+
 import java.util.HashMap;
 import java.util.List;
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
 import io.reactivex.rxjava3.disposables.Disposable;
-import io.reactivex.rxjava3.functions.Action;
 import io.reactivex.rxjava3.functions.Consumer;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 

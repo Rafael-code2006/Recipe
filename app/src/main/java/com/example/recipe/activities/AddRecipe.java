@@ -1,6 +1,5 @@
-package com.example.recipe;
+package com.example.recipe.activities;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -15,29 +14,21 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.ItemTouchHelper;
-import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.recipe.viewmodel.AddRecipeModelView;
+import com.example.recipe.model.Descriptions;
+import com.example.recipe.R;
+import com.example.recipe.model.Recipes;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-
-import io.reactivex.rxjava3.core.Completable;
-import io.reactivex.rxjava3.core.CompletableObserver;
-import io.reactivex.rxjava3.disposables.CompositeDisposable;
-import io.reactivex.rxjava3.disposables.Disposable;
-import io.reactivex.rxjava3.functions.Action;
-import io.reactivex.rxjava3.schedulers.Schedulers;
 
 public class AddRecipe extends AppCompatActivity {
 
@@ -58,10 +49,6 @@ public class AddRecipe extends AppCompatActivity {
 
     // LinearLayout
     private LinearLayout linearLayoutDescription;
-
-
-    // Spinner
-    private Spinner SpinnerUnit;
 
 
     // ViewModel
@@ -89,6 +76,8 @@ public class AddRecipe extends AppCompatActivity {
     }
 
 
+
+
     private void InitViews() {
         editTextRecipe = findViewById(R.id.EditTextRecipe);
         RecipeSaveButton = findViewById(R.id.RecipeSaveButton);
@@ -96,7 +85,6 @@ public class AddRecipe extends AppCompatActivity {
         floatingActionButton = findViewById(R.id.floatingActionButton);
         addRecipeModelView = new ViewModelProvider(this).get(AddRecipeModelView.class);
         editTextInsctructionRecipe = findViewById(R.id.EditTextInsctructionRecipe);
-        SpinnerUnit = findViewById(R.id.SpinnerUnit);
     }
 
     private void FloatingClickButton(){

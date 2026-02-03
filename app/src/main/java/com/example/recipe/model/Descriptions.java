@@ -1,4 +1,4 @@
-package com.example.recipe;
+package com.example.recipe.model;
 
 import androidx.room.Entity;
 import androidx.room.Ignore;

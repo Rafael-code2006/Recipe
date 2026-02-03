@@ -1,4 +1,4 @@
-package com.example.recipe;
+package com.example.recipe.adapters;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,6 +8,9 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.recipe.R;
+import com.example.recipe.model.Recipes;
 
 import java.util.ArrayList;
 import java.util.List;

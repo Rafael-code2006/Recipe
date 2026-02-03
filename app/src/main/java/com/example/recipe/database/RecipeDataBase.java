@@ -1,10 +1,13 @@
-package com.example.recipe;
+package com.example.recipe.database;
 
 import android.app.Application;
 
 import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
+
+import com.example.recipe.model.Descriptions;
+import com.example.recipe.model.Recipes;
 
 @Database(entities = {Recipes.class, Descriptions.class}, version = 2, exportSchema = false)
 public abstract class RecipeDataBase extends RoomDatabase {

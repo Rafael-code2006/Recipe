@@ -1,4 +1,4 @@
-package com.example.recipe;
+package com.example.recipe.model;
 // cd /d/1AndroidStudioProjects/Recipe
 
 import androidx.room.Entity;

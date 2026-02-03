@@ -1,10 +1,10 @@
-package com.example.recipe;
+package com.example.recipe.database;
 
-import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
-import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.Query;
+
+import com.example.recipe.model.Recipes;
 
 import java.util.List;
 

@@ -1,4 +1,4 @@
-package com.example.recipe;
+package com.example.recipe.viewmodel;
 // cd /d/1AndroidStudioProjects/Recipe
 import android.annotation.SuppressLint;
 import android.app.Application;
@@ -9,13 +9,14 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
-import java.util.List;
+import com.example.recipe.model.Descriptions;
+import com.example.recipe.model.Recipes;
+import com.example.recipe.database.RecipeDataBase;
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.core.Single;
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
 import io.reactivex.rxjava3.disposables.Disposable;
-import io.reactivex.rxjava3.functions.Consumer;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 
 public class AddRecipeModelView extends AndroidViewModel {
