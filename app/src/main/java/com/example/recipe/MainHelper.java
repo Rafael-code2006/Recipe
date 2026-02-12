@@ -132,8 +132,7 @@ public class MainHelper {
 
     private void clickRecipe(Recipes recipe) {
         Log.d("Rafa", "ClickButton сработал");
-        long idRecipe = recipe.getId();
-        Intent intent = ShowRecipe.newIntent(context, idRecipe);
+        Intent intent = ShowRecipe.newIntent(context, recipe);
         context.startActivity(intent);
     }
 

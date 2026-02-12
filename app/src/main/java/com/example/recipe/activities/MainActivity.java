@@ -2,26 +2,13 @@ package com.example.recipe.activities;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
-import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
 
@@ -29,11 +16,7 @@ import com.example.recipe.MainHelper;
 import com.example.recipe.adapters.AdapterRecipes;
 import com.example.recipe.viewmodel.MainViewModel;
 import com.example.recipe.R;
-import com.example.recipe.model.Recipes;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-
-import java.util.HashMap;
-import java.util.List;
 
 
 public class MainActivity extends AppCompatActivity {

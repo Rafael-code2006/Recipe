@@ -17,13 +17,12 @@ import androidx.core.view.WindowInsetsCompat;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.example.recipe.MainRecipeHelper;
-import com.example.recipe.adapters.AdapterRecipes;
 import com.example.recipe.model.Descriptions;
 import com.example.recipe.R;
 import com.example.recipe.viewmodel.RecipeShowViewModel;
 import com.example.recipe.model.Recipes;
 
+import java.io.Serializable;
 import java.util.List;
 
 public class ShowRecipe extends AppCompatActivity {
@@ -51,12 +50,13 @@ public class ShowRecipe extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_recipe_show);
-        long recipe_id = getIntent().getLongExtra("IdRecipe", 0);
+
+        Recipes recipes = (Recipes) getIntent().getSerializableExtra("Recipe");
         initVies(); // Инициализация
 
-        showRecipe(recipe_id); // Показ ингридиентов
+        showRecipe(recipes.getId()); // Показ ингридиентов
 
-        EditButtonClick(recipe_id); // Слушатель клика на редактирование
+        EditButtonClick(recipes); // Слушатель клика на редактирование
 
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
@@ -120,19 +120,19 @@ public class ShowRecipe extends AppCompatActivity {
         });
     }
 
-    private void EditButtonClick(long recipe_id){
+    private void EditButtonClick(Recipes recipe){
         EditButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = EditRecipe.getIntent(ShowRecipe.this, recipe_id);
+                Intent intent = EditRecipe.getIntent(ShowRecipe.this, recipe);
                 startActivity(intent);
             }
         });
     }
 
-    public static Intent newIntent(Context context, long id_Recipe){
+    public static Intent newIntent(Context context, Recipes recipe){
         Intent intent = new Intent(context, ShowRecipe.class);
-        intent.putExtra("IdRecipe", id_Recipe);
+        intent.putExtra("Recipe", recipe);
         return intent;
     }
 }

@@ -157,13 +157,21 @@
                 android:shadowDy="2"
                 android:shadowRadius="4"/>
 
+
+            <!-- Список рецептов -->
             <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/RecyclerViewIngredients"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="30dp"
-                android:layout_marginEnd="30dp"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                />
+                android:nestedScrollingEnabled="false"
+                android:overScrollMode="never"
+                android:layout_marginTop="20dp"
+                tools:listitem="@layout/ingredient_item"
+                tools:itemCount="2" />
+
+
+
+
 
 
             <TextView
