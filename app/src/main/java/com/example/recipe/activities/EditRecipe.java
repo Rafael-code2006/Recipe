@@ -3,9 +3,11 @@ package com.example.recipe.activities;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 
 import androidx.activity.EdgeToEdge;
@@ -25,12 +27,14 @@ import com.example.recipe.model.Recipes;
 import com.example.recipe.viewmodel.EditRecipeViewModel;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 public class EditRecipe extends AppCompatActivity {
 
     private RecyclerView recyclerView;
     private EditText editTextRecipe;
+    private Button saveButton;
     private EditRecipeViewModel viewModel;
     private  AdapterEditRecipes adapter;
 
@@ -54,12 +58,30 @@ public class EditRecipe extends AppCompatActivity {
 
 
 
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
+        adapter.setCheckRecipes(ingredient -> {
+                    Log.d("EditRecipe11", "name: " + ingredient.getName());
+                    Log.d("EditRecipe11", "weight" + ingredient.getWeight());
+                    Log.d("EditRecipe11", "unit: " + ingredient.getUnit());
+                });
+
+        saveButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                List<Descriptions> descriptions = adapter.getIngredients();
+                viewModel.updateAllIngredients(descriptions);
+                Intent intent = ShowRecipe.newIntent(EditRecipe.this, recipes);
+                startActivity(intent);
+                finish();
+
+
+            }
         });
-    }
+            ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+                Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+                v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+                return insets;
+            });
+        }
 
     private void initView(){
         recyclerView = findViewById(R.id.RecyclerViewIngredients);
@@ -70,6 +92,7 @@ public class EditRecipe extends AppCompatActivity {
         recyclerView.setHasFixedSize(false);
         recyclerView.setAdapter(adapter);
         viewModel = new ViewModelProvider(this).get(EditRecipeViewModel.class);
+        saveButton = findViewById(R.id.RecipeEditButton);
     }
 
     private void setRecyclerViewHeightBasedOnChildren(RecyclerView recyclerView) {

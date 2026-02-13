@@ -3,6 +3,7 @@ package com.example.recipe.database;
 import androidx.room.Dao;
 import androidx.room.Insert;
 import androidx.room.Query;
+import androidx.room.Update;
 
 import com.example.recipe.model.Recipes;
 
@@ -24,6 +25,9 @@ public interface recipesDAO {
 
     @Query("SELECT * FROM recipes WHERE id = :id")
     Single<Recipes> getRecipe(long id);
+
+    @Update
+    Completable update(Recipes recipe);
 
 
 }

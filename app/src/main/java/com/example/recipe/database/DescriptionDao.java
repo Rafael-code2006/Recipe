@@ -3,6 +3,7 @@ package com.example.recipe.database;
 import androidx.room.Dao;
 import androidx.room.Insert;
 import androidx.room.Query;
+import androidx.room.Update;
 
 import com.example.recipe.model.Descriptions;
 
@@ -32,12 +33,10 @@ public interface DescriptionDao{
     @Query("SELECT * FROM descriptions WHERE id_description = :id_description")
     Single<Descriptions> getDescription(long id_description);
 
+    @Query("UPDATE descriptions SET name = :name, weight = :weight, unit = :unit WHERE recipe_id = :recipeId")
+    Completable updateAllByRecipeId(long recipeId, String name, float weight, String unit);
 
 
-
-
-
-
-
-
+    @Update
+    void updateIngredients(List<Descriptions> ingredients);
 }

@@ -113,7 +113,7 @@ public class ShowRecipe extends AppCompatActivity {
                     weightIngredient.setText(String.valueOf(weight));
                     unitIngredient.setText(x.getUnit());
 
-                    // вот этого не хватало!
+                    
                     linearLayout.addView(view);
                 }
             }
@@ -126,6 +126,7 @@ public class ShowRecipe extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = EditRecipe.getIntent(ShowRecipe.this, recipe);
                 startActivity(intent);
+                finish();
             }
         });
     }
