@@ -4,12 +4,12 @@
     <string name="text_string_format">%s</string>
 
     <string-array name="ingredients_unit">
-        <item>кг</item>
-        <item>гр</item>
-        <item>л</item>
-        <item>мл</item>
-        <item>мсл</item>
-        <item>мчл</item>
+        <item>kg</item>
+        <item>gr</item>
+        <item>l</item>
+        <item>ml</item>
+        <item>tbsp</item>
+        <item>tsp</item>
 
     </string-array>
 </resources>

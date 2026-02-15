@@ -1,5 +1,7 @@
 package com.example.recipe.activities;
 
+import static android.view.View.INVISIBLE;
+
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -22,7 +24,6 @@ import com.example.recipe.R;
 import com.example.recipe.viewmodel.RecipeShowViewModel;
 import com.example.recipe.model.Recipes;
 
-import java.io.Serializable;
 import java.util.List;
 
 public class ShowRecipe extends AppCompatActivity {
@@ -43,6 +44,7 @@ public class ShowRecipe extends AppCompatActivity {
 
     // ViewModel
     private RecipeShowViewModel recipeShowViewModel;
+    private View textViewIngredients;
 
 
     @Override
@@ -68,6 +70,7 @@ public class ShowRecipe extends AppCompatActivity {
 
     private void initVies(){
         RecipeTextViewShow = findViewById(R.id.RecipeTextViewShow);
+        textViewIngredients = findViewById(R.id.TextViewIngredients);
         EditButton = findViewById(R.id.RecipeEditButton);
         recipeShowViewModel = new ViewModelProvider(this).get(RecipeShowViewModel.class);
         textViewInstructionContent = findViewById(R.id.TextViewInstructionContent);
@@ -88,6 +91,10 @@ public class ShowRecipe extends AppCompatActivity {
         recipeShowViewModel.getDesriptions().observe(this, new Observer<List<Descriptions>>() {
             @Override
             public void onChanged(List<Descriptions> descriptions) {
+
+                if(descriptions.size() == 0){
+                    textViewIngredients.setVisibility(INVISIBLE);
+                }
                 // очищаем контейнер, чтобы не дублировать элементы при обновлении
                 linearLayout.removeAllViews();
 

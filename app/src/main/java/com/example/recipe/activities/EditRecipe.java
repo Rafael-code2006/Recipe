@@ -27,7 +27,6 @@ import com.example.recipe.model.Recipes;
 import com.example.recipe.viewmodel.EditRecipeViewModel;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 
 public class EditRecipe extends AppCompatActivity {

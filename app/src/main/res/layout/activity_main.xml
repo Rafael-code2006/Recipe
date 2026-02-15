@@ -59,8 +59,8 @@
         android:contentDescription="@string/app_name"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:backgroundTint="@color/fab_background"
+        app:backgroundTint="@color/background_floatingButton"
         app:srcCompat="@drawable/ic_add_recipe"
-        app:tint="@android:color/white" />
+        app:tint="@color/black" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
