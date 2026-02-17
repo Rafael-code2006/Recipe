@@ -1,0 +1,68 @@
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/linearLayoutSetting"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="20dp">
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/CardViewSetting"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="7dp"
+        android:padding="8dp"
+        app:cardBackgroundColor="@android:color/transparent"
+        app:cardElevation="8dp"
+        app:cardCornerRadius="10dp"
+        app:cardUseCompatPadding="true"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <LinearLayout
+            android:id="@+id/LinearLayoutSetting"
+            android:layout_width="350dp"
+            android:layout_height="50dp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:background="@drawable/icon_setting"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp">
+
+            <ImageView
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:src="@drawable/setting"/>
+
+            <EditText
+                android:id="@+id/EditTextSettingName"
+                android:singleLine="true"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="50dp"
+                android:hint="Name"
+                android:paddingStart="15dp"
+                android:gravity="left"
+                android:background="@android:color/transparent"
+                android:textColor="@color/my_text_view_back"
+                android:textColorHint="@android:color/darker_gray"
+                android:textSize="13sp"
+                android:paddingTop="15dp"/>
+
+            <Spinner
+                android:id="@+id/EditTextSettingValue"
+                android:layout_width="80dp"
+                android:layout_height="50dp"
+                android:background="@drawable/weight_border"
+                android:gravity="center"
+                android:hint="Value"
+                android:entries="@array/language"
+                android:inputType="numberDecimal"
+                android:textColor="@color/my_text_view_back"
+                android:textColorHint="@color/my_text_view_back"
+                android:textSize="12sp"/>
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

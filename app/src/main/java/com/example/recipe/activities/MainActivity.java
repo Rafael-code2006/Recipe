@@ -27,21 +27,6 @@ public class MainActivity extends AppCompatActivity {
     private MainHelper helper;
 
 
-    // FloatingActionButton
-    private FloatingActionButton floatingActionButton;
-
-
-    // RecyclerView
-    private RecyclerView RecyclerViewRecipes;
-
-    // Adapter
-    private AdapterRecipes adapterRecipes;
-
-
-    // ViewModel
-    private MainViewModel mainViewModel;
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,6 +36,8 @@ public class MainActivity extends AppCompatActivity {
         helper = new MainHelper(this);
 
         helper.showRecipes(); // Показ рецептов
+
+        helper.onClickSetting();
 
         helper.onClickFloatingButton(); // Клик кнопки добавления
 

@@ -102,7 +102,6 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginTop="15dp"
-                android:fontFamily="@font/bakbak_one"
                 android:text="Name"
                 android:textColor="@color/my_text_view_show"
                 android:textSize="28sp"
@@ -124,6 +123,8 @@
                 app:cardCornerRadius="10dp"
                 app:cardUseCompatPadding="true">
 
+
+
                 <EditText
                     android:id="@+id/EditTextRecipe"
                     style="@style/Widget.Material3.AutoCompleteTextView.OutlinedBox"
@@ -138,7 +139,7 @@
                     android:paddingStart="20dp"
                     android:textColor="#DCDCDC"
                     android:textColorHint="#979595"
-                    android:textSize="14sp"/>
+                    android:textSize="13sp"/>
             </androidx.cardview.widget.CardView>
 
             <TextView
@@ -211,7 +212,6 @@
                 android:layout_height="wrap_content"
                 android:minHeight="200dp"
                 android:background="@drawable/textview_border"
-                android:fontFamily="@font/archivo_black"
                 android:gravity="top|start"
                 android:layout_gravity="center"
                 android:hint="instruction"
@@ -220,7 +220,7 @@
                 android:singleLine="false"
                 android:textColor="#DCDCDC"
                 android:textColorHint="#979595"
-                android:textSize="14sp"
+                android:textSize="13sp"
                 android:scrollbars="vertical"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"/>
@@ -238,11 +238,11 @@
         android:layout_marginEnd="20dp"
         android:layout_marginBottom="30dp"
         android:contentDescription="@string/app_name"
-        app:backgroundTint="@color/fab_background"
+        app:backgroundTint="@color/my_textView_gray"
         app:layout_constraintBottom_toTopOf="@id/CardView"
         app:layout_constraintEnd_toEndOf="parent"
         app:srcCompat="@drawable/ic_add_recipe"
-        app:tint="@android:color/white" />
+        app:tint="@color/black" />
 
     <androidx.cardview.widget.CardView
         android:id="@+id/CardView"
@@ -250,7 +250,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginTop="20dp"
-        android:layout_marginBottom="40dp"
+        android:layout_marginBottom="30dp"
         app:cardBackgroundColor="@android:color/transparent"
         app:cardCornerRadius="120dp"
         app:cardElevation="8dp"
@@ -262,10 +262,10 @@
             android:id="@+id/RecipeEditButton"
             android:layout_width="match_parent"
             android:layout_height="56dp"
-            android:backgroundTint="@color/my_button_background"
+            android:backgroundTint="@color/my_textView_gray"
             android:elevation="8dp"
             android:text="Save"
-            android:textColor="#FFFFFF" />
+            android:textColor="@color/black" />
     </androidx.cardview.widget.CardView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,9 +1,5 @@
 package com.example.recipe;
 
-import static androidx.core.content.ContextCompat.startActivity;
-
-import android.app.Application;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -11,6 +7,7 @@ import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -39,6 +36,8 @@ public class MainHelper {
 
     private AdapterRecipes adapter;
 
+    private ImageView setting;
+
     private MainActivity context;
 
     private RecyclerView RecyclerViewRecipes;
@@ -53,6 +52,7 @@ public class MainHelper {
         adapter = new AdapterRecipes();
         floatingActionButton = context.findViewById(R.id.floatingActionButton);
         RecyclerViewRecipes = context.findViewById(R.id.RecyclerViewRecipes);
+        setting = context.findViewById(R.id.SettingButton);
         RecyclerViewRecipes.setAdapter(adapter);
     }
 
@@ -67,6 +67,16 @@ public class MainHelper {
         });
     }
 
+
+    public void onClickSetting(){
+        setting.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = SettingActivity.newIntent(context);
+                context.startActivity(intent);
+            }
+        });
+    }
 
     public void showRecipes() {
 

@@ -44,6 +44,14 @@ public class Recipes implements Serializable {
         return insctruction;
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setInsctruction(String insctruction) {
+        this.insctruction = insctruction;
+    }
+
     @Ignore
     public int getIngredient_count() {
         return ingredient_count;
@@ -53,6 +61,8 @@ public class Recipes implements Serializable {
     public void setIngredient_count(int ingredient_count) {
         this.ingredient_count = ingredient_count;
     }
+
+
 
     @Override
     public String toString() {

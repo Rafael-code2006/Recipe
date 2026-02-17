@@ -10,20 +10,35 @@
     android:scaleType="centerCrop"
     tools:context=".activities.MainActivity">
 
+
     <!-- Заголовок -->
+
     <TextView
         android:id="@+id/main_RecipeTextView"
-        android:layout_width="350dp"
+        android:layout_width="0dp"
         android:layout_height="62dp"
-        android:layout_marginTop="50dp"
+        android:layout_marginTop="48dp"
+        android:layout_marginStart="25dp"
+        android:layout_marginEnd="8dp"
         android:fontFamily="@font/open_sans_bold"
-        android:gravity="left"
+        android:gravity="start|center_vertical"
         android:text="@string/text_my_recipes"
         android:textColor="@color/my_text_view_back"
         android:textSize="40sp"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/SettingButton" />
+
+    <ImageView
+        android:id="@+id/SettingButton"
+        android:layout_width="40dp"
+        android:layout_height="35dp"
+        android:scaleType="fitXY"
+        android:src="@drawable/setting"
+        android:layout_marginEnd="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/main_RecipeTextView"
+        app:layout_constraintBottom_toBottomOf="@+id/main_RecipeTextView" />
 
     <View
         android:id="@+id/lineUnderText"

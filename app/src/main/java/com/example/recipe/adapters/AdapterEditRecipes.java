@@ -63,9 +63,11 @@ public class AdapterEditRecipes extends RecyclerView.Adapter<AdapterEditRecipes.
         for (int i = 0; i < units.length; i++) {
             if (units[i].equals(ingredient.getUnit())) {
                 holder.unit.setSelection(i);
+
                 break;
             }
         }
+
 
         // --- TextWatcher для EditText Name ---
         holder.editTextNameIngredient.addTextChangedListener(new TextWatcher() {
@@ -113,6 +115,8 @@ public class AdapterEditRecipes extends RecyclerView.Adapter<AdapterEditRecipes.
                 if (checkIngredient != null) {
                     checkIngredient.getIngredient(ingredient);
                 }
+                String selected = parent.getItemAtPosition(position).toString();
+                holder.TextViewUnit.setText(selected);
             }
 
             @Override

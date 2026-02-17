@@ -41,7 +41,6 @@ dependencies {
     implementation(libs.constraintlayout)
 
     val room_version = "2.8.3"
-
     implementation("androidx.room:room-runtime:$room_version")
     implementation("androidx.room:room-rxjava3:$room_version")
     annotationProcessor("androidx.room:room-compiler:2.8.3")

@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/my_background"
+    tools:context=".SettingActivity">
+
+    <TextView
+        android:id="@+id/main_RecipeTextView"
+        android:layout_width="0dp"
+        android:layout_height="62dp"
+        android:layout_marginTop="48dp"
+        android:layout_marginStart="25dp"
+        android:layout_marginEnd="8dp"
+        android:fontFamily="@font/open_sans_bold"
+        android:gravity="start|center_vertical"
+        android:text="Setting"
+        android:textColor="@color/my_text_view_back"
+        android:textSize="40sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <View
+        android:id="@+id/lineUnderText"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#888888"
+        app:layout_constraintTop_toBottomOf="@id/main_RecipeTextView"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <TextView
+        android:id="@+id/RecipeExportButton"
+        android:layout_width="0dp"
+        android:layout_height="56dp"
+        android:background="@drawable/icon_setting"
+        android:elevation="8dp"
+        android:gravity="center"
+        android:text="Export"
+        android:textColor="@android:color/white"
+        android:layout_marginTop="30dp"
+        android:layout_marginStart="30dp"
+        android:layout_marginEnd="8dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/RecipeImportButton"
+        app:layout_constraintTop_toBottomOf="@id/lineUnderText" />
+
+    <TextView
+        android:id="@+id/RecipeImportButton"
+        android:layout_width="0dp"
+        android:layout_height="56dp"
+        android:background="@drawable/icon_setting"
+        android:elevation="8dp"
+        android:gravity="center"
+        android:text="Import"
+        android:textColor="@android:color/white"
+        android:layout_marginTop="30dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="30dp"
+        app:layout_constraintStart_toEndOf="@id/RecipeExportButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/lineUnderText" />
+
+
+
+    <LinearLayout
+        android:id="@+id/LinearLayoutSetting"
+        android:layout_width="350dp"
+        android:layout_height="60dp"
+        android:background="@drawable/icon_setting"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:layout_marginTop="30dp"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/RecipeExportButton">
+
+        <ImageView
+            android:id="@+id/LanguageIcon"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:src="@drawable/russia" />
+
+
+
+        <EditText
+            android:id="@+id/EditTextSettingName"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@android:color/transparent"
+            android:gravity="center|left"
+            android:paddingStart="10dp"
+            android:text="Language"
+            android:singleLine="true"
+            android:textColor="@color/my_textView_gray"
+            android:textColorHint="@color/my_textView_gray"
+            android:textSize="13sp" />
+
+        <Spinner
+            android:id="@+id/SpinnerUnit"
+            android:layout_width="50dp"
+            android:layout_height="match_parent"
+            android:entries="@array/language"
+            android:minHeight="48dp" />
+
+
+    </LinearLayout>
+
+
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/CardView"
+        android:layout_width="350dp"
+        android:layout_height="wrap_content"
+        app:cardElevation="8dp"
+        android:layout_margin="40dp"
+        app:cardCornerRadius="120dp"
+        android:layout_marginBottom="30dp"
+        app:cardBackgroundColor="@android:color/transparent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <Button
+            android:id="@+id/RecipeSaveButton"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:text="Save"
+            android:elevation="8dp"
+            android:backgroundTint="@color/background_floatingButton"
+            android:textColor="@color/black"/>
+    </androidx.cardview.widget.CardView>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

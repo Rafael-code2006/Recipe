@@ -32,10 +32,12 @@ import java.util.List;
 public class EditRecipe extends AppCompatActivity {
 
     private RecyclerView recyclerView;
+
+    private EditText editTextInsctruction;
     private EditText editTextRecipe;
     private Button saveButton;
     private EditRecipeViewModel viewModel;
-    private  AdapterEditRecipes adapter;
+    private AdapterEditRecipes adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,20 +56,16 @@ public class EditRecipe extends AppCompatActivity {
                 recyclerView.post(() -> setRecyclerViewHeightBasedOnChildren(recyclerView));
             }
         });
-
-
-
-        adapter.setCheckRecipes(ingredient -> {
-                    Log.d("EditRecipe11", "name: " + ingredient.getName());
-                    Log.d("EditRecipe11", "weight" + ingredient.getWeight());
-                    Log.d("EditRecipe11", "unit: " + ingredient.getUnit());
-                });
+        editTextInsctruction.setText(recipes.getInsctruction());
 
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 List<Descriptions> descriptions = adapter.getIngredients();
+                recipes.setName(editTextRecipe.getText().toString());
+                recipes.setInsctruction(editTextInsctruction.getText().toString());
                 viewModel.updateAllIngredients(descriptions);
+                viewModel.editRecipe(recipes);
                 Intent intent = ShowRecipe.newIntent(EditRecipe.this, recipes);
                 startActivity(intent);
                 finish();
@@ -86,6 +84,7 @@ public class EditRecipe extends AppCompatActivity {
         recyclerView = findViewById(R.id.RecyclerViewIngredients);
         editTextRecipe = findViewById(R.id.EditTextRecipe);
         adapter = new AdapterEditRecipes();
+        editTextInsctruction = findViewById(R.id.EditTextInsctructionRecipe);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setNestedScrollingEnabled(false);
         recyclerView.setHasFixedSize(false);
