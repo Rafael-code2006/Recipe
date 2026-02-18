@@ -41,7 +41,7 @@
         android:shadowRadius="4"
         android:text="Recipe"
         android:textColor="@color/my_text_view_back"
-        android:textSize="40sp"
+        android:textSize="35sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/YourRecipeTextView" />
@@ -97,7 +97,7 @@
             </androidx.cardview.widget.CardView>
 
             <TextView
-                android:id="@+id/TextViewNameIngredients"
+                android:id="@+id/TextViewNameRecipe"
                 android:layout_width="350dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -166,7 +166,6 @@
                 android:layout_height="wrap_content"
                 android:nestedScrollingEnabled="false"
                 android:overScrollMode="never"
-                android:layout_marginTop="20dp"
                 tools:listitem="@layout/ingredient_item"
                 tools:itemCount="2" />
 

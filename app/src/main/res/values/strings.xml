@@ -17,6 +17,7 @@
     <string-array name="language">
         <item>Рус</item>
         <item>Eng</item>
+        <item>Каз</item>
 
     </string-array>
 </resources>

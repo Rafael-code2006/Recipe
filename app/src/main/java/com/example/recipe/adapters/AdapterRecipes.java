@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.recipe.R;
 import com.example.recipe.model.Recipes;
+import com.example.recipe.setting.MyApp;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +22,8 @@ public class AdapterRecipes extends RecyclerView.Adapter<AdapterRecipes.RecipesV
 
     // ArrayList
     private List<Recipes> recipes = new ArrayList<>();
+
+    private MyApp myApp = MyApp.getInstance();
 
 
     //Interface object
@@ -77,6 +80,16 @@ public class AdapterRecipes extends RecyclerView.Adapter<AdapterRecipes.RecipesV
 
         holder.ingredientsCount.setText(String.valueOf(recipe.getIngredient_count()));
 
+        if(myApp.getBaseLanguage().equals("Рус")){
+            holder.ingredientsLabel.setText("Ингредиенты:");
+        }
+        if(myApp.getBaseLanguage().equals("Eng")){
+            holder.ingredientsLabel.setText("Ingredients:");
+        }
+        if(myApp.getBaseLanguage().equals("Каз")){
+            holder.ingredientsLabel.setText("Құрамы:");
+        }
+
         if(countIngredients != null){
             Recipes recipeCounter = recipes.get(position);
             countIngredients.CountIngredients(recipeCounter, holder.ingredientsCount);
@@ -101,11 +114,14 @@ public class AdapterRecipes extends RecyclerView.Adapter<AdapterRecipes.RecipesV
         private final TextView ingredientsCount;
         private final ConstraintLayout recipeCard;
 
+        private final TextView ingredientsLabel;
+
         public RecipesViewHolder(@NonNull View itemView) {
             super(itemView);
             recipeTitle = itemView.findViewById(R.id.recipeTitle);
             recipeCard = itemView.findViewById(R.id.recipeCard);
             ingredientsCount = itemView.findViewById(R.id.ingredientsCount);
+            ingredientsLabel = itemView.findViewById(R.id.ingredientsLabel);
         }
     }
 

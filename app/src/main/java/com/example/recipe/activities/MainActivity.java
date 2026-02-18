@@ -9,14 +9,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
-import androidx.recyclerview.widget.RecyclerView;
 
 
 import com.example.recipe.MainHelper;
-import com.example.recipe.adapters.AdapterRecipes;
-import com.example.recipe.viewmodel.MainViewModel;
 import com.example.recipe.R;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -34,6 +30,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         helper = new MainHelper(this);
+
+        helper.changeLanguage();
 
         helper.showRecipes(); // Показ рецептов
 

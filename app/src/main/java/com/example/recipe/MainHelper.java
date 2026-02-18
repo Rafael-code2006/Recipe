@@ -24,6 +24,7 @@ import com.example.recipe.activities.MainActivity;
 import com.example.recipe.activities.ShowRecipe;
 import com.example.recipe.adapters.AdapterRecipes;
 import com.example.recipe.model.Recipes;
+import com.example.recipe.setting.MyApp;
 import com.example.recipe.viewmodel.MainViewModel;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -44,6 +45,8 @@ public class MainHelper {
 
     private FloatingActionButton floatingActionButton;
 
+    private TextView mainRecipeTextView;
+
 
 
     public MainHelper(MainActivity context){
@@ -54,6 +57,7 @@ public class MainHelper {
         RecyclerViewRecipes = context.findViewById(R.id.RecyclerViewRecipes);
         setting = context.findViewById(R.id.SettingButton);
         RecyclerViewRecipes.setAdapter(adapter);
+        mainRecipeTextView = context.findViewById(R.id.main_RecipeTextView);
     }
 
     public void onClickFloatingButton(){
@@ -67,6 +71,19 @@ public class MainHelper {
         });
     }
 
+
+    public void changeLanguage(){
+        String lang = MyApp.getInstance().getBaseLanguage();
+        if(lang.equals("Рус")){
+            mainRecipeTextView.setText("Мои Рецепты");
+        }
+        if(lang.equals("Eng")){
+            mainRecipeTextView.setText("My Recipes");
+        }
+        if(lang.equals("Каз")){
+            mainRecipeTextView.setText("Рецептер");
+        }
+    }
 
     public void onClickSetting(){
         setting.setOnClickListener(new View.OnClickListener() {

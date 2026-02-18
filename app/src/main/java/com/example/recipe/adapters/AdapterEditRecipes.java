@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -15,13 +16,17 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.recipe.R;
 import com.example.recipe.model.Descriptions;
+import com.example.recipe.setting.MyApp;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class AdapterEditRecipes extends RecyclerView.Adapter<AdapterEditRecipes.IngredientViewHolder> {
 
     private List<Descriptions> ingredients = new ArrayList<>();
+
+    private MyApp myApp = MyApp.getInstance();
 
     public interface CheckIngredient {
         void getIngredient(Descriptions ingredient);
@@ -53,6 +58,54 @@ public class AdapterEditRecipes extends RecyclerView.Adapter<AdapterEditRecipes.
     @Override
     public void onBindViewHolder(@NonNull IngredientViewHolder holder, int position) {
         Descriptions ingredient = ingredients.get(position);
+
+        if(myApp.getBaseLanguage().equals("Рус")){
+            holder.title.setText("Ингредиент");
+            holder.editTextNameIngredient.setHint("имя");
+            holder.editTextWeight.setHint("вес");
+            List<String> newEntries = Arrays.asList("кг", "гр", "л", "мл", "мсл", "мчл");
+
+            ArrayAdapter<String> adapter = new ArrayAdapter<>(
+                    holder.itemView.getContext(), // важно: контекст берём из itemView
+                    android.R.layout.simple_spinner_item,
+                    newEntries
+            );
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+            holder.unit.setAdapter(adapter);
+        }
+        if(myApp.getBaseLanguage().equals("Eng")){
+            holder.title.setText("Ingredient");
+            holder.editTextNameIngredient.setHint("name");
+            holder.editTextWeight.setHint("weight");
+            List<String> newEntries = Arrays.asList("kg", "gr", "l", "ml", "tbsp", "tsp");
+
+            ArrayAdapter<String> adapter = new ArrayAdapter<>(
+                    holder.itemView.getContext(), // важно: контекст берём из itemView
+                    android.R.layout.simple_spinner_item,
+                    newEntries
+            );
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+            holder.unit.setAdapter(adapter);
+        }
+        if(myApp.getBaseLanguage().equals("Каз")){
+            holder.title.setText("Құрамы");
+            holder.editTextNameIngredient.setHint("атауы");
+            holder.editTextWeight.setHint("салмағы");
+            List<String> newEntries = Arrays.asList("кг", "гр", "л", "мл", "өақ", "өшқ");
+
+            ArrayAdapter<String> adapter = new ArrayAdapter<>(
+                    holder.itemView.getContext(), // важно: контекст берём из itemView
+                    android.R.layout.simple_spinner_item,
+                    newEntries
+            );
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+            holder.unit.setAdapter(adapter);
+        }
+
+
 
         // Заполняем поля текущими данными
         holder.editTextNameIngredient.setText(ingredient.getName());
@@ -131,6 +184,8 @@ public class AdapterEditRecipes extends RecyclerView.Adapter<AdapterEditRecipes.
 
     // --- ViewHolder ---
     class IngredientViewHolder extends RecyclerView.ViewHolder {
+
+        TextView title;
         EditText editTextNameIngredient;
         EditText editTextWeight;
         Spinner unit;
@@ -138,6 +193,7 @@ public class AdapterEditRecipes extends RecyclerView.Adapter<AdapterEditRecipes.
 
         public IngredientViewHolder(@NonNull View itemView) {
             super(itemView);
+            title = itemView.findViewById(R.id.TextViewIngredient);
             editTextNameIngredient = itemView.findViewById(R.id.EditTextNameIngredient);
             editTextWeight = itemView.findViewById(R.id.EditTextWeight);
             unit = itemView.findViewById(R.id.SpinnerUnit);

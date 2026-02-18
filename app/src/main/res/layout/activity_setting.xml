@@ -10,7 +10,7 @@
 
     <TextView
         android:id="@+id/main_RecipeTextView"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="62dp"
         android:layout_marginTop="48dp"
         android:layout_marginStart="25dp"
@@ -84,12 +84,13 @@
             android:id="@+id/LanguageIcon"
             android:layout_width="30dp"
             android:layout_height="30dp"
-            android:src="@drawable/russia" />
+            android:src="@drawable/russia_test" />
 
 
 
-        <EditText
-            android:id="@+id/EditTextSettingName"
+
+        <TextView
+            android:id="@+id/TextSettingName"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"

@@ -21,6 +21,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.example.recipe.model.Descriptions;
 import com.example.recipe.R;
+import com.example.recipe.setting.MyApp;
 import com.example.recipe.viewmodel.RecipeShowViewModel;
 import com.example.recipe.model.Recipes;
 
@@ -31,6 +32,10 @@ public class ShowRecipe extends AppCompatActivity {
     // TextView
     private TextView RecipeTextViewShow;
     private TextView textViewInstructionContent;
+
+    private TextView title;
+    private TextView ingredientsTitle;
+    private TextView instructionTitle;
 
 
     // Button
@@ -46,6 +51,8 @@ public class ShowRecipe extends AppCompatActivity {
     private RecipeShowViewModel recipeShowViewModel;
     private View textViewIngredients;
 
+    private MyApp myApp;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,8 +65,23 @@ public class ShowRecipe extends AppCompatActivity {
 
         showRecipe(recipes.getId()); // Показ ингридиентов
 
-        EditButtonClick(recipes); // Слушатель клика на редактирование
+        EditButtonClick(recipes);// Слушатель клика на редактирование
 
+        if(myApp.getBaseLanguage().equals("Рус")){
+            title.setText("Рецепт");
+            ingredientsTitle.setText("Ингредиенты");
+            instructionTitle.setText("Инструкция");
+        }
+        if(myApp.getBaseLanguage().equals("Eng")){
+            title.setText("Recipe");
+            ingredientsTitle.setText("Ingredients");
+            instructionTitle.setText("Instruction");
+        }
+        if(myApp.getBaseLanguage().equals("Каз")){
+            title.setText("Рецепт");
+            ingredientsTitle.setText("Құрамы");
+            instructionTitle.setText("Нұсқаулық");
+        }
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
@@ -75,6 +97,11 @@ public class ShowRecipe extends AppCompatActivity {
         recipeShowViewModel = new ViewModelProvider(this).get(RecipeShowViewModel.class);
         textViewInstructionContent = findViewById(R.id.TextViewInstructionContent);
         linearLayout = findViewById(R.id.ingredientsContainer);
+        myApp = MyApp.getInstance();
+        title = findViewById(R.id.YourRecipeTextView);
+        ingredientsTitle = findViewById(R.id.TextViewIngredients);
+        instructionTitle = findViewById(R.id.TextViewInstruction);
+
     }
 
     private void showRecipe(long recipe_id) {

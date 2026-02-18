@@ -21,6 +21,7 @@ import androidx.core.view.WindowInsetsCompat;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.example.recipe.setting.MyApp;
 import com.example.recipe.viewmodel.AddRecipeModelView;
 import com.example.recipe.model.Descriptions;
 import com.example.recipe.R;
@@ -33,6 +34,10 @@ import java.util.List;
 public class AddRecipe extends AppCompatActivity {
 
     private static final String TAG = "AddRecipe1";
+
+    private TextView title;
+    private TextView nameRecipeTitle;
+    private TextView instructionTitle;
 
 
     // EditText
@@ -54,6 +59,8 @@ public class AddRecipe extends AppCompatActivity {
     // ViewModel
     private AddRecipeModelView addRecipeModelView;
 
+    private MyApp myApp;
+
 
 
     @Override
@@ -63,6 +70,8 @@ public class AddRecipe extends AppCompatActivity {
         setContentView(R.layout.activity_add_recipe);
 
         InitViews(); // Инициализация
+
+        changeLanguage();
 
         FloatingClickButton(); // Добавление поле для ингридиента
 
@@ -75,7 +84,29 @@ public class AddRecipe extends AppCompatActivity {
         });
     }
 
-
+    private void changeLanguage() {
+        if(myApp.getBaseLanguage().equals("Рус")){
+            title.setText("Добавить Рецепт");
+            nameRecipeTitle.setText("Имя рецепта:");
+            instructionTitle.setText("Инструкция:");
+            editTextRecipe.setHint("имя");
+            editTextInsctructionRecipe.setHint("инструкция");
+        }
+        if(myApp.getBaseLanguage().equals("Eng")){
+            title.setText("Add Recipe");
+            nameRecipeTitle.setText("Recipe name");
+            instructionTitle.setText("Insctruction");
+            editTextRecipe.setHint("name");
+            editTextInsctructionRecipe.setHint("instruction");
+        }
+        if(myApp.getBaseLanguage().equals("Каз")){
+            title.setText("Рецепт Қосыңыз");
+            nameRecipeTitle.setText("Рецепт атауы");
+            instructionTitle.setText("Нұсқаулық");
+            editTextRecipe.setHint("атауы");
+            editTextInsctructionRecipe.setHint("нұсқаулық");
+        }
+    }
 
 
     private void InitViews() {
@@ -85,6 +116,11 @@ public class AddRecipe extends AppCompatActivity {
         floatingActionButton = findViewById(R.id.floatingActionButton);
         addRecipeModelView = new ViewModelProvider(this).get(AddRecipeModelView.class);
         editTextInsctructionRecipe = findViewById(R.id.EditTextInsctructionRecipe);
+        myApp = MyApp.getInstance();
+        title = findViewById(R.id.CreateRecipeTextView);
+        nameRecipeTitle = findViewById(R.id.TextViewRecipeName);
+        instructionTitle = findViewById(R.id.TextViewInstructionRecipe);
+
     }
 
     private void FloatingClickButton(){

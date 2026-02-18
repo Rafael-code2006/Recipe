@@ -3,12 +3,12 @@ package com.example.recipe.activities;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -24,6 +24,7 @@ import com.example.recipe.R;
 import com.example.recipe.adapters.AdapterEditRecipes;
 import com.example.recipe.model.Descriptions;
 import com.example.recipe.model.Recipes;
+import com.example.recipe.setting.MyApp;
 import com.example.recipe.viewmodel.EditRecipeViewModel;
 
 import java.io.Serializable;
@@ -33,11 +34,18 @@ public class EditRecipe extends AppCompatActivity {
 
     private RecyclerView recyclerView;
 
+    private TextView title;
+    private TextView nameRecipeTitle;
+    private TextView ingredientsTitle;
+    private TextView instructionTitle;
+
     private EditText editTextInsctruction;
     private EditText editTextRecipe;
     private Button saveButton;
     private EditRecipeViewModel viewModel;
     private AdapterEditRecipes adapter;
+
+    private MyApp myApp;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,17 +55,21 @@ public class EditRecipe extends AppCompatActivity {
         initView();
 
         Recipes recipes = (Recipes) getIntent().getSerializableExtra("Recipe");
-        editTextRecipe.setText(recipes.getName());
-        viewModel.loadIngredients(recipes);
-        viewModel.getIngredients().observe(this, new Observer<List<Descriptions>>() {
-            @Override
-            public void onChanged(List<Descriptions> descriptions) {
-                adapter.setIngredient(descriptions);
-                recyclerView.post(() -> setRecyclerViewHeightBasedOnChildren(recyclerView));
-            }
-        });
-        editTextInsctruction.setText(recipes.getInsctruction());
 
+        setStarted(recipes);
+
+        clickSaveButton(recipes);
+
+        changeLanguage();
+
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+                Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+                v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+                return insets;
+            });
+        }
+
+    private void clickSaveButton(Recipes recipes) {
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -73,12 +85,47 @@ public class EditRecipe extends AppCompatActivity {
 
             }
         });
-            ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-                Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-                v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-                return insets;
-            });
+    }
+
+    private void setStarted(Recipes recipes) {
+        editTextRecipe.setText(recipes.getName());
+        viewModel.loadIngredients(recipes);
+        viewModel.getIngredients().observe(this, new Observer<List<Descriptions>>() {
+            @Override
+            public void onChanged(List<Descriptions> descriptions) {
+                adapter.setIngredient(descriptions);
+                recyclerView.post(() -> setRecyclerViewHeightBasedOnChildren(recyclerView));
+            }
+        });
+        editTextInsctruction.setText(recipes.getInsctruction());
+    }
+
+    private void changeLanguage() {
+        if(myApp.getBaseLanguage().equals("Рус")){
+            title.setText("Изменить Рецепт");
+            nameRecipeTitle.setText("Имя");
+            ingredientsTitle.setText("Ингредиенты");
+            instructionTitle.setText("Инструкция");
+            editTextRecipe.setHint("имя");
+            editTextInsctruction.setHint("инструкция");
         }
+        if(myApp.getBaseLanguage().equals("Eng")){
+            title.setText("Edit Recipe");
+            nameRecipeTitle.setText("Name");
+            ingredientsTitle.setText("Ingredients");
+            instructionTitle.setText("Instruction");
+            editTextRecipe.setHint("name");
+            editTextInsctruction.setHint("insctruction");
+        }
+        if(myApp.getBaseLanguage().equals("Каз")){
+            title.setText("Рецептті Өңдеу");
+            nameRecipeTitle.setText("Атауы");
+            ingredientsTitle.setText("Құрамы");
+            instructionTitle.setText("Нұсқаулық");
+            editTextRecipe.setHint("атауы");
+            editTextInsctruction.setHint("нұсқаулық");
+        }
+    }
 
     private void initView(){
         recyclerView = findViewById(R.id.RecyclerViewIngredients);
@@ -91,6 +138,11 @@ public class EditRecipe extends AppCompatActivity {
         recyclerView.setAdapter(adapter);
         viewModel = new ViewModelProvider(this).get(EditRecipeViewModel.class);
         saveButton = findViewById(R.id.RecipeEditButton);
+        myApp = MyApp.getInstance();
+        title = findViewById(R.id.YourRecipeTextView);
+        nameRecipeTitle = findViewById(R.id.TextViewNameRecipe);
+        ingredientsTitle = findViewById(R.id.TextViewIngredients);
+        instructionTitle = findViewById(R.id.TextViewInstruction);
     }
 
     private void setRecyclerViewHeightBasedOnChildren(RecyclerView recyclerView) {

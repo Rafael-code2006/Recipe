@@ -10,15 +10,15 @@
     <!-- Заголовок -->
     <TextView
         android:id="@+id/CreateRecipeTextView"
-        android:layout_width="350dp"
+        android:layout_width="wrap_content"
         android:layout_height="62dp"
         android:layout_marginTop="50dp"
+        android:layout_marginStart="30dp"
         android:fontFamily="@font/open_sans_bold"
         android:gravity="left"
         android:text="Add Recipe"
         android:textColor="@color/my_text_view_back"
-        android:textSize="40sp"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:textSize="35sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -81,7 +81,7 @@
                     android:inputType="text"
                     android:paddingStart="16dp"
                     android:paddingTop="15dp"
-                    android:textColor="#DEDEDE"
+                    android:textColor="@color/my_textView_gray"
                     android:textColorHint="@android:color/darker_gray"
                     android:textSize="13sp"
                     android:background="@null"/>
@@ -128,7 +128,7 @@
                     android:scrollbars="vertical"
                     android:overScrollMode="always"
                     android:padding="12dp"
-                    android:textColor="@android:color/black"
+                    android:textColor="@color/my_textView_gray"
                     android:textColorHint="@android:color/darker_gray"
                     android:textSize="13sp"
                     android:background="@null"/>
