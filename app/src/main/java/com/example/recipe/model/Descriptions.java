@@ -8,8 +8,8 @@ import androidx.room.PrimaryKey;
 public class Descriptions {
 
     @PrimaryKey(autoGenerate = true)
-    long id_description;
-    long recipe_id;
+    public long id_description;
+    public long recipe_id;
     private String name;
     private float weight;
 
@@ -32,6 +32,8 @@ public class Descriptions {
         this.unit = unit;
     }
 
+    public Descriptions() {
+    }
 
     public long getId_description() {
         return id_description;
@@ -39,6 +41,10 @@ public class Descriptions {
 
     public long getRecipe_id() {
         return recipe_id;
+    }
+
+    public void setRecipe_id(long recipe_id) {
+        this.recipe_id = recipe_id;
     }
 
     public String getName() {

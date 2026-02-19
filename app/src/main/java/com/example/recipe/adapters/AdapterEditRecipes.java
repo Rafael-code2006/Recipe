@@ -26,6 +26,8 @@ public class AdapterEditRecipes extends RecyclerView.Adapter<AdapterEditRecipes.
 
     private List<Descriptions> ingredients = new ArrayList<>();
 
+
+
     private MyApp myApp = MyApp.getInstance();
 
 
@@ -60,23 +62,22 @@ public class AdapterEditRecipes extends RecyclerView.Adapter<AdapterEditRecipes.
 
     @Override
     public void onBindViewHolder(@NonNull IngredientViewHolder holder, int position) {
-
         Descriptions ingredient = ingredients.get(position);
 
-        // ---------- Язык ----------
+        holder.isBinding = true; // начинаем биндинг
+
+        // --- Язык ---
         switch (myApp.getBaseLanguage()) {
             case "Рус":
                 holder.title.setText("Ингредиент");
                 holder.editTextNameIngredient.setHint("имя");
                 holder.editTextWeight.setHint("вес");
                 break;
-
             case "Eng":
                 holder.title.setText("Ingredient");
                 holder.editTextNameIngredient.setHint("name");
                 holder.editTextWeight.setHint("weight");
                 break;
-
             case "Каз":
                 holder.title.setText("Құрамы");
                 holder.editTextNameIngredient.setHint("атауы");
@@ -84,99 +85,92 @@ public class AdapterEditRecipes extends RecyclerView.Adapter<AdapterEditRecipes.
                 break;
         }
 
-        // ---------- Spinner ----------
-        List<String> units = myApp.unit();
+        // --- Spinner ---
+        List<String> tempUnits = myApp.unit();
+        if (tempUnits == null) tempUnits = new ArrayList<>();
+        final List<String> units = tempUnits;
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(
+        String unitText = ingredient.getUnit();
+        if (unitText == null || unitText.isEmpty()) unitText = units.isEmpty() ? "" : units.get(0);
+        unitText = checkLanguage(unitText, units);
+        holder.TextViewUnit.setText(unitText);
+
+        ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(
                 holder.itemView.getContext(),
                 android.R.layout.simple_spinner_item,
                 units
         );
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        holder.unit.setAdapter(adapter);
+        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        holder.unit.setAdapter(spinnerAdapter);
 
-        // ---------- Используем checkLanguage ----------
-        String unitText = checkLanguage(ingredient.getUnit(), units);
+        int index = units.indexOf(unitText);
+        holder.unit.setSelection(index != -1 ? index : 0, false);
 
-        // Ищем индекс в текущем списке
-        int index = -1;
-        for (int i = 0; i < units.size(); i++) {
-            if (units.get(i).equals(unitText)) {
-                index = i;
-                break;
+        // --- Spinner Listener ---
+        holder.unit.setOnItemSelectedListener(null);
+        holder.unit.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
+                if (holder.isBinding) return; // игнорируем событие при биндинге
+                String selected = units.get(pos);
+                ingredient.setUnit(selected);
+                holder.TextViewUnit.setText(selected);
+                if (checkIngredient != null) checkIngredient.getIngredient(ingredient);
             }
-        }
+            @Override public void onNothingSelected(AdapterView<?> parent) {}
+        });
 
-        if (index != -1) {
-            holder.unit.setSelection(index, false); // false чтобы не вызвать listener
-            holder.TextViewUnit.setText(unitText);
-        } else {
-            holder.TextViewUnit.setText("");
-        }
-
-        // ---------- Заполняем данные ----------
+        // --- Заполняем EditText ---
         holder.editTextNameIngredient.setText(ingredient.getName());
         holder.editTextWeight.setText(
                 ingredient.getWeight() == 0 ? "" : String.valueOf(ingredient.getWeight())
         );
 
-        // ---------- Listener Spinner ----------
-        holder.unit.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
-                String selected = units.get(pos);
-                ingredient.setUnit(selected);
-                holder.TextViewUnit.setText(selected);
-
-                if (checkIngredient != null) {
-                    checkIngredient.getIngredient(ingredient);
-                }
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) { }
-        });
-
-        // ---------- TextWatcher NAME ----------
-        holder.editTextNameIngredient.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) { }
-
+        // --- TextWatcher NAME ---
+        if (holder.editTextNameIngredient.getTag() instanceof TextWatcher) {
+            holder.editTextNameIngredient.removeTextChangedListener(
+                    (TextWatcher) holder.editTextNameIngredient.getTag()
+            );
+        }
+        TextWatcher nameWatcher = new TextWatcher() {
+            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            @Override public void onTextChanged(CharSequence s, int start, int before, int count) {}
             @Override
             public void afterTextChanged(Editable s) {
+                if (holder.isBinding) return; // игнорируем при биндинге
                 ingredient.setName(s.toString());
-                if (checkIngredient != null) {
-                    checkIngredient.getIngredient(ingredient);
-                }
+                if (checkIngredient != null) checkIngredient.getIngredient(ingredient);
             }
-        });
+        };
+        holder.editTextNameIngredient.addTextChangedListener(nameWatcher);
+        holder.editTextNameIngredient.setTag(nameWatcher);
 
-        // ---------- TextWatcher WEIGHT ----------
-        holder.editTextWeight.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) { }
-
+        // --- TextWatcher WEIGHT ---
+        if (holder.editTextWeight.getTag() instanceof TextWatcher) {
+            holder.editTextWeight.removeTextChangedListener(
+                    (TextWatcher) holder.editTextWeight.getTag()
+            );
+        }
+        TextWatcher weightWatcher = new TextWatcher() {
+            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            @Override public void onTextChanged(CharSequence s, int start, int before, int count) {}
             @Override
             public void afterTextChanged(Editable s) {
+                if (holder.isBinding) return; // игнорируем при биндинге
                 float weight = 0;
-                try {
-                    weight = Float.parseFloat(s.toString());
-                } catch (NumberFormatException ignored) { }
-
+                try { weight = Float.parseFloat(s.toString()); } catch (NumberFormatException ignored) {}
                 ingredient.setWeight(weight);
-
-                if (checkIngredient != null) {
-                    checkIngredient.getIngredient(ingredient);
-                }
+                if (checkIngredient != null) checkIngredient.getIngredient(ingredient);
             }
-        });
+        };
+        holder.editTextWeight.addTextChangedListener(weightWatcher);
+        holder.editTextWeight.setTag(weightWatcher);
+
+        holder.isBinding = false; // биндинг завершён
     }
+
+
+
 
 
 
@@ -206,12 +200,12 @@ public class AdapterEditRecipes extends RecyclerView.Adapter<AdapterEditRecipes.
 
     // --- ViewHolder ---
     class IngredientViewHolder extends RecyclerView.ViewHolder {
-
         TextView title;
         EditText editTextNameIngredient;
         EditText editTextWeight;
         Spinner unit;
         TextView TextViewUnit;
+        boolean isBinding = false; // <-- новый флаг
 
         public IngredientViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -222,4 +216,5 @@ public class AdapterEditRecipes extends RecyclerView.Adapter<AdapterEditRecipes.
             TextViewUnit = itemView.findViewById(R.id.TextViewUnit);
         }
     }
+
 }

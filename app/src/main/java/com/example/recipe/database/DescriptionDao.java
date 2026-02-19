@@ -2,6 +2,7 @@ package com.example.recipe.database;
 // cd /d/1AndroidStudioProjects/Recipe
 import androidx.room.Dao;
 import androidx.room.Insert;
+import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 import androidx.room.Update;
 
@@ -17,6 +18,12 @@ public interface DescriptionDao{
 
     @Insert
     Completable add(Descriptions description);
+
+    @Insert
+    Completable addList(List<Descriptions> desc);
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    Completable saveIngredient(Descriptions description);
 
     @Query("DELETE FROM descriptions WHERE id_description = :id_description")
     Completable remove(long id_description);
@@ -38,5 +45,7 @@ public interface DescriptionDao{
 
 
     @Update
-    void updateIngredients(List<Descriptions> ingredients);
+    void updateAllIngredients(List<Descriptions> ingredients);
+    @Update
+    Completable updateIngredients(Descriptions ingredients);
 }

@@ -1,8 +1,10 @@
 package com.example.recipe.activities;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,11 +28,19 @@ import com.example.recipe.model.Descriptions;
 import com.example.recipe.model.Recipes;
 import com.example.recipe.setting.MyApp;
 import com.example.recipe.viewmodel.EditRecipeViewModel;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.disposables.CompositeDisposable;
+import io.reactivex.rxjava3.disposables.Disposable;
+
 public class EditRecipe extends AppCompatActivity {
+
+    private CompositeDisposable compositeDisposable = new CompositeDisposable();
 
     private RecyclerView recyclerView;
 
@@ -39,12 +49,16 @@ public class EditRecipe extends AppCompatActivity {
     private TextView ingredientsTitle;
     private TextView instructionTitle;
 
+    private FloatingActionButton addIngredient;
+
     private EditText editTextInsctruction;
     private EditText editTextRecipe;
     private Button saveButton;
     private EditRecipeViewModel viewModel;
     private AdapterEditRecipes adapter;
     private MyApp myApp;
+
+    private static int totalHeight = -1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,6 +75,23 @@ public class EditRecipe extends AppCompatActivity {
 
         changeLanguage();
 
+        addIngredient.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                List<Descriptions> newDescriptions = adapter.getIngredients();
+                Descriptions desc = new Descriptions();
+                desc.setRecipe_id(recipes.getId());
+                desc.setName("");
+                desc.setUnit("kg");
+                desc.setWeight(1f);
+                recyclerView.post(() -> setRecyclerViewHeightBasedOnChildren(recyclerView, 25));
+                newDescriptions.add(desc);
+                adapter.setIngredient(newDescriptions);
+                adapter.notifyDataSetChanged();
+            }
+        });
+
+
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
                 Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
                 v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
@@ -68,23 +99,35 @@ public class EditRecipe extends AppCompatActivity {
             });
         }
 
+
     private void clickSaveButton(Recipes recipes) {
-        saveButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                List<Descriptions> descriptions = adapter.getIngredients();
-                recipes.setName(editTextRecipe.getText().toString());
-                recipes.setInsctruction(editTextInsctruction.getText().toString());
-                viewModel.updateAllIngredients(descriptions);
-                viewModel.editRecipe(recipes);
-                Intent intent = ShowRecipe.newIntent(EditRecipe.this, recipes);
-                startActivity(intent);
-                finish();
+        saveButton.setOnClickListener(v -> {
+
+            List<Descriptions> descriptions = adapter.getIngredients();
+
+            recipes.setName(editTextRecipe.getText().toString());
+            recipes.setInsctruction(editTextInsctruction.getText().toString());
+
+            Disposable disposable = viewModel.saveAllIngredients(descriptions)
+                    .andThen(viewModel.editRecipe(recipes))
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(() -> {
+
+                        Intent intent = ShowRecipe.newIntent(EditRecipe.this, recipes);
+                        startActivity(intent);
+                        finish();
+
+                    }, throwable -> {
+                        Log.d("EditRecipe", throwable.getMessage());
+                    });
+
+            compositeDisposable.add(disposable);
 
 
-            }
         });
+
     }
+
 
     private void setStarted(Recipes recipes) {
         editTextRecipe.setText(recipes.getName());
@@ -93,7 +136,7 @@ public class EditRecipe extends AppCompatActivity {
             @Override
             public void onChanged(List<Descriptions> descriptions) {
                 adapter.setIngredient(descriptions);
-                recyclerView.post(() -> setRecyclerViewHeightBasedOnChildren(recyclerView));
+                recyclerView.post(() -> setRecyclerViewHeightBasedOnChildren(recyclerView ,50));
             }
         });
         editTextInsctruction.setText(recipes.getInsctruction());
@@ -142,34 +185,55 @@ public class EditRecipe extends AppCompatActivity {
         nameRecipeTitle = findViewById(R.id.TextViewNameRecipe);
         ingredientsTitle = findViewById(R.id.TextViewIngredients);
         instructionTitle = findViewById(R.id.TextViewInstruction);
+        addIngredient = findViewById(R.id.floatingActionButton);
     }
 
-    private void setRecyclerViewHeightBasedOnChildren(RecyclerView recyclerView) {
+    /**
+     * Обновляет высоту RecyclerView на основе нового элемента.
+     * @param recyclerView - сам RecyclerView
+     * @param size - дополнительный размер/отступ (например, 30px)
+     */
+    private void setRecyclerViewHeightBasedOnChildren(RecyclerView recyclerView, int size) {
         RecyclerView.Adapter adapter = recyclerView.getAdapter();
-        if (adapter == null) return;
+        if (adapter == null || adapter.getItemCount() == 0) return;
 
-        int totalHeight = 0;
-        for (int i = 0; i < adapter.getItemCount(); i++) {
-            RecyclerView.ViewHolder holder = adapter.createViewHolder(recyclerView, adapter.getItemViewType(i));
-            adapter.onBindViewHolder(holder, i);
+        int marginPx = (int) TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP,
+                8,  // стандартный отступ между элементами
+                recyclerView.getResources().getDisplayMetrics()
+        );
+
+        // Если глобальный totalHeight не определён, инициализируем его
+        if (totalHeight == -1) {
+            totalHeight = 0;
+            for (int i = 0; i < adapter.getItemCount(); i++) {
+                RecyclerView.ViewHolder holder = adapter.createViewHolder(recyclerView, adapter.getItemViewType(i));
+                adapter.onBindViewHolder(holder, i);
+                holder.itemView.measure(
+                        View.MeasureSpec.makeMeasureSpec(recyclerView.getWidth(), View.MeasureSpec.EXACTLY),
+                        View.MeasureSpec.UNSPECIFIED
+                );
+                totalHeight += holder.itemView.getMeasuredHeight() + marginPx + size;
+            }
+        } else {
+            // измеряем только последний (новый) элемент
+            int position = adapter.getItemCount() - 1;
+            RecyclerView.ViewHolder holder = adapter.createViewHolder(recyclerView, adapter.getItemViewType(position));
+            adapter.onBindViewHolder(holder, position);
             holder.itemView.measure(
                     View.MeasureSpec.makeMeasureSpec(recyclerView.getWidth(), View.MeasureSpec.EXACTLY),
                     View.MeasureSpec.UNSPECIFIED
             );
-            totalHeight += holder.itemView.getMeasuredHeight();
-
-            // Если в item layout есть margin, можно добавить здесь, например 8dp в px:
-            int marginPx = (int) TypedValue.applyDimension(
-                    TypedValue.COMPLEX_UNIT_DIP, 8, recyclerView.getResources().getDisplayMetrics());
-            totalHeight += marginPx + 50;
+            totalHeight += holder.itemView.getMeasuredHeight() + marginPx + size;
         }
 
-
+        // применяем новую высоту
         ViewGroup.LayoutParams params = recyclerView.getLayoutParams();
         params.height = totalHeight;
         recyclerView.setLayoutParams(params);
         recyclerView.requestLayout();
     }
+
 
 
 
