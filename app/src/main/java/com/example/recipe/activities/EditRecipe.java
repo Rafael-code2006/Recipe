@@ -44,7 +44,6 @@ public class EditRecipe extends AppCompatActivity {
     private Button saveButton;
     private EditRecipeViewModel viewModel;
     private AdapterEditRecipes adapter;
-
     private MyApp myApp;
 
     @Override

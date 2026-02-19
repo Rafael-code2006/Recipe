@@ -28,6 +28,9 @@ public class AdapterEditRecipes extends RecyclerView.Adapter<AdapterEditRecipes.
 
     private MyApp myApp = MyApp.getInstance();
 
+
+    private List<String> unit;
+
     public interface CheckIngredient {
         void getIngredient(Descriptions ingredient);
     }
@@ -57,72 +60,84 @@ public class AdapterEditRecipes extends RecyclerView.Adapter<AdapterEditRecipes.
 
     @Override
     public void onBindViewHolder(@NonNull IngredientViewHolder holder, int position) {
+
         Descriptions ingredient = ingredients.get(position);
 
-        if(myApp.getBaseLanguage().equals("Рус")){
-            holder.title.setText("Ингредиент");
-            holder.editTextNameIngredient.setHint("имя");
-            holder.editTextWeight.setHint("вес");
-            List<String> newEntries = Arrays.asList("кг", "гр", "л", "мл", "мсл", "мчл");
+        // ---------- Язык ----------
+        switch (myApp.getBaseLanguage()) {
+            case "Рус":
+                holder.title.setText("Ингредиент");
+                holder.editTextNameIngredient.setHint("имя");
+                holder.editTextWeight.setHint("вес");
+                break;
 
-            ArrayAdapter<String> adapter = new ArrayAdapter<>(
-                    holder.itemView.getContext(), // важно: контекст берём из itemView
-                    android.R.layout.simple_spinner_item,
-                    newEntries
-            );
-            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            case "Eng":
+                holder.title.setText("Ingredient");
+                holder.editTextNameIngredient.setHint("name");
+                holder.editTextWeight.setHint("weight");
+                break;
 
-            holder.unit.setAdapter(adapter);
-        }
-        if(myApp.getBaseLanguage().equals("Eng")){
-            holder.title.setText("Ingredient");
-            holder.editTextNameIngredient.setHint("name");
-            holder.editTextWeight.setHint("weight");
-            List<String> newEntries = Arrays.asList("kg", "gr", "l", "ml", "tbsp", "tsp");
-
-            ArrayAdapter<String> adapter = new ArrayAdapter<>(
-                    holder.itemView.getContext(), // важно: контекст берём из itemView
-                    android.R.layout.simple_spinner_item,
-                    newEntries
-            );
-            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
-            holder.unit.setAdapter(adapter);
-        }
-        if(myApp.getBaseLanguage().equals("Каз")){
-            holder.title.setText("Құрамы");
-            holder.editTextNameIngredient.setHint("атауы");
-            holder.editTextWeight.setHint("салмағы");
-            List<String> newEntries = Arrays.asList("кг", "гр", "л", "мл", "өақ", "өшқ");
-
-            ArrayAdapter<String> adapter = new ArrayAdapter<>(
-                    holder.itemView.getContext(), // важно: контекст берём из itemView
-                    android.R.layout.simple_spinner_item,
-                    newEntries
-            );
-            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
-            holder.unit.setAdapter(adapter);
+            case "Каз":
+                holder.title.setText("Құрамы");
+                holder.editTextNameIngredient.setHint("атауы");
+                holder.editTextWeight.setHint("салмағы");
+                break;
         }
 
+        // ---------- Spinner ----------
+        List<String> units = myApp.unit();
 
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(
+                holder.itemView.getContext(),
+                android.R.layout.simple_spinner_item,
+                units
+        );
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        holder.unit.setAdapter(adapter);
 
-        // Заполняем поля текущими данными
-        holder.editTextNameIngredient.setText(ingredient.getName());
-        holder.editTextWeight.setText(String.valueOf(ingredient.getWeight()));
+        // ---------- Используем checkLanguage ----------
+        String unitText = checkLanguage(ingredient.getUnit(), units);
 
-        // Устанавливаем Spinner
-        String[] units = holder.unit.getResources().getStringArray(R.array.ingredients_unit);
-        for (int i = 0; i < units.length; i++) {
-            if (units[i].equals(ingredient.getUnit())) {
-                holder.unit.setSelection(i);
-
+        // Ищем индекс в текущем списке
+        int index = -1;
+        for (int i = 0; i < units.size(); i++) {
+            if (units.get(i).equals(unitText)) {
+                index = i;
                 break;
             }
         }
 
+        if (index != -1) {
+            holder.unit.setSelection(index, false); // false чтобы не вызвать listener
+            holder.TextViewUnit.setText(unitText);
+        } else {
+            holder.TextViewUnit.setText("");
+        }
 
-        // --- TextWatcher для EditText Name ---
+        // ---------- Заполняем данные ----------
+        holder.editTextNameIngredient.setText(ingredient.getName());
+        holder.editTextWeight.setText(
+                ingredient.getWeight() == 0 ? "" : String.valueOf(ingredient.getWeight())
+        );
+
+        // ---------- Listener Spinner ----------
+        holder.unit.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
+                String selected = units.get(pos);
+                ingredient.setUnit(selected);
+                holder.TextViewUnit.setText(selected);
+
+                if (checkIngredient != null) {
+                    checkIngredient.getIngredient(ingredient);
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) { }
+        });
+
+        // ---------- TextWatcher NAME ----------
         holder.editTextNameIngredient.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
@@ -139,7 +154,7 @@ public class AdapterEditRecipes extends RecyclerView.Adapter<AdapterEditRecipes.
             }
         });
 
-        // --- TextWatcher для EditText Weight ---
+        // ---------- TextWatcher WEIGHT ----------
         holder.editTextWeight.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
@@ -152,29 +167,36 @@ public class AdapterEditRecipes extends RecyclerView.Adapter<AdapterEditRecipes.
                 float weight = 0;
                 try {
                     weight = Float.parseFloat(s.toString());
-                } catch (NumberFormatException e) { }
+                } catch (NumberFormatException ignored) { }
+
                 ingredient.setWeight(weight);
+
                 if (checkIngredient != null) {
                     checkIngredient.getIngredient(ingredient);
                 }
             }
         });
+    }
 
-        // --- Listener для Spinner Unit ---
-        holder.unit.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                ingredient.setUnit(parent.getItemAtPosition(position).toString());
-                if (checkIngredient != null) {
-                    checkIngredient.getIngredient(ingredient);
-                }
-                String selected = parent.getItemAtPosition(position).toString();
-                holder.TextViewUnit.setText(selected);
+
+
+    private String checkLanguage(String unit, List<String> units) {
+        for(int i=0; i<3; i++){
+            List<String> current;
+            if(i == 0){
+                current = myApp.getRusUnit();
+            } else if(i == 1){
+                current = myApp.getEngUnit();
+            } else{
+                current = myApp.getKazUnit();
             }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) { }
-        });
+            for(int j=0; j < current.size(); j++){
+                if(unit.equals(current.get(j))){
+                    unit = units.get(j);
+                }
+            }
+        }
+        return unit;
     }
 
     @Override

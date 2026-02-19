@@ -5,6 +5,7 @@ import static android.view.View.INVISIBLE;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -25,6 +26,7 @@ import com.example.recipe.setting.MyApp;
 import com.example.recipe.viewmodel.RecipeShowViewModel;
 import com.example.recipe.model.Recipes;
 
+import java.util.Arrays;
 import java.util.List;
 
 public class ShowRecipe extends AppCompatActivity {
@@ -136,22 +138,44 @@ public class ShowRecipe extends AppCompatActivity {
                     TextView weightIngredient = view.findViewById(R.id.ingredientWeight);
                     TextView unitIngredient = view.findViewById(R.id.ingredientWeightType);
 
+
+                    List<String> units = myApp.unit();
+
+                    String unit = x.getUnit();
+                    unit = checkLanguage(unit, units);
+
+                    Log.d("RecipeShow11", "unit:" + unit);
+
                     nameIngredient.setText(x.getName());
                     float weight = x.getWeight();
-                    String unit = x.getUnit();
-
-                    if (unit.equals("кг") || unit.equals("л")) {
-                        weight = weight / 1000;
-                    }
 
                     weightIngredient.setText(String.valueOf(weight));
-                    unitIngredient.setText(x.getUnit());
+                    unitIngredient.setText(unit);
 
                     
                     linearLayout.addView(view);
                 }
             }
         });
+    }
+
+    private String checkLanguage(String unit, List<String> units) {
+        for(int i=0; i<3; i++){
+            List<String> current;
+            if(i == 0){
+                current = myApp.getRusUnit();
+            } else if(i == 1){
+                current = myApp.getEngUnit();
+            } else{
+                current = myApp.getKazUnit();
+            }
+            for(int j=0; j < current.size(); j++){
+                if(unit.equals(current.get(j))){
+                    unit = units.get(j);
+                }
+            }
+        }
+        return unit;
     }
 
     private void EditButtonClick(Recipes recipe){
