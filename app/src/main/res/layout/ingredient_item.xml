@@ -69,6 +69,8 @@
                     android:layout_height="50dp"
                     android:background="@drawable/weight_border"
                     android:gravity="center"
+                    android:paddingStart="7dp"
+                    android:paddingEnd="7dp"
                     android:hint="Weight"
                     android:inputType="numberDecimal"
                     android:minHeight="48dp"

@@ -45,24 +45,48 @@
         android:layout_marginStart="30dp"
         android:layout_marginEnd="8dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/RecipeImportButton"
+        app:layout_constraintEnd_toStartOf="@id/RecipeImportContainer"
         app:layout_constraintTop_toBottomOf="@id/lineUnderText" />
 
-    <TextView
-        android:id="@+id/RecipeImportButton"
+    <FrameLayout
+        android:id="@+id/RecipeImportContainer"
         android:layout_width="0dp"
         android:layout_height="56dp"
-        android:background="@drawable/icon_setting"
-        android:elevation="8dp"
-        android:gravity="center"
-        android:text="Import"
-        android:textColor="@android:color/white"
         android:layout_marginTop="30dp"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="30dp"
         app:layout_constraintStart_toEndOf="@id/RecipeExportButton"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/lineUnderText" />
+        app:layout_constraintTop_toBottomOf="@id/lineUnderText">
+
+        <!-- Текст кнопки -->
+        <TextView
+            android:id="@+id/RecipeImportButton"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/icon_setting"
+            android:elevation="8dp"
+            android:gravity="center"
+            android:text="Import"
+            android:textColor="@android:color/white" />
+
+        <!-- Иконка поверх текста -->
+        <ImageView
+            android:id="@+id/ImageHaveFile"
+            android:layout_width="10dp"
+            android:layout_height="10dp"
+            android:visibility="invisible"
+            android:layout_gravity="end|top"
+            android:background="#16FF00" />
+
+        <ImageView
+            android:id="@+id/ImageNonHaveFile"
+            android:layout_width="10dp"
+            android:layout_height="10dp"
+            android:visibility="visible"
+            android:layout_gravity="end|top"
+            android:background="#FF0000" />
+    </FrameLayout>
 
 
 

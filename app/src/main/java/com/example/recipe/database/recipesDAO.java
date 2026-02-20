@@ -18,6 +18,10 @@ public interface recipesDAO {
     @Insert
     long add(Recipes recipe);
 
+    @Insert
+    List<Long> addList(List<Recipes> recipes);
+
+
     @Query("DELETE FROM recipes WHERE id = :id")
     Completable remove(long id);
     @Query("SELECT * FROM recipes")
