@@ -86,14 +86,6 @@
                 app:cardUseCompatPadding="true"
                 app:cardBackgroundColor="@android:color/transparent">
 
-                <ImageView
-                    android:id="@+id/RecipeImageView"
-                    android:layout_width="350dp"
-                    android:layout_height="190dp"
-                    android:scaleType="centerCrop"
-                    android:src="@drawable/steak"
-                    android:background="@drawable/rounded_image"
-                    android:clipToOutline="true"/>
             </androidx.cardview.widget.CardView>
 
             <TextView
@@ -102,14 +94,14 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginTop="15dp"
-                android:text="Name"
-                android:textColor="@color/my_text_view_show"
-                android:textSize="28sp"
-                android:textStyle="bold"
                 android:shadowColor="#000000"
                 android:shadowDx="2"
                 android:shadowDy="2"
-                android:shadowRadius="4"/>
+                android:shadowRadius="4"
+                android:text="Name"
+                android:textColor="@color/my_text_view_show"
+                android:textSize="28sp"
+                android:textStyle="bold" />
 
             <androidx.cardview.widget.CardView
                 android:id="@+id/CardViewRecipeName"
@@ -131,7 +123,6 @@
                     android:layout_width="350dp"
                     android:layout_height="wrap_content"
                     android:minHeight="55dp"
-                    android:fontFamily="@font/archivo_black"
                     android:gravity="start"
                     android:background="@drawable/textview_border"
                     android:hint="name"
@@ -140,8 +131,11 @@
                     android:textColor="#DCDCDC"
                     android:textColorHint="#979595"
                     android:textSize="13sp"/>
+
             </androidx.cardview.widget.CardView>
 
+
+            <!-- Список рецептов -->
             <TextView
                 android:id="@+id/TextViewIngredients"
                 android:layout_width="350dp"
@@ -149,17 +143,15 @@
                 android:layout_gravity="center"
                 android:layout_marginTop="15dp"
                 android:fontFamily="@font/bakbak_one"
-                android:text="Ingredients"
-                android:textColor="@color/my_text_view_show"
-                android:textSize="28sp"
-                android:textStyle="bold"
                 android:shadowColor="#000000"
                 android:shadowDx="2"
                 android:shadowDy="2"
-                android:shadowRadius="4"/>
+                android:shadowRadius="4"
+                android:text="Ingredients"
+                android:textColor="@color/my_text_view_show"
+                android:textSize="28sp"
+                android:textStyle="bold" />
 
-
-            <!-- Список рецептов -->
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/RecyclerViewIngredients"
                 android:layout_width="match_parent"
@@ -260,7 +252,7 @@
         <Button
             android:id="@+id/RecipeEditButton"
             android:layout_width="match_parent"
-            android:layout_height="56dp"
+            android:layout_height="match_parent"
             android:backgroundTint="@color/my_textView_gray"
             android:elevation="8dp"
             android:text="Save"

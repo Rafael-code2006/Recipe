@@ -1,6 +1,5 @@
 package com.example.recipe.activities;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -11,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -31,7 +31,6 @@ import com.example.recipe.viewmodel.EditRecipeViewModel;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
@@ -58,8 +57,6 @@ public class EditRecipe extends AppCompatActivity {
     private AdapterEditRecipes adapter;
     private MyApp myApp;
 
-    private static int totalHeight = -1;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -84,7 +81,7 @@ public class EditRecipe extends AppCompatActivity {
                 desc.setName("");
                 desc.setUnit("kg");
                 desc.setWeight(1f);
-                recyclerView.post(() -> setRecyclerViewHeightBasedOnChildren(recyclerView, 25));
+                recyclerView.post(() -> setRecyclerViewHeightBasedOnChildren(recyclerView, 30));
                 newDescriptions.add(desc);
                 adapter.setIngredient(newDescriptions);
                 adapter.notifyDataSetChanged();
@@ -102,29 +99,45 @@ public class EditRecipe extends AppCompatActivity {
 
     private void clickSaveButton(Recipes recipes) {
         saveButton.setOnClickListener(v -> {
+            boolean success = false;
 
-            List<Descriptions> descriptions = adapter.getIngredients();
+                List<Descriptions> descriptions = adapter.getIngredients();
 
-            recipes.setName(editTextRecipe.getText().toString());
-            recipes.setInsctruction(editTextInsctruction.getText().toString());
+                recipes.setName(editTextRecipe.getText().toString());
+                recipes.setInsctruction(editTextInsctruction.getText().toString());
 
-            Disposable disposable = viewModel.saveAllIngredients(descriptions)
-                    .andThen(viewModel.editRecipe(recipes))
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(() -> {
 
-                        Intent intent = ShowRecipe.newIntent(EditRecipe.this, recipes);
-                        startActivity(intent);
-                        finish();
+                for (Descriptions x : descriptions) {
+                    if (x.getName() == null || x.getName().isEmpty()) {
+                        success = false;
+                        break;
+                    } else {
+                        success = true;
+                    }
+                }
 
-                    }, throwable -> {
-                        Log.d("EditRecipe", throwable.getMessage());
-                    });
+                if(success) {
 
-            compositeDisposable.add(disposable);
+                    Disposable disposable = viewModel.saveAllIngredients(descriptions)
+                            .andThen(viewModel.editRecipe(recipes))
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe(() -> {
 
+                                Intent intent = ShowRecipe.newIntent(EditRecipe.this, recipes);
+                                startActivity(intent);
+                                finish();
+
+                            }, throwable -> {
+                                Log.d("EditRecipe", throwable.getMessage());
+                            });
+
+                    compositeDisposable.add(disposable);
+                } else {
+                    Toast.makeText(myApp, "Введите имя игредиента", Toast.LENGTH_SHORT).show();
+                }
 
         });
+
 
     }
 
@@ -136,7 +149,7 @@ public class EditRecipe extends AppCompatActivity {
             @Override
             public void onChanged(List<Descriptions> descriptions) {
                 adapter.setIngredient(descriptions);
-                recyclerView.post(() -> setRecyclerViewHeightBasedOnChildren(recyclerView ,50));
+                recyclerView.post(() -> setRecyclerViewHeightBasedOnChildren(recyclerView ,55));
             }
         });
         editTextInsctruction.setText(recipes.getInsctruction());
@@ -194,6 +207,7 @@ public class EditRecipe extends AppCompatActivity {
      * @param size - дополнительный размер/отступ (например, 30px)
      */
     private void setRecyclerViewHeightBasedOnChildren(RecyclerView recyclerView, int size) {
+        int totalHeight = -1;
         RecyclerView.Adapter adapter = recyclerView.getAdapter();
         if (adapter == null || adapter.getItemCount() == 0) return;
 
