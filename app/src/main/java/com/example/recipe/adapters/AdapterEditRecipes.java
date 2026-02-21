@@ -1,5 +1,7 @@
 package com.example.recipe.adapters;
 
+import static android.view.View.INVISIBLE;
+
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -7,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -32,6 +35,11 @@ public class AdapterEditRecipes extends RecyclerView.Adapter<AdapterEditRecipes.
 
 
     private List<String> unit;
+
+    public void removeIngredient(int position) {
+        this.ingredients.remove(position);
+        notifyDataSetChanged();
+    }
 
     public interface CheckIngredient {
         void getIngredient(Descriptions ingredient);
@@ -62,6 +70,7 @@ public class AdapterEditRecipes extends RecyclerView.Adapter<AdapterEditRecipes.
 
     @Override
     public void onBindViewHolder(@NonNull IngredientViewHolder holder, int position) {
+        holder.buttonDelete.setVisibility(INVISIBLE);
         Descriptions ingredient = ingredients.get(position);
 
         holder.isBinding = true; // начинаем биндинг
@@ -203,6 +212,8 @@ public class AdapterEditRecipes extends RecyclerView.Adapter<AdapterEditRecipes.
         TextView title;
         EditText editTextNameIngredient;
         EditText editTextWeight;
+
+        Button buttonDelete;
         Spinner unit;
         TextView TextViewUnit;
         boolean isBinding = false; // <-- новый флаг
@@ -214,6 +225,7 @@ public class AdapterEditRecipes extends RecyclerView.Adapter<AdapterEditRecipes.
             editTextWeight = itemView.findViewById(R.id.EditTextWeight);
             unit = itemView.findViewById(R.id.SpinnerUnit);
             TextViewUnit = itemView.findViewById(R.id.TextViewUnit);
+            buttonDelete = itemView.findViewById(R.id.ButtonDelete);
         }
     }
 

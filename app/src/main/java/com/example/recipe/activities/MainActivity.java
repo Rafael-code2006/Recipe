@@ -31,6 +31,8 @@ public class MainActivity extends AppCompatActivity {
 
         helper = new MainHelper(this);
 
+        helper.refreshActivity();
+
         helper.changeLanguage();
 
         helper.showRecipes(); // Показ рецептов

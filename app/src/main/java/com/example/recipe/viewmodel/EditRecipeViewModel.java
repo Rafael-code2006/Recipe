@@ -21,6 +21,7 @@ import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.core.Completable;
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
 import io.reactivex.rxjava3.disposables.Disposable;
+import io.reactivex.rxjava3.functions.Action;
 import io.reactivex.rxjava3.functions.Consumer;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 
@@ -65,47 +66,20 @@ public class EditRecipeViewModel extends AndroidViewModel {
                 .subscribeOn(Schedulers.io());
     }
 
-
-    public void editIngredient(long recipe_id, Descriptions descriptions){
-        Disposable disposable = recipeDataBase.descriptionDao().updateAllByRecipeId(
-                recipe_id,descriptions.getName()
-                        , descriptions.getWeight()
-                        , descriptions.getUnit())
+    public void deleteIngredient(Descriptions ingredient){
+        Disposable disposable = recipeDataBase.descriptionDao().remove(ingredient.getId_description())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnError(new Consumer<Throwable>() {
                     @Override
                     public void accept(Throwable throwable) throws Throwable {
-                        Log.d("EditRecipeViewModel1", throwable.getMessage());
+                        Log.d("EditRecipeViewModel", throwable.getMessage());
                     }
                 })
                 .subscribe();
-        compositeDisposable.add(disposable);
     }
 
-    public void addNewIngredient(Descriptions desc){
-        Disposable disposable = recipeDataBase.descriptionDao().add(desc)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe();
-        compositeDisposable.add(disposable);
-    }
 
-    @SuppressLint("CheckResult")
-    public void updateAllIngredients(List<Descriptions> ingredients) {
-        Completable.fromAction(() -> recipeDataBase.descriptionDao().updateAllIngredients(ingredients))
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(() -> Log.d("DB", "All ingredients updated"),
-                        throwable -> Log.e("DB", "Update error", throwable));
-    }
-
-    public void updateIngredients(Descriptions x) {
-        Disposable disposable = recipeDataBase.descriptionDao().updateIngredients(x)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe();
-    }
 
 
     public Completable saveAllIngredients(List<Descriptions> list) {

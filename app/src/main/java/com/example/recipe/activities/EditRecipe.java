@@ -1,7 +1,12 @@
 package com.example.recipe.activities;
 
+
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.TypedValue;
@@ -13,12 +18,16 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -68,6 +77,8 @@ public class EditRecipe extends AppCompatActivity {
 
         setStarted(recipes);
 
+        Swipe();
+
         clickSaveButton(recipes);
 
         changeLanguage();
@@ -95,6 +106,62 @@ public class EditRecipe extends AppCompatActivity {
                 return insets;
             });
         }
+
+    public void Swipe() {
+        ItemTouchHelper.SimpleCallback simpleCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
+            @Override
+            public boolean onMove(@NonNull RecyclerView recyclerView,
+                                  @NonNull RecyclerView.ViewHolder viewHolder,
+                                  @NonNull RecyclerView.ViewHolder target) {
+                return false;
+            }
+
+            @Override
+            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+                Log.d("Rafa", "Swipe сработал");
+                int position = viewHolder.getBindingAdapterPosition(); // Получаем позицию рецепта
+
+
+                // Если позиция существует
+                if (position != RecyclerView.NO_POSITION) {
+                    Descriptions ingredient = adapter.getIngredients().get(position); // Берем рецепт по позиции из адаптера
+
+                    deletedIngredient(position, ingredient);
+                }
+            }
+
+
+            @Override
+            public void onChildDraw(@NonNull Canvas c,
+                                    @NonNull RecyclerView recyclerView,
+                                    @NonNull RecyclerView.ViewHolder viewHolder,
+                                    float dX, float dY,
+                                    int actionState, boolean isCurrentlyActive) {
+                super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
+            }
+        };
+
+        new ItemTouchHelper(simpleCallback).attachToRecyclerView(recyclerView);
+    }
+
+
+    private void deletedIngredient(int position, Descriptions ingredient) {
+        adapter.notifyItemChanged(position); // Указываем перепроверить позицию
+
+        // Диалог подтверждения
+        new AlertDialog.Builder(EditRecipe.this)
+                .setTitle("Удалить рецепт")
+                .setMessage("Вы уверены, что хотите удалить этот ингредиент?")
+                .setPositiveButton("Удалить", (dialog, which) -> {
+                    viewModel.deleteIngredient(ingredient); // Удаляем из базы
+                    adapter.removeIngredient(position); // Удаляем из адаптера
+                })
+                .setNegativeButton("Отмена", (dialog, which) -> {
+                    adapter.notifyItemChanged(position); // Указываем перепроверить позицию
+                })
+                .show();
+    }
+
 
 
     private void clickSaveButton(Recipes recipes) {

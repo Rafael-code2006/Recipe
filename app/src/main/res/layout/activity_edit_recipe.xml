@@ -8,21 +8,36 @@
     android:background="@drawable/my_background">
 
     <!-- Заголовок -->
-    <TextView
-        android:id="@+id/YourRecipeTextView"
-        android:layout_width="0dp"
+
+    <LinearLayout
+        android:id="@+id/LinearTitle"
+        android:layout_width="350dp"
         android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
         android:layout_marginTop="30dp"
-        android:layout_marginStart="30dp"
-        android:layout_marginEnd="30dp"
-        android:fontFamily="@font/archivo_black"
-        android:gravity="start"
-        android:text="Edit Recipe"
-        android:textColor="@color/my_recipes_background"
-        android:textSize="20sp"
         app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        tools:ignore="MissingConstraints">
+
+        <TextView
+            android:id="@+id/YourRecipeTextView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:fontFamily="@font/archivo_black"
+            android:text="Edit Recipe"
+            android:textColor="@color/my_recipes_background"
+            android:textSize="20sp" />
+
+        <ImageView
+            android:id="@+id/ImageViewBack"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@android:drawable/ic_menu_revert" />
+    </LinearLayout>
+
 
     <!-- Текст рецепта -->
     <TextView
@@ -44,7 +59,7 @@
         android:textSize="35sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/YourRecipeTextView" />
+        app:layout_constraintTop_toBottomOf="@id/LinearTitle" />
 
     <!-- Линия -->
     <View

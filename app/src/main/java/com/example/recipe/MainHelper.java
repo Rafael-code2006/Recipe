@@ -1,5 +1,7 @@
 package com.example.recipe;
 
+import static androidx.core.app.ActivityCompat.recreate;
+
 import android.content.Intent;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -18,6 +20,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelStoreOwner;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.example.recipe.activities.AddRecipe;
 import com.example.recipe.activities.MainActivity;
@@ -228,6 +231,22 @@ public class MainHelper {
                 icon.draw(c);
             }
         }
+    }
+
+
+    public void refreshActivity(){
+        SwipeRefreshLayout swipeRefreshLayout = context.findViewById(R.id.swipeRefreshLayout);
+
+        swipeRefreshLayout.setOnRefreshListener(() -> {
+            // Здесь обновляешь список или перезапускаешь Activity
+            // Например:
+            // reloadData();
+            // или
+            recreate(context);
+
+            // Когда обновление завершено:
+            swipeRefreshLayout.setRefreshing(false);
+        });
     }
 
     private void deletedRecipe(int position, Recipes recipeDB) {
