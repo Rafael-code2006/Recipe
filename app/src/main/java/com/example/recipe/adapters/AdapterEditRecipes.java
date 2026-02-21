@@ -78,17 +78,14 @@ public class AdapterEditRecipes extends RecyclerView.Adapter<AdapterEditRecipes.
         // --- Язык ---
         switch (myApp.getBaseLanguage()) {
             case "Рус":
-                holder.title.setText("Ингредиент");
                 holder.editTextNameIngredient.setHint("имя");
                 holder.editTextWeight.setHint("вес");
                 break;
             case "Eng":
-                holder.title.setText("Ingredient");
                 holder.editTextNameIngredient.setHint("name");
                 holder.editTextWeight.setHint("weight");
                 break;
             case "Каз":
-                holder.title.setText("Құрамы");
                 holder.editTextNameIngredient.setHint("атауы");
                 holder.editTextWeight.setHint("салмағы");
                 break;
@@ -209,7 +206,6 @@ public class AdapterEditRecipes extends RecyclerView.Adapter<AdapterEditRecipes.
 
     // --- ViewHolder ---
     class IngredientViewHolder extends RecyclerView.ViewHolder {
-        TextView title;
         EditText editTextNameIngredient;
         EditText editTextWeight;
 
@@ -220,7 +216,6 @@ public class AdapterEditRecipes extends RecyclerView.Adapter<AdapterEditRecipes.
 
         public IngredientViewHolder(@NonNull View itemView) {
             super(itemView);
-            title = itemView.findViewById(R.id.TextViewIngredient);
             editTextNameIngredient = itemView.findViewById(R.id.EditTextNameIngredient);
             editTextWeight = itemView.findViewById(R.id.EditTextWeight);
             unit = itemView.findViewById(R.id.SpinnerUnit);

@@ -4,15 +4,23 @@ import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
+import com.google.gson.annotations.SerializedName;
+
 @Entity(tableName = "descriptions")
 public class Descriptions {
 
     @PrimaryKey(autoGenerate = true)
+    @SerializedName("id_description")
     public long id_description;
+    @SerializedName("recipe_id")
     public long recipe_id;
+
+    @SerializedName("name")
     private String name;
+    @SerializedName("weight")
     private float weight;
 
+    @SerializedName("unit")
     private String unit;
 
 
@@ -47,6 +55,10 @@ public class Descriptions {
         this.recipe_id = recipe_id;
     }
 
+    public void setId_description(long id_description) {
+        this.id_description = id_description;
+    }
+
     public String getName() {
         return name;
     }
@@ -69,6 +81,17 @@ public class Descriptions {
 
     public void setUnit(String unit) {
         this.unit = unit;
+    }
+
+    @Override
+    public String toString() {
+        return "Descriptions{" +
+                "id_description=" + id_description +
+                ", recipe_id=" + recipe_id +
+                ", name='" + name + '\'' +
+                ", weight=" + weight +
+                ", unit='" + unit + '\'' +
+                '}';
     }
 }
 

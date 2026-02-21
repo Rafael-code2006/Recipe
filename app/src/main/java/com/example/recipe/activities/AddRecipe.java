@@ -1,19 +1,28 @@
 package com.example.recipe.activities;
 
+import android.Manifest;
+import android.app.AlertDialog;
+import android.content.ContentValues;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -26,8 +35,13 @@ import com.example.recipe.viewmodel.AddRecipeModelView;
 import com.example.recipe.model.Descriptions;
 import com.example.recipe.R;
 import com.example.recipe.model.Recipes;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,10 +53,14 @@ public class AddRecipe extends AppCompatActivity {
     private TextView nameRecipeTitle;
     private TextView instructionTitle;
 
+    private ImageView imageRecipe;
+
 
     // EditText
     private EditText editTextRecipe;
     private EditText editTextInsctructionRecipe;
+
+    private String image;
 
 
     // Button
@@ -52,8 +70,14 @@ public class AddRecipe extends AppCompatActivity {
     // FloatingActionButton
     private FloatingActionButton floatingActionButton;
 
+
     // LinearLayout
     private LinearLayout linearLayoutDescription;
+
+    private static final int PICK_IMAGE_REQUEST = 101;
+    private static final int REQUEST_PERMISSION = 102;
+
+
 
 
     // ViewModel
@@ -77,11 +101,85 @@ public class AddRecipe extends AppCompatActivity {
 
         SaveButtonClick(); // Нажатие кнопки сохранения рецепта
 
+        imageRecipe = findViewById(R.id.recipeImageView);
+
+        imageRecipe.setOnClickListener(v -> openGallery());
+
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+    }
+
+    // Открываем галерею
+    private void openGallery() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (checkSelfPermission(Manifest.permission.READ_MEDIA_IMAGES) != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(new String[]{Manifest.permission.READ_MEDIA_IMAGES}, REQUEST_PERMISSION);
+                return;
+            }
+        } else {
+            if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_PERMISSION);
+                return;
+            }
+        }
+
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        intent.setType("image/*");
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        startActivityForResult(Intent.createChooser(intent, "Выберите фото"), PICK_IMAGE_REQUEST);
+    }
+
+    // Получаем результат запроса разрешения
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        if (requestCode == REQUEST_PERMISSION) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                openGallery();
+            } else {
+                Toast.makeText(this, "Нужно разрешение на доступ к галерее", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    // Получаем результат выбора изображения
+    // В onActivityResult после выбора изображения
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null) {
+            Uri imageUri = data.getData();
+
+            try {
+                // Создаём файл в internal storage
+                File file = new File(getFilesDir(), String.format("temp_%s_image.jpg", System.currentTimeMillis()));
+
+                try (InputStream input = getContentResolver().openInputStream(imageUri);
+                     OutputStream output = new FileOutputStream(file)) {
+
+                    byte[] buffer = new byte[1024];
+                    int length;
+                    while ((length = input.read(buffer)) > 0) {
+                        output.write(buffer, 0, length);
+                    }
+                }
+
+                // Сохраняем путь к файлу в базе или переменной
+                image = file.getAbsolutePath();
+
+                // Ставим картинку в ImageView
+                imageRecipe.setImageURI(Uri.fromFile(file));
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                Toast.makeText(this, "Не удалось сохранить изображение", Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 
     private void changeLanguage() {
@@ -120,7 +218,7 @@ public class AddRecipe extends AppCompatActivity {
         title = findViewById(R.id.CreateRecipeTextView);
         nameRecipeTitle = findViewById(R.id.TextViewRecipeName);
         instructionTitle = findViewById(R.id.TextViewInstructionRecipe);
-
+        imageRecipe = findViewById(R.id.RecipeImageView);
     }
 
     private void FloatingClickButton(){
@@ -133,6 +231,7 @@ public class AddRecipe extends AppCompatActivity {
     }
 
     private void showDescriptions() {
+        Log.d("AddRecipe2123", "Сработал флоатинг");
         View view = getLayoutInflater().inflate(R.layout.ingredient_item, linearLayoutDescription, false);
         Button test = view.findViewById(R.id.ButtonDelete);
         Spinner spinnerUnit = view.findViewById(R.id.SpinnerUnit);
@@ -148,89 +247,115 @@ public class AddRecipe extends AppCompatActivity {
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
-
             }
         });
 
         test.setOnClickListener(v -> {
-            int clickedId = v.getId();
-            linearLayoutDescription.removeView((View) v.getParent());
+            new MaterialAlertDialogBuilder(AddRecipe.this)
+                    .setTitle("Удалить ингредиент?")
+                    .setMessage("Вы уверены, что хотите удалить этот ингредиент?")
+                    .setIcon(R.drawable.ic_delete) // иконка (можно убрать)
+                    .setPositiveButton("Да", (dialog, which) -> {
+                        // удаляем родительский элемент (строку ингредиента)
+                        View parentRow = (View) v.getParent();
+                        linearLayoutDescription.removeView(parentRow);
+                    })
+                    .setNegativeButton("Нет", (dialog, which) -> dialog.dismiss())
+                    .show();
         });
+
 
         linearLayoutDescription.addView(view);
     }
 
 
-    private void SaveButtonClick(){
-        RecipeSaveButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(editTextRecipe.getText().toString().isEmpty()){
-                    Toast.makeText(AddRecipe.this, "Введите название рецепта", Toast.LENGTH_SHORT).show();
-                } else{
-                    setRecipe();
-                   Intent intent = MainActivity.getIntent(AddRecipe.this);
-                   startActivity(intent);
-                }
-            }
-        });
+    private void SaveButtonClick() {
+        RecipeSaveButton.setOnClickListener(v -> saveRecipe());
     }
 
-    private void setRecipe() {
+    private void saveRecipe() {
 
-        // Создание рецепта
-        String text = editTextRecipe.getText().toString().trim();
-        String insctruction = editTextInsctructionRecipe.getText().toString();
-        Recipes recipe = new Recipes(text, insctruction);
+        String title = editTextRecipe.getText().toString().trim();
+        String instruction = editTextInsctructionRecipe.getText().toString().trim();
 
+        if (title.isEmpty()) {
+            Toast.makeText(this, "Введите название рецепта", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // Сначала проверяем все ингредиенты
+        List<Descriptions> descriptionsList = new ArrayList<>();
+
+        for (int i = 0; i < linearLayoutDescription.getChildCount(); i++) {
+
+            View item = linearLayoutDescription.getChildAt(i);
+
+            EditText nameIngredient = item.findViewById(R.id.EditTextNameIngredient);
+            EditText weightIngredient = item.findViewById(R.id.EditTextWeight);
+            Spinner spinnerUnit = item.findViewById(R.id.SpinnerUnit);
+
+            String name = nameIngredient.getText().toString().trim();
+            String weightText = weightIngredient.getText().toString().trim();
+
+            if (name.isEmpty()) {
+                Toast.makeText(this, "Введите название ингредиента", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            if (weightText.isEmpty()) {
+                Toast.makeText(this, "Введите вес у ингредиента", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            float weight;
+            try {
+                weight = Float.parseFloat(weightText);
+            } catch (NumberFormatException e) {
+                Toast.makeText(this, "Ошибка формата веса", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            String unit = spinnerUnit.getSelectedItem().toString();
+
+            // Пока recipeId неизвестен — ставим 0
+            descriptionsList.add(new Descriptions(0, name, weight, unit));
+        }
+
+        // Если ингредиентов нет
+        if (descriptionsList.isEmpty()) {
+            Toast.makeText(this, "Добавьте хотя бы один ингредиент", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if(image == null){
+            image = "";
+        }
+        // Создаем рецепт
+        Recipes recipe = new Recipes(title, instruction, image);
+        recipe.setIngredient_count(descriptionsList.size());
+
+        // Сохраняем рецепт
         addRecipeModelView.addRecipe(recipe);
 
+        // Получаем ID один раз
+        addRecipeModelView.getIdRecipes().observe(this, recipeId -> {
 
-        addRecipeModelView.getIdRecipes().observe(this, new Observer<Long>() {
-            @Override
-            public void onChanged(Long recipeId) {
-                if (recipeId == null) return;
+            if (recipeId == null) return;
 
-                List<Descriptions> listDescriptions = new ArrayList<>();
-
-
-                // Добавление ингридиентов из LinearLayout
-                for (int i = 0; i < linearLayoutDescription.getChildCount(); i++) {
-                    View item = linearLayoutDescription.getChildAt(i);
-
-                    EditText nameIngredient = item.findViewById(R.id.EditTextNameIngredient);
-                    EditText weightIngredient = item.findViewById(R.id.EditTextWeight);
-                    Spinner spinnerUnit = item.findViewById(R.id.SpinnerUnit);
-
-                    String name = nameIngredient.getText().toString().trim();
-                    String weightText = weightIngredient.getText().toString().trim();
-
-                    if (name.isEmpty() || weightText.isEmpty()) continue;
-
-                    try {
-                        float weight = Float.parseFloat(weightText);
-                        String spinnerValue = spinnerUnit.getSelectedItem().toString();
-
-                        Descriptions descriptions = new Descriptions(recipeId, name, weight, spinnerValue);
-                        addRecipeModelView.addDescription(descriptions);
-                        listDescriptions.add(descriptions);
-                        Log.d("AddRecipe1", "Ингредиент: " + name + ", вес: " + weight + " добавлен");
-                    } catch (NumberFormatException e) {
-                        Toast.makeText(AddRecipe.this, "Ошибка формата веса", Toast.LENGTH_SHORT).show();
-                    }
-                }
-
-                if (!listDescriptions.isEmpty()) {
-                    int count_ingredient = 0;
-                    for(Descriptions x : listDescriptions){
-                        count_ingredient += 1;
-                    }
-                    recipe.setIngredient_count(count_ingredient);
-                }
-
-                // чтобы не подписываться бесконечно
-                addRecipeModelView.getIdRecipes().removeObserver(this);
+            // Сохраняем ингредиенты с правильным recipeId
+            for (Descriptions desc : descriptionsList) {
+                desc.setRecipe_id(recipeId);
+                addRecipeModelView.addDescription(desc);
             }
+
+            // Удаляем observer
+            addRecipeModelView.getIdRecipes().removeObservers(this);
+
+            Toast.makeText(this, "Рецепт сохранён", Toast.LENGTH_SHORT).show();
+
+            // Переход
+            startActivity(MainActivity.getIntent(AddRecipe.this));
+            finish();
         });
     }
 

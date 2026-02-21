@@ -64,6 +64,8 @@ public class EditRecipe extends AppCompatActivity {
     private Button saveButton;
     private EditRecipeViewModel viewModel;
     private AdapterEditRecipes adapter;
+
+    private int sizeIngedient;
     private MyApp myApp;
 
     @Override
@@ -83,6 +85,17 @@ public class EditRecipe extends AppCompatActivity {
 
         changeLanguage();
 
+        addNewIngredient(recipes);
+
+
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+                Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+                v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+                return insets;
+            });
+        }
+
+    private void addNewIngredient(Recipes recipes) {
         addIngredient.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -92,20 +105,15 @@ public class EditRecipe extends AppCompatActivity {
                 desc.setName("");
                 desc.setUnit("kg");
                 desc.setWeight(1f);
-                recyclerView.post(() -> setRecyclerViewHeightBasedOnChildren(recyclerView, 30));
+                recyclerView.post(() -> setRecyclerViewHeightBasedOnChildren(recyclerView, 20));
                 newDescriptions.add(desc);
                 adapter.setIngredient(newDescriptions);
                 adapter.notifyDataSetChanged();
+                sizeIngedient = adapter.getItemCount();
+                Log.d("Testovich", "size: " + sizeIngedient);
             }
         });
-
-
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-                Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-                v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-                return insets;
-            });
-        }
+    }
 
     public void Swipe() {
         ItemTouchHelper.SimpleCallback simpleCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
@@ -125,8 +133,8 @@ public class EditRecipe extends AppCompatActivity {
                 // Если позиция существует
                 if (position != RecyclerView.NO_POSITION) {
                     Descriptions ingredient = adapter.getIngredients().get(position); // Берем рецепт по позиции из адаптера
-
                     deletedIngredient(position, ingredient);
+                    recyclerView.post(() -> setRecyclerViewHeightBasedOnChildren(recyclerView, -10));
                 }
             }
 
@@ -155,6 +163,8 @@ public class EditRecipe extends AppCompatActivity {
                 .setPositiveButton("Удалить", (dialog, which) -> {
                     viewModel.deleteIngredient(ingredient); // Удаляем из базы
                     adapter.removeIngredient(position); // Удаляем из адаптера
+                    sizeIngedient = adapter.getItemCount();
+                    Log.d("Testovich", "size: " + sizeIngedient);
                 })
                 .setNegativeButton("Отмена", (dialog, which) -> {
                     adapter.notifyItemChanged(position); // Указываем перепроверить позицию
@@ -182,8 +192,8 @@ public class EditRecipe extends AppCompatActivity {
                         success = true;
                     }
                 }
-
-                if(success) {
+                Log.d("Testovich", "size: " + sizeIngedient);
+                if(success || sizeIngedient == 0) {
 
                     Disposable disposable = viewModel.saveAllIngredients(descriptions)
                             .andThen(viewModel.editRecipe(recipes))
@@ -216,6 +226,7 @@ public class EditRecipe extends AppCompatActivity {
             @Override
             public void onChanged(List<Descriptions> descriptions) {
                 adapter.setIngredient(descriptions);
+                sizeIngedient = descriptions.size();
                 recyclerView.post(() -> setRecyclerViewHeightBasedOnChildren(recyclerView ,55));
             }
         });

@@ -29,7 +29,7 @@
         android:fontFamily="@font/open_sans_light"
         android:gravity="left"
         android:minHeight="62dp"
-        android:maxHeight="200dp"
+        android:maxHeight="160dp"
         android:shadowColor="#000000"
         android:shadowDx="2"
         android:shadowDy="2"
@@ -82,7 +82,7 @@
                 <ImageView
                     android:id="@+id/RecipeImageView"
                     android:layout_width="350dp"
-                    android:layout_height="190dp"
+                    android:layout_height="250dp"
                     android:scaleType="centerCrop"
                     android:src="@drawable/steak"
                     android:background="@drawable/rounded_image"

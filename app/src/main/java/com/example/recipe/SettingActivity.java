@@ -1,14 +1,11 @@
 package com.example.recipe;
 
-import static android.view.View.GONE;
-import static android.view.View.INVISIBLE;
-import static android.view.View.VISIBLE;
-
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.DeadSystemException;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -23,10 +20,11 @@ import androidx.core.content.FileProvider;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.recipe.activities.MainActivity;
+import com.example.recipe.model.Descriptions;
+import com.example.recipe.model.ExportData;
 import com.example.recipe.model.Recipes;
 import com.example.recipe.setting.MyApp;
 import com.example.recipe.viewmodel.SettingViewModel;
@@ -41,8 +39,15 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
+
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.disposables.Disposable;
+import io.reactivex.rxjava3.functions.Consumer;
+import io.reactivex.rxjava3.schedulers.Schedulers;
 
 public class SettingActivity extends AppCompatActivity {
 
@@ -60,6 +65,8 @@ public class SettingActivity extends AppCompatActivity {
     private SettingViewModel viewModel;
 
     private List<Recipes> importRecipes;
+    private List<Descriptions> importIngredients;
+
     private static final int PICK_JSON_FILE = 100;
     private MyApp myApp;
 
@@ -71,48 +78,73 @@ public class SettingActivity extends AppCompatActivity {
         initView();
         setStarted();
         changeLanguage();
-        clickSaveButton();
 
         // Экспорт
-        buttonExport.setOnClickListener(v -> {
-            viewModel.updateAllRecipe();
-            viewModel.getRecipes().observe(SettingActivity.this, recipes -> {
-                Gson gson = new Gson();
-                String json = gson.toJson(recipes);
-                Log.d("Setting1", json);
-                try {
-                    File file = new File(getFilesDir(), "recipes.json");
-                    Log.d("Setting1", "path: " + file.getAbsoluteFile());
-                    FileWriter writer = new FileWriter(file);
-                    String encodeJson = "";
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                        encodeJson = Base64.getEncoder().encodeToString(json.getBytes());
-                    }
-                    writer.write(encodeJson);
-                    writer.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-
-                File file = new File(getFilesDir(), "recipes.json");
-                Uri uri = FileProvider.getUriForFile(SettingActivity.this,
-                        getPackageName() + ".provider", file);
-
-                Intent shareIntent = new Intent(Intent.ACTION_SEND);
-                shareIntent.setType("application/json");
-                shareIntent.putExtra(Intent.EXTRA_STREAM, uri);
-                shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                startActivity(Intent.createChooser(shareIntent, "Поделиться рецептом"));
-            });
-        });
-
+        exportButton();
         // Импорт
-        buttonImport.setOnClickListener(v -> openFilePicker());
+        importButton();
+
+        clickSaveButton();
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
+        });
+    }
+
+    private void importButton() {
+        buttonImport.setOnClickListener(v -> openFilePicker());
+    }
+
+    private void exportButton() {
+        buttonExport.setOnClickListener(v -> {
+            viewModel.updateAllRecipe();
+            viewModel.updateAllDescription();
+
+            // наблюдаем сразу за двумя LiveData
+            viewModel.getRecipes().observe(SettingActivity.this, recipes -> {
+                viewModel.getIngredients().observe(SettingActivity.this, ingredients -> {
+                    Gson gson = new Gson();
+                    ExportData exportData = new ExportData(recipes, ingredients);
+                    String json = gson.toJson(exportData);
+                    Log.d("Setting1", json);
+
+                    try {
+                        File file = new File(getFilesDir(), "recipes.json");
+                        Log.d("Setting1", "path: " + file.getAbsoluteFile());
+
+                        FileWriter writer = new FileWriter(file);
+                        // если хочешь кодировать в Base64
+                        String encodeJson;
+                        Log.d("SettingActivityExport", json);
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                            encodeJson = Base64.getEncoder().encodeToString(json.getBytes());
+                        } else {
+                            encodeJson = json;
+                        }
+                        writer.write(encodeJson);
+                        writer.close();
+
+                        // Поделиться файлом
+                        Uri uri = FileProvider.getUriForFile(
+                                SettingActivity.this,
+                                getPackageName() + ".provider",
+                                file
+                        );
+
+                        Intent shareIntent = new Intent(Intent.ACTION_SEND);
+                        shareIntent.setType("application/json");
+                        shareIntent.putExtra(Intent.EXTRA_STREAM, uri);
+                        shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                        startActivity(Intent.createChooser(shareIntent, "Поделиться рецептом"));
+
+
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                });
+            });
         });
     }
 
@@ -142,28 +174,53 @@ public class SettingActivity extends AppCompatActivity {
                     String encodedJson = builder.toString();
                     String decodedJson = encodedJson;
 
+                    // Если файл закодирован в Base64
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                        byte[] decodedBytes = Base64.getDecoder().decode(encodedJson);
-                        decodedJson = new String(decodedBytes, StandardCharsets.UTF_8);
+                        try {
+                            byte[] decodedBytes = Base64.getDecoder().decode(encodedJson);
+                            decodedJson = new String(decodedBytes, StandardCharsets.UTF_8);
+                        } catch (IllegalArgumentException e) {
+                            // если не Base64 — оставляем как есть
+                            decodedJson = encodedJson;
+                        }
                     }
+
 
                     Gson gson = new Gson();
-                    Type listType = new TypeToken<List<Recipes>>(){}.getType();
-                    importRecipes = gson.fromJson(decodedJson, listType);
-                    for(Recipes x : importRecipes){
-                        x.setId(0);
+                    ExportData exportData = gson.fromJson(decodedJson, ExportData.class);
+
+                    importRecipes = exportData.getRecipes();
+                    importIngredients = exportData.getIngredients();
+
+                    /*if (importRecipes != null) {
+                        for (Recipes x : importRecipes) {
+                            x.setId(0); // сброс ID
+                        }
                     }
+
+                     */
+
+
+                   /* for (Descriptions x : importIngredients) {
+                        x.setId_description(0); // сброс ID
+                    }
+
+                    */
+
+
+
+
+
                     haveFile.setVisibility(View.VISIBLE);
-                    Log.d("SettingTest", "haveFile = visible");
                     nonHaveFile.setVisibility(View.GONE);
-                    Log.d("SettingTest", "nonHaveFile = visible");
 
-
-                    // при необходимости можно сохранить файл во внутреннее хранилище
+                    // при необходимости сохраняем импортированный файл во внутреннее хранилище
                     File file = new File(getFilesDir(), "recipes_imported.json");
                     try (FileWriter writer = new FileWriter(file)) {
                         writer.write(decodedJson);
                     }
+
+                    Log.d("SettingTest", "Импорт завершён успешно");
 
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -208,9 +265,43 @@ public class SettingActivity extends AppCompatActivity {
 
     private void clickSaveButton() {
         recipeSaveButton.setOnClickListener(v -> {
-            if(importRecipes != null) {
-                viewModel.saveAllRecipe(importRecipes);
+            if (importRecipes != null && importIngredients != null) {
+                Log.d("SettingImports", "Пришедший список ингредиентов: \n" + importIngredients);
+
+                for (Recipes recipe : importRecipes) {
+                    long originalId = recipe.getId(); // сохраняем старый ID из JSON
+
+                    // фильтруем ингредиенты по старому ID
+                    List<Descriptions> ingredientsForRecipe = new ArrayList<>();
+                    for (Descriptions ing : importIngredients) {
+                        if (ing.getRecipe_id() == originalId) {
+                            Log.d("SettingImports", "Присваиваем к рецепту " + recipe.getName() + ": " + ing.getName());
+                            ing.setId_description(0); // сброс ID для Room
+                            ingredientsForRecipe.add(ing);
+                        }
+                    }
+
+                    recipe.setId(0); // сброс ID для Room
+
+                    // сохраняем рецепт и обрабатываем результат
+                    Disposable disposable = viewModel.addRecipeRX(recipe)
+                            .subscribeOn(Schedulers.io())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe(newId -> {
+                                // Room вернул новый ID
+                                recipe.setId(newId); // обновляем объект
+                                for (Descriptions ing : ingredientsForRecipe) {
+                                    ing.setRecipe_id(newId); // проставляем новый ID
+                                    Log.d("SettingImports", "Присвоили id ингредиенту: " + ing.getName());
+                                }
+                                viewModel.saveAllIngredients(ingredientsForRecipe);
+                                Log.d("SettingImports", "Сохранили все ингредиенты для рецепта " + recipe.getName());
+                            }, throwable -> {
+                                Log.e("SettingActivity", "Ошибка сохранения рецепта", throwable);
+                            });
+                }
             }
+
             Intent intent = MainActivity.getIntent(SettingActivity.this);
             startActivity(intent);
         });

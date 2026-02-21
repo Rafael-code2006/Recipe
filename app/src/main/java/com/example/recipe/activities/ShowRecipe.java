@@ -4,11 +4,15 @@ import static android.view.View.INVISIBLE;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -26,7 +30,11 @@ import com.example.recipe.setting.MyApp;
 import com.example.recipe.viewmodel.RecipeShowViewModel;
 import com.example.recipe.model.Recipes;
 
-import java.util.Arrays;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.URL;
 import java.util.List;
 
 public class ShowRecipe extends AppCompatActivity {
@@ -38,6 +46,8 @@ public class ShowRecipe extends AppCompatActivity {
     private TextView title;
     private TextView ingredientsTitle;
     private TextView instructionTitle;
+
+    private ImageView imageView;
 
 
     // Button
@@ -64,6 +74,12 @@ public class ShowRecipe extends AppCompatActivity {
 
         Recipes recipes = (Recipes) getIntent().getSerializableExtra("Recipe");
         initVies(); // Инициализация
+
+        Log.d("tests", recipes.getImage());
+        if(recipes == null){
+            Log.d("ErrorTests", "Нулевой рецепт пришел");
+        }
+        showImage(recipes);
 
         showRecipe(recipes.getId()); // Показ ингридиентов
 
@@ -92,6 +108,32 @@ public class ShowRecipe extends AppCompatActivity {
         });
     }
 
+
+    private void showImage(Recipes recipe) {
+        try {
+            String imagePath = recipe.getImage();
+            Log.d("ShowRecipe", "URI из базы: " + imagePath);
+
+            if (imagePath == null || imagePath.isEmpty()) {
+                imageView.setImageResource(R.drawable.steak);
+                return;
+            }
+
+            File file = new File(imagePath);
+
+            if (file.exists()) {
+                imageView.setImageURI(Uri.fromFile(file)); // <-- вот здесь валидный Uri
+            } else {
+                Log.d("ShowRecipe", "Файл не найден: " + imagePath);
+                imageView.setImageResource(R.drawable.steak);
+            }
+
+        } catch (Exception e) {
+            Log.e("ShowRecipe", "Ошибка показа изображения", e);
+            imageView.setImageResource(R.drawable.steak);
+        }
+    }
+
     private void initVies(){
         RecipeTextViewShow = findViewById(R.id.RecipeTextViewShow);
         textViewIngredients = findViewById(R.id.TextViewIngredients);
@@ -103,6 +145,7 @@ public class ShowRecipe extends AppCompatActivity {
         title = findViewById(R.id.YourRecipeTextView);
         ingredientsTitle = findViewById(R.id.TextViewIngredients);
         instructionTitle = findViewById(R.id.TextViewInstruction);
+        imageView = findViewById(R.id.RecipeImageView);
 
     }
 

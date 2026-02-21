@@ -5,30 +5,43 @@ import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.io.Serializable;
 
 @Entity(tableName = "recipes")
 public class Recipes implements Serializable {
 
     @PrimaryKey(autoGenerate = true)
+    @SerializedName("id")
     private long id;
+    @SerializedName("name")
     private String name;
+    @SerializedName("insctruction")
     private String insctruction;
     @Ignore
+    @SerializedName("ingredient_count")
     private int ingredient_count;
+   @SerializedName("image")
+    private String image;
 
 
 
-    public Recipes(long id, String name, String insctruction) {
+    public Recipes(long id, String name, String insctruction, String image) {
         this.id = id;
         this.name = name;
         this.insctruction = insctruction;
+        this.image = image;
+    }
+
+    public Recipes() {
     }
 
     @Ignore
-    public Recipes(String name, String insctruction) {
+    public Recipes(String name, String insctruction, String image) {
         this.name = name;
         this.insctruction = insctruction;
+        this.image = image;
     }
 
     public long getId() {
@@ -65,7 +78,13 @@ public class Recipes implements Serializable {
         this.ingredient_count = ingredient_count;
     }
 
+    public String getImage() {
+        return image;
+    }
 
+    public void setImage(String image) {
+       this.image = image;
+    }
 
     @Override
     public String toString() {

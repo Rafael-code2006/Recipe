@@ -253,16 +253,19 @@ public class MainHelper {
         adapter.notifyItemChanged(position); // Указываем перепроверить позицию
 
         // Диалог подтверждения
-        new AlertDialog.Builder(context)
+        new com.google.android.material.dialog.MaterialAlertDialogBuilder(context)
                 .setTitle("Удалить рецепт")
                 .setMessage("Вы уверены, что хотите удалить этот рецепт?")
+                .setIcon(R.drawable.ic_delete) // иконка мусорки (можно свою)
                 .setPositiveButton("Удалить", (dialog, which) -> {
-                    viewModel.remove(recipeDB); // Удаляем из базы
-                    viewModel.removeDescriptionForRecipe(recipeDB); // Удаляем все ингридиенты
-                    adapter.removeRecipe(position); // Удаляем из адаптера
+                    // Удаляем из базы и из адаптера
+                    viewModel.remove(recipeDB);
+                    viewModel.removeDescriptionForRecipe(recipeDB);
+                    adapter.removeRecipe(position);
                 })
                 .setNegativeButton("Отмена", (dialog, which) -> {
-                    adapter.notifyItemChanged(position); // Указываем перепроверить позицию
+                    // Восстанавливаем элемент, если отменили
+                    adapter.notifyItemChanged(position);
                 })
                 .show();
     }

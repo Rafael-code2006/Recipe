@@ -26,10 +26,9 @@
         android:text="Очень длинное название ингредиента которое не помещается"
         android:textColor="#FFFFFF"
         android:textSize="18sp"
-        android:ellipsize="end"
         android:scrollHorizontally="false"
         android:singleLine="false"
-        android:maxLines="2" />
+        android:maxLines="4" />
 
     <!-- Вес -->
     <TextView

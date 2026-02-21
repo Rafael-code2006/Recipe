@@ -88,6 +88,13 @@ public class AddRecipeModelView extends AndroidViewModel {
         compositeDisposable.add(disposable);
     }
 
+    public void deleteRecipe(Recipes recipes){
+        recipeDataBase.recipesDAO().remove(recipes.getId())
+                .observeOn(Schedulers.io())
+                .subscribeOn(AndroidSchedulers.mainThread())
+                .subscribe();
+    }
+
 
     @Override
     protected void onCleared() {
