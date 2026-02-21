@@ -30,10 +30,16 @@ public class EditRecipeViewModel extends AndroidViewModel {
     private RecipeDataBase recipeDataBase = RecipeDataBase.getInstance(getApplication());
     private MutableLiveData<List<Descriptions>> ingredients = new MutableLiveData<>();
 
+    private MutableLiveData<Recipes> recipe = new MutableLiveData<>();
+
     private CompositeDisposable compositeDisposable = new CompositeDisposable();
 
     public LiveData<List<Descriptions>> getIngredients() {
         return ingredients;
+    }
+
+    public LiveData<Recipes> getRecipe() {
+        return recipe;
     }
 
     public EditRecipeViewModel(@NonNull Application application) {
@@ -107,5 +113,23 @@ public class EditRecipeViewModel extends AndroidViewModel {
     protected void onCleared() {
         super.onCleared();
         compositeDisposable.dispose();
+    }
+
+    public void loadRecipe(Recipes recipes) {
+        recipeDataBase.recipesDAO().getRecipe(recipes.getId())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnError(new Consumer<Throwable>() {
+                    @Override
+                    public void accept(Throwable throwable) throws Throwable {
+                        Log.d("EditRecipeViewModel", throwable.getMessage());
+                    }
+                })
+                .subscribe(new Consumer<Recipes>() {
+                    @Override
+                    public void accept(Recipes recipes) throws Throwable {
+                        recipe.setValue(recipes);
+                    }
+                });
     }
 }

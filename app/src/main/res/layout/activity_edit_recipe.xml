@@ -105,7 +105,7 @@
                 <ImageView
                     android:id="@+id/RecipeImageView"
                     android:layout_width="350dp"
-                    android:layout_height="190dp"
+                    android:layout_height="250dp"
                     android:background="@drawable/rounded_image"
                     android:clipToOutline="true"
                     android:scaleType="centerCrop"
@@ -126,7 +126,7 @@
                 android:shadowDy="2"
                 android:shadowRadius="4"
                 android:text="Name"
-                android:textColor="@color/my_text_view_show"
+                android:textColor="@color/title_my_color"
                 android:textSize="28sp"
                 android:textStyle="bold" />
 
@@ -175,7 +175,7 @@
                 android:shadowDy="2"
                 android:shadowRadius="4"
                 android:text="Ingredients"
-                android:textColor="@color/my_text_view_show"
+                android:textColor="@color/title_my_color"
                 android:textSize="28sp"
                 android:textStyle="bold" />
 
@@ -199,7 +199,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:text="Instruction"
-                android:textColor="@color/my_text_view_show"
+                android:textColor="@color/title_my_color"
                 android:textSize="28sp"
                 android:fontFamily="@font/bakbak_one"
                 android:textStyle="bold"

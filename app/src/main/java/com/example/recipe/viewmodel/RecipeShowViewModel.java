@@ -61,8 +61,8 @@ public class RecipeShowViewModel extends AndroidViewModel {
 
 
     // Обновление списка ингридиентов по id рецепта
-    public void refreshDescriptions(long recipe_id){
-        Disposable disposable = recipeDataBase.descriptionDao().getDescriptionForRecipe(recipe_id)
+    public void refreshDescriptions(Recipes recipes){
+        Disposable disposable = recipeDataBase.descriptionDao().getDescriptionForRecipe(recipes.getId())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Consumer<List<Descriptions>>() {
@@ -76,8 +76,8 @@ public class RecipeShowViewModel extends AndroidViewModel {
 
     // Возврат рецепта по id
     @SuppressLint("CheckResult")
-    public void loadRecipe(long recipe_id){
-        recipeDataBase.recipesDAO().getRecipe(recipe_id)
+    public void loadRecipe(Recipes recipeUser){
+        recipeDataBase.recipesDAO().getRecipe(recipeUser.getId())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnError(new Consumer<Throwable>() {

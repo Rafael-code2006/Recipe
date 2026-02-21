@@ -1,12 +1,13 @@
 package com.example.recipe.activities;
 
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.drawable.Drawable;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.TypedValue;
@@ -14,14 +15,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -39,6 +41,10 @@ import com.example.recipe.setting.MyApp;
 import com.example.recipe.viewmodel.EditRecipeViewModel;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.Serializable;
 import java.util.List;
 
@@ -59,11 +65,20 @@ public class EditRecipe extends AppCompatActivity {
 
     private FloatingActionButton addIngredient;
 
+    private ImageView imageView;
+
     private EditText editTextInsctruction;
     private EditText editTextRecipe;
     private Button saveButton;
     private EditRecipeViewModel viewModel;
     private AdapterEditRecipes adapter;
+
+    private Recipes recipe = new Recipes();
+
+    private static final int PICK_IMAGE_REQUEST = 101;
+    private static final int REQUEST_PERMISSION = 102;
+
+    private String image;
 
     private int sizeIngedient;
     private MyApp myApp;
@@ -76,16 +91,24 @@ public class EditRecipe extends AppCompatActivity {
         initView();
 
         Recipes recipes = (Recipes) getIntent().getSerializableExtra("Recipe");
+        viewModel.loadRecipe(recipes);
+        viewModel.getRecipe().observe(EditRecipe.this, recipeDB-> {
+            recipe = recipeDB;
+            setStarted(recipe);
 
-        setStarted(recipes);
+            Swipe();
 
-        Swipe();
+            showImage(recipe);
 
-        clickSaveButton(recipes);
+            clickSaveButton(recipe);
 
-        changeLanguage();
+            changeLanguage();
 
-        addNewIngredient(recipes);
+            addNewIngredient(recipe);
+
+            imageView.setOnClickListener(v -> openGallery());
+        });
+
 
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
@@ -94,6 +117,101 @@ public class EditRecipe extends AppCompatActivity {
                 return insets;
             });
         }
+
+
+    private void openGallery() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (checkSelfPermission(Manifest.permission.READ_MEDIA_IMAGES) != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(new String[]{Manifest.permission.READ_MEDIA_IMAGES}, REQUEST_PERMISSION);
+                return;
+            }
+        } else {
+            if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_PERMISSION);
+                return;
+            }
+        }
+
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        intent.setType("image/*");
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        startActivityForResult(Intent.createChooser(intent, "Выберите фото"), PICK_IMAGE_REQUEST);
+    }
+
+    // Получаем результат запроса разрешения
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        if (requestCode == REQUEST_PERMISSION) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                openGallery();
+            } else {
+                Toast.makeText(this, "Нужно разрешение на доступ к галерее", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    // Получаем результат выбора изображения
+    // В onActivityResult после выбора изображения
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null) {
+            Uri imageUri = data.getData();
+
+            try {
+                // Создаём файл в internal storage
+                File file = new File(getFilesDir(), String.format("temp_%s_image.jpg", System.currentTimeMillis()));
+
+                try (InputStream input = getContentResolver().openInputStream(imageUri);
+                     OutputStream output = new FileOutputStream(file)) {
+
+                    byte[] buffer = new byte[1024];
+                    int length;
+                    while ((length = input.read(buffer)) > 0) {
+                        output.write(buffer, 0, length);
+                    }
+                }
+
+                // Сохраняем путь к файлу в базе или переменной
+                image = file.getAbsolutePath();
+
+                // Ставим картинку в ImageView
+                imageView.setImageURI(Uri.fromFile(file));
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                Toast.makeText(this, "Не удалось сохранить изображение", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    private void showImage(Recipes recipe) {
+        try {
+            String imagePath = recipe.getImage();
+            Log.d("ShowRecipe", "URI из базы: " + imagePath);
+
+            if (imagePath == null || imagePath.isEmpty()) {
+                imageView.setImageResource(R.drawable.steak);
+                return;
+            }
+
+            File file = new File(imagePath);
+
+            if (file.exists()) {
+                imageView.setImageURI(Uri.fromFile(file)); // <-- вот здесь валидный Uri
+            } else {
+                Log.d("ShowRecipe", "Файл не найден: " + imagePath);
+                imageView.setImageResource(R.drawable.steak);
+            }
+
+        } catch (Exception e) {
+            Log.e("ShowRecipe", "Ошибка показа изображения", e);
+            imageView.setImageResource(R.drawable.steak);
+        }
+    }
 
     private void addNewIngredient(Recipes recipes) {
         addIngredient.setOnClickListener(new View.OnClickListener() {
@@ -182,7 +300,10 @@ public class EditRecipe extends AppCompatActivity {
 
                 recipes.setName(editTextRecipe.getText().toString());
                 recipes.setInsctruction(editTextInsctruction.getText().toString());
-
+            if(image != null){
+                Log.d("Testtest", image);
+                recipes.setImage(image);
+            }
 
                 for (Descriptions x : descriptions) {
                     if (x.getName() == null || x.getName().isEmpty()) {
@@ -277,6 +398,7 @@ public class EditRecipe extends AppCompatActivity {
         ingredientsTitle = findViewById(R.id.TextViewIngredients);
         instructionTitle = findViewById(R.id.TextViewInstruction);
         addIngredient = findViewById(R.id.floatingActionButton);
+        imageView = findViewById(R.id.RecipeImageView);
     }
 
     /**

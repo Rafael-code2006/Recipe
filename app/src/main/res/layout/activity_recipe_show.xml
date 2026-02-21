@@ -105,14 +105,15 @@
                 android:shadowDy="2"
                 android:shadowRadius="4"/>
 
-
-            <LinearLayout
-                android:id="@+id/ingredientsContainer"
-                android:layout_width="380dp"
+            <!-- RecyclerView вместо LinearLayout -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/ingredientsRecyclerView"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:orientation="vertical"/>
-
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="16dp"
+                android:clipToPadding="false"
+                android:scrollbars="none"/>
 
             <TextView
                 android:id="@+id/TextViewInstruction"
@@ -129,8 +130,6 @@
                 android:shadowDx="2"
                 android:shadowDy="2"
                 android:shadowRadius="4"/>
-
-
 
             <TextView
                 android:id="@+id/TextViewInstructionContent"

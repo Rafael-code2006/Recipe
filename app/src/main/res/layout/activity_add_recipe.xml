@@ -82,7 +82,7 @@
                 android:layout_marginTop="30dp"
                 android:fontFamily="@font/archivo_black"
                 android:text="Recipe name"
-                android:textColor="@color/my_text_view_back"
+                android:textColor="@color/title_my_color"
                 android:textSize="21sp"
                 android:textStyle="bold"
                 android:layout_gravity="center"/>
@@ -113,6 +113,19 @@
                     android:background="@null"/>
             </androidx.cardview.widget.CardView>
 
+            <TextView
+                android:id="@+id/TextViewIngredient"
+                android:layout_width="350dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:fontFamily="@font/archivo_black"
+                android:text="Ingredients"
+                android:visibility="invisible"
+                android:textColor="@color/title_my_color"
+                android:textSize="21sp"
+                android:textStyle="bold"
+                android:layout_gravity="center" />
+
             <LinearLayout
                 android:id="@+id/linearLayoutDescription"
                 android:layout_width="match_parent"
@@ -127,7 +140,7 @@
                 android:layout_marginTop="50dp"
                 android:fontFamily="@font/archivo_black"
                 android:text="Instruction"
-                android:textColor="@color/my_text_view_back"
+                android:textColor="@color/title_my_color"
                 android:textSize="21sp"
                 android:textStyle="bold"
                 android:layout_gravity="center"/>

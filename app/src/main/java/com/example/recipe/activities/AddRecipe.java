@@ -1,5 +1,8 @@
 package com.example.recipe.activities;
 
+import static android.view.View.INVISIBLE;
+import static android.view.View.VISIBLE;
+
 import android.Manifest;
 import android.app.AlertDialog;
 import android.content.ContentValues;
@@ -13,6 +16,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -43,6 +47,7 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class AddRecipe extends AppCompatActivity {
@@ -54,6 +59,8 @@ public class AddRecipe extends AppCompatActivity {
     private TextView instructionTitle;
 
     private ImageView imageRecipe;
+
+    private TextView titleIngredients;
 
 
     // EditText
@@ -74,8 +81,10 @@ public class AddRecipe extends AppCompatActivity {
     // LinearLayout
     private LinearLayout linearLayoutDescription;
 
-    private static final int PICK_IMAGE_REQUEST = 101;
+    static final int PICK_IMAGE_REQUEST = 101;
     private static final int REQUEST_PERMISSION = 102;
+
+    private static int counter_ingredients = 0;
 
 
 
@@ -100,8 +109,6 @@ public class AddRecipe extends AppCompatActivity {
         FloatingClickButton(); // Добавление поле для ингридиента
 
         SaveButtonClick(); // Нажатие кнопки сохранения рецепта
-
-        imageRecipe = findViewById(R.id.recipeImageView);
 
         imageRecipe.setOnClickListener(v -> openGallery());
 
@@ -186,6 +193,7 @@ public class AddRecipe extends AppCompatActivity {
         if(myApp.getBaseLanguage().equals("Рус")){
             title.setText("Добавить Рецепт");
             nameRecipeTitle.setText("Имя рецепта:");
+            titleIngredients.setText("Ингредиенты");
             instructionTitle.setText("Инструкция:");
             editTextRecipe.setHint("имя");
             editTextInsctructionRecipe.setHint("инструкция");
@@ -193,6 +201,7 @@ public class AddRecipe extends AppCompatActivity {
         if(myApp.getBaseLanguage().equals("Eng")){
             title.setText("Add Recipe");
             nameRecipeTitle.setText("Recipe name");
+            titleIngredients.setText("Ingredients");
             instructionTitle.setText("Insctruction");
             editTextRecipe.setHint("name");
             editTextInsctructionRecipe.setHint("instruction");
@@ -200,6 +209,7 @@ public class AddRecipe extends AppCompatActivity {
         if(myApp.getBaseLanguage().equals("Каз")){
             title.setText("Рецепт Қосыңыз");
             nameRecipeTitle.setText("Рецепт атауы");
+            titleIngredients.setText("Ингредиенттер");
             instructionTitle.setText("Нұсқаулық");
             editTextRecipe.setHint("атауы");
             editTextInsctructionRecipe.setHint("нұсқаулық");
@@ -218,25 +228,42 @@ public class AddRecipe extends AppCompatActivity {
         title = findViewById(R.id.CreateRecipeTextView);
         nameRecipeTitle = findViewById(R.id.TextViewRecipeName);
         instructionTitle = findViewById(R.id.TextViewInstructionRecipe);
-        imageRecipe = findViewById(R.id.RecipeImageView);
+        imageRecipe = findViewById(R.id.recipeImageView);
+        titleIngredients = findViewById(R.id.TextViewIngredient);
     }
 
     private void FloatingClickButton(){
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                counter_ingredients += 1;
                 showDescriptions();
             }
         });
     }
 
     private void showDescriptions() {
+        if(titleIngredients.getVisibility() == INVISIBLE){
+            titleIngredients.setVisibility(VISIBLE);
+        }
         Log.d("AddRecipe2123", "Сработал флоатинг");
         View view = getLayoutInflater().inflate(R.layout.ingredient_item, linearLayoutDescription, false);
         Button test = view.findViewById(R.id.ButtonDelete);
         Spinner spinnerUnit = view.findViewById(R.id.SpinnerUnit);
         TextView UnitTextView = view.findViewById(R.id.TextViewUnit);
         test.setId(View.generateViewId());
+
+        List<String> list = checkLanguage();
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(
+                this,
+                android.R.layout.simple_spinner_item,
+                list
+        );
+
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        spinnerUnit.setAdapter(adapter);
 
         spinnerUnit.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -254,18 +281,50 @@ public class AddRecipe extends AppCompatActivity {
             new MaterialAlertDialogBuilder(AddRecipe.this)
                     .setTitle("Удалить ингредиент?")
                     .setMessage("Вы уверены, что хотите удалить этот ингредиент?")
-                    .setIcon(R.drawable.ic_delete) // иконка (можно убрать)
+                    .setIcon(R.drawable.ic_delete)
                     .setPositiveButton("Да", (dialog, which) -> {
                         // удаляем родительский элемент (строку ингредиента)
                         View parentRow = (View) v.getParent();
+                        counter_ingredients -= 1;
                         linearLayoutDescription.removeView(parentRow);
+                        if(counter_ingredients == 0){
+                            if(titleIngredients.getVisibility() == VISIBLE){
+                                titleIngredients.setVisibility(INVISIBLE);
+                            }
+                        }
                     })
                     .setNegativeButton("Нет", (dialog, which) -> dialog.dismiss())
                     .show();
         });
 
-
         linearLayoutDescription.addView(view);
+    }
+
+    private List<String> checkLanguage() {
+        List<String> result = new ArrayList<>();
+        if(myApp.getBaseLanguage().equals("Рус")){
+            result.add("кг");
+            result.add("гр");
+            result.add("л");
+            result.add("мл");
+            result.add("мсл");
+            result.add("мчл");
+        } else if(myApp.getBaseLanguage().equals("Eng")){
+            result.add("kg");
+            result.add("gr");
+            result.add("l");
+            result.add("ml");
+            result.add("tbsp");
+            result.add("tsp");
+        } else {
+            result.add("кг");
+            result.add("гр");
+            result.add("л");
+            result.add("мл");
+            result.add("өақ");
+            result.add("өшк");
+        }
+        return result;
     }
 
 
