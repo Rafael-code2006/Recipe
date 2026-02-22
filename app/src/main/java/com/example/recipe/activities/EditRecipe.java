@@ -51,6 +51,7 @@ import java.util.List;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
 import io.reactivex.rxjava3.disposables.Disposable;
+import io.reactivex.rxjava3.functions.Consumer;
 
 public class EditRecipe extends AppCompatActivity {
 
@@ -319,6 +320,12 @@ public class EditRecipe extends AppCompatActivity {
                     Disposable disposable = viewModel.saveAllIngredients(descriptions)
                             .andThen(viewModel.editRecipe(recipes))
                             .observeOn(AndroidSchedulers.mainThread())
+                            .doOnError(new Consumer<Throwable>() {
+                                @Override
+                                public void accept(Throwable throwable) throws Throwable {
+                                    Log.d("EditRecipe", throwable.getMessage());
+                                }
+                            })
                             .subscribe(() -> {
 
                                 Intent intent = ShowRecipe.newIntent(EditRecipe.this, recipes);

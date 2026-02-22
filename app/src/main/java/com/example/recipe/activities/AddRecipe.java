@@ -396,9 +396,12 @@ public class AddRecipe extends AppCompatActivity {
         // Сохраняем рецепт
         addRecipeModelView.addRecipe(recipe);
 
+
         // Получаем ID один раз
         addRecipeModelView.getIdRecipes().observe(this, recipeId -> {
-
+            Log.d("TesTest", "Выполняю переход");
+            startActivity(MainActivity.getIntent(AddRecipe.this));
+            finish();
             if (recipeId == null) return;
 
             // Сохраняем ингредиенты с правильным recipeId
@@ -409,13 +412,14 @@ public class AddRecipe extends AppCompatActivity {
 
             // Удаляем observer
             addRecipeModelView.getIdRecipes().removeObservers(this);
+            Log.d("TesTest", "Выполняю переход");
 
             Toast.makeText(this, "Рецепт сохранён", Toast.LENGTH_SHORT).show();
 
+            Log.d("TesTest", "Выполняю переход");
             // Переход
-            startActivity(MainActivity.getIntent(AddRecipe.this));
-            finish();
         });
+
     }
 
 

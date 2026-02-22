@@ -65,6 +65,12 @@ public class RecipeShowViewModel extends AndroidViewModel {
         Disposable disposable = recipeDataBase.descriptionDao().getDescriptionForRecipe(recipes.getId())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
+                .doOnError(new Consumer<Throwable>() {
+                    @Override
+                    public void accept(Throwable throwable) throws Throwable {
+                        Log.d("ShowRecipeViewModel", throwable.getMessage());
+                    }
+                })
                 .subscribe(new Consumer<List<Descriptions>>() {
                     @Override
                     public void accept(List<Descriptions> getDescriptions) throws Throwable {

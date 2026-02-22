@@ -18,36 +18,20 @@ import java.util.List;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
 import io.reactivex.rxjava3.disposables.Disposable;
-import io.reactivex.rxjava3.functions.Consumer;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 
 public class MainViewModel extends AndroidViewModel {
 
-    private static final String TAG = "MainViewModel1";
+    private static final String TAG = "MainViewModel";
 
-
-    // DataBase
     private RecipeDataBase recipeDataBase = RecipeDataBase.getInstance(getApplication());
 
-
-    // MutableLiveData
-
     private MutableLiveData<List<Recipes>> recipes = new MutableLiveData<>();
-
     private MutableLiveData<List<Descriptions>> descriptions = new MutableLiveData<>();
-
     private MutableLiveData<HashMap<Recipes, Integer>> countIngredients = new MutableLiveData<>();
-
     private MutableLiveData<Recipes> recipe = new MutableLiveData<>();
 
-
-    // CompositeDisposable
     private CompositeDisposable compositeDisposable = new CompositeDisposable();
-
-
-
-    // Getters
-
 
     public LiveData<Recipes> getRecipe() {
         return recipe;
@@ -61,106 +45,87 @@ public class MainViewModel extends AndroidViewModel {
         return descriptions;
     }
 
+    public LiveData<List<Recipes>> getRecipes() {
+        return recipes;
+    }
 
-
-    // Конструктор
     public MainViewModel(@NonNull Application application) {
         super(application);
         refreshList();
     }
 
-
-    // Возврат коллекции рецептов
-    public LiveData<List<Recipes>> getRecipes(){
-        Log.d("ViewModelTest", "Количество обьектов: ");
-        return recipes;
-    }
-
-
-    // Обновление списка рецептов в recipes
-    public void refreshList(){
+    // ================== Обновление списка рецептов ==================
+    public void refreshList() {
         Disposable disposableRefresh = recipeDataBase.recipesDAO().getRecipes()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Consumer<List<Recipes>>() {
-                    @Override
-                    public void accept(List<Recipes> recipesForDB) throws Throwable {
-                        Log.d(TAG, "countRecipe: " + recipesForDB.size());
-                        recipes.setValue(recipesForDB);
-                    }
-                });
+                .subscribe(
+                        recipesForDB -> {
+                            Log.d(TAG, "countRecipe: " + recipesForDB.size());
+                            recipes.setValue(recipesForDB);
+                        },
+                        throwable -> Log.e(TAG, "Ошибка при загрузке рецептов", throwable)
+                );
         compositeDisposable.add(disposableRefresh);
     }
 
-
-    // Удаление рецепта по его id
-    public void remove(Recipes recipe){
-      Disposable disposableRemove = recipeDataBase.recipesDAO().remove(recipe.getId())
-                .subscribeOn(Schedulers.io())
-                .subscribe();
-      compositeDisposable.add(disposableRemove);
-    }
-
-    public void removeDescriptionForRecipe(Recipes recipe){
-        Disposable disposable = recipeDataBase.descriptionDao().removeForRecipe(recipe.getId())
-                .subscribeOn(Schedulers.io())
-                .doOnError(new Consumer<Throwable>() {
-                    @Override
-                    public void accept(Throwable throwable) throws Throwable {
-                        Log.d(TAG, throwable.getMessage().toString());
-                    }
-                })
-                .subscribe();
-    }
-
-
-    public void loadIngredients(Recipes recipes){
-        Disposable disposable = recipeDataBase.descriptionDao().getDescriptionForRecipe(recipes.getId())
+    // ================== Удаление рецепта ==================
+    public void remove(Recipes recipe) {
+        Disposable disposableRemove = recipeDataBase.recipesDAO().remove(recipe.getId())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Consumer<List<Descriptions>>() {
-                    @Override
-                    public void accept(List<Descriptions> getDescriptions) throws Throwable {
-                        int count = getDescriptions.size();
+                .subscribe(
+                        () -> Log.d(TAG, "Рецепт удалён: " + recipe.getName()),
+                        throwable -> Log.e(TAG, "Ошибка при удалении рецепта", throwable)
+                );
+        compositeDisposable.add(disposableRemove);
+    }
 
-                        HashMap<Recipes, Integer> map = countIngredients.getValue();
-
-                        if(map == null){
-                           map = new HashMap<>();
-                        }
-
-                        map.put(recipes, count);
-
-                        countIngredients.setValue(map);
-                    }
-                }, new Consumer<Throwable>() {
-                    @Override
-                    public void accept(Throwable throwable) throws Throwable {
-                        Log.d(TAG, throwable.getMessage().toString());
-                    }
-                });
+    // ================== Удаление ингредиентов для рецепта ==================
+    public void removeDescriptionForRecipe(Recipes recipe) {
+        Disposable disposable = recipeDataBase.descriptionDao().removeForRecipe(recipe.getId())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        () -> Log.d(TAG, "Ингредиенты для рецепта удалены"),
+                        throwable -> Log.e(TAG, "Ошибка при удалении ингредиентов", throwable)
+                );
         compositeDisposable.add(disposable);
     }
 
+    // ================== Загрузка ингредиентов ==================
+    public void loadIngredients(Recipes recipesItem) {
+        Disposable disposable = recipeDataBase.descriptionDao().getDescriptionForRecipe(recipesItem.getId())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        getDescriptions -> {
+                            int count = getDescriptions.size();
+                            HashMap<Recipes, Integer> map = countIngredients.getValue();
+                            if (map == null) map = new HashMap<>();
+                            map.put(recipesItem, count);
+                            countIngredients.setValue(map);
+                        },
+                        throwable -> Log.e(TAG, "Ошибка при загрузке ингредиентов", throwable)
+                );
+        compositeDisposable.add(disposable);
+    }
+
+    // ================== Получение рецепта по id ==================
     public void getRecipeForId(Recipes recipeDB) {
         Disposable disposable = recipeDataBase.recipesDAO().getRecipe(recipeDB.getId())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Consumer<Recipes>() {
-                    @Override
-                    public void accept(Recipes recipes) throws Throwable {
-                        recipe.setValue(recipes);
-                    }
-                });
+                .subscribe(
+                        r -> recipe.setValue(r),
+                        throwable -> Log.e(TAG, "Ошибка при получении рецепта по ID", throwable)
+                );
         compositeDisposable.add(disposable);
     }
-
 
     @Override
     protected void onCleared() {
         super.onCleared();
         compositeDisposable.clear();
     }
-
-
 }
