@@ -67,7 +67,7 @@
                     android:id="@+id/recipeImageView"
                     android:layout_width="350dp"
                     android:layout_height="250dp"
-                    android:src="@drawable/america"
+                    android:src="@drawable/steak"
                     android:scaleType="centerCrop"
                     android:contentDescription="Recipe photo"
                     android:clickable="true"
@@ -83,7 +83,7 @@
                 android:fontFamily="@font/archivo_black"
                 android:text="Recipe name"
                 android:textColor="@color/title_my_color"
-                android:textSize="21sp"
+                android:textSize="19sp"
                 android:textStyle="bold"
                 android:layout_gravity="center"/>
 
@@ -122,7 +122,7 @@
                 android:text="Ingredients"
                 android:visibility="invisible"
                 android:textColor="@color/title_my_color"
-                android:textSize="21sp"
+                android:textSize="19sp"
                 android:textStyle="bold"
                 android:layout_gravity="center" />
 
@@ -141,7 +141,7 @@
                 android:fontFamily="@font/archivo_black"
                 android:text="Instruction"
                 android:textColor="@color/title_my_color"
-                android:textSize="21sp"
+                android:textSize="19sp"
                 android:textStyle="bold"
                 android:layout_gravity="center"/>
 

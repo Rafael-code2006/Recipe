@@ -38,6 +38,8 @@ public class MainViewModel extends AndroidViewModel {
 
     private MutableLiveData<HashMap<Recipes, Integer>> countIngredients = new MutableLiveData<>();
 
+    private MutableLiveData<Recipes> recipe = new MutableLiveData<>();
+
 
     // CompositeDisposable
     private CompositeDisposable compositeDisposable = new CompositeDisposable();
@@ -46,6 +48,10 @@ public class MainViewModel extends AndroidViewModel {
 
     // Getters
 
+
+    public LiveData<Recipes> getRecipe() {
+        return recipe;
+    }
 
     public LiveData<HashMap<Recipes, Integer>> getCountIngredients() {
         return countIngredients;
@@ -136,7 +142,18 @@ public class MainViewModel extends AndroidViewModel {
         compositeDisposable.add(disposable);
     }
 
-
+    public void getRecipeForId(Recipes recipeDB) {
+        Disposable disposable = recipeDataBase.recipesDAO().getRecipe(recipeDB.getId())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Consumer<Recipes>() {
+                    @Override
+                    public void accept(Recipes recipes) throws Throwable {
+                        recipe.setValue(recipes);
+                    }
+                });
+        compositeDisposable.add(disposable);
+    }
 
 
     @Override
@@ -144,4 +161,6 @@ public class MainViewModel extends AndroidViewModel {
         super.onCleared();
         compositeDisposable.clear();
     }
+
+
 }

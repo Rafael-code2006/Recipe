@@ -1,8 +1,11 @@
 package com.example.recipe.adapters;
 
+import android.net.Uri;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -13,6 +16,7 @@ import com.example.recipe.R;
 import com.example.recipe.model.Recipes;
 import com.example.recipe.setting.MyApp;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,6 +40,9 @@ public class AdapterRecipes extends RecyclerView.Adapter<AdapterRecipes.RecipesV
 
 
     // Setters
+
+
+
     public void setCountIngredients(CountIngredients countIngredients) {
         this.countIngredients = countIngredients;
     }
@@ -78,6 +85,8 @@ public class AdapterRecipes extends RecyclerView.Adapter<AdapterRecipes.RecipesV
         // Название рецепта
         holder.recipeTitle.setText(recipe.getName());
 
+        showImage(holder.imageRecipe, recipe);
+
         holder.ingredientsCount.setText(String.valueOf(recipe.getIngredient_count()));
 
         if(myApp.getBaseLanguage().equals("Рус")){
@@ -103,6 +112,33 @@ public class AdapterRecipes extends RecyclerView.Adapter<AdapterRecipes.RecipesV
         });
     }
 
+    private void showImage(ImageView imageView, Recipes recipe) {
+        try {
+            String imagePath = recipe.getImage();
+            Log.d("ShowRecipe", "URI из базы: " + imagePath);
+
+            if (imagePath == null || imagePath.isEmpty()) {
+                imageView.setImageResource(R.drawable.steak);
+                return;
+            }
+
+            File file = new File(imagePath);
+
+            if (file.exists()) {
+                imageView.setImageURI(Uri.fromFile(file)); // <-- вот здесь валидный Uri
+            } else {
+                Log.d("ShowRecipe", "Файл не найден: " + imagePath);
+                imageView.setImageResource(R.drawable.steak);
+            }
+
+        } catch (Exception e) {
+            Log.e("ShowRecipe", "Ошибка показа изображения", e);
+            imageView.setImageResource(R.drawable.steak);
+        }
+    }
+
+
+
     @Override
     public int getItemCount() {
         return recipes.size();
@@ -114,6 +150,8 @@ public class AdapterRecipes extends RecyclerView.Adapter<AdapterRecipes.RecipesV
         private final TextView ingredientsCount;
         private final ConstraintLayout recipeCard;
 
+        private final ImageView imageRecipe;
+
         private final TextView ingredientsLabel;
 
         public RecipesViewHolder(@NonNull View itemView) {
@@ -122,6 +160,7 @@ public class AdapterRecipes extends RecyclerView.Adapter<AdapterRecipes.RecipesV
             recipeCard = itemView.findViewById(R.id.recipeCard);
             ingredientsCount = itemView.findViewById(R.id.ingredientsCount);
             ingredientsLabel = itemView.findViewById(R.id.ingredientsLabel);
+            imageRecipe= itemView.findViewById(R.id.RecipeImageView);
         }
     }
 
@@ -130,6 +169,8 @@ public class AdapterRecipes extends RecyclerView.Adapter<AdapterRecipes.RecipesV
     public interface RecipeOnClickListener {
         void OnClickRecipe(Recipes recipe);
     }
+
+
     public interface CountIngredients{
         void CountIngredients(Recipes recipe, TextView targetView);
     }

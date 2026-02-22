@@ -223,7 +223,7 @@ public class EditRecipe extends AppCompatActivity {
                 desc.setName("");
                 desc.setUnit("kg");
                 desc.setWeight(1f);
-                recyclerView.post(() -> setRecyclerViewHeightBasedOnChildren(recyclerView, 20));
+                recyclerView.post(() -> setRecyclerViewHeightBasedOnChildren(recyclerView));
                 newDescriptions.add(desc);
                 adapter.setIngredient(newDescriptions);
                 adapter.notifyDataSetChanged();
@@ -252,7 +252,7 @@ public class EditRecipe extends AppCompatActivity {
                 if (position != RecyclerView.NO_POSITION) {
                     Descriptions ingredient = adapter.getIngredients().get(position); // Берем рецепт по позиции из адаптера
                     deletedIngredient(position, ingredient);
-                    recyclerView.post(() -> setRecyclerViewHeightBasedOnChildren(recyclerView, -10));
+                    recyclerView.post(() -> setRecyclerViewHeightBasedOnChildren(recyclerView));
                 }
             }
 
@@ -342,16 +342,19 @@ public class EditRecipe extends AppCompatActivity {
 
     private void setStarted(Recipes recipes) {
         editTextRecipe.setText(recipes.getName());
+        editTextInsctruction.setText(recipes.getInsctruction());
+
         viewModel.loadIngredients(recipes);
         viewModel.getIngredients().observe(this, new Observer<List<Descriptions>>() {
             @Override
             public void onChanged(List<Descriptions> descriptions) {
                 adapter.setIngredient(descriptions);
                 sizeIngedient = descriptions.size();
-                recyclerView.post(() -> setRecyclerViewHeightBasedOnChildren(recyclerView ,55));
+
+                // Пересчитываем высоту RecyclerView после обновления данных
+                recyclerView.post(() -> setRecyclerViewHeightBasedOnChildren(recyclerView));
             }
         });
-        editTextInsctruction.setText(recipes.getInsctruction());
     }
 
     private void changeLanguage() {
@@ -401,53 +404,40 @@ public class EditRecipe extends AppCompatActivity {
         imageView = findViewById(R.id.RecipeImageView);
     }
 
-    /**
-     * Обновляет высоту RecyclerView на основе нового элемента.
-     * @param recyclerView - сам RecyclerView
-     * @param size - дополнительный размер/отступ (например, 30px)
-     */
-    private void setRecyclerViewHeightBasedOnChildren(RecyclerView recyclerView, int size) {
-        int totalHeight = -1;
+
+    private void setRecyclerViewHeightBasedOnChildren(RecyclerView recyclerView) {
         RecyclerView.Adapter adapter = recyclerView.getAdapter();
         if (adapter == null || adapter.getItemCount() == 0) return;
 
+        int totalHeight = 0;
         int marginPx = (int) TypedValue.applyDimension(
                 TypedValue.COMPLEX_UNIT_DIP,
-                8,  // стандартный отступ между элементами
+                8, // отступ между элементами
                 recyclerView.getResources().getDisplayMetrics()
         );
 
-        // Если глобальный totalHeight не определён, инициализируем его
-        if (totalHeight == -1) {
-            totalHeight = 0;
-            for (int i = 0; i < adapter.getItemCount(); i++) {
-                RecyclerView.ViewHolder holder = adapter.createViewHolder(recyclerView, adapter.getItemViewType(i));
-                adapter.onBindViewHolder(holder, i);
-                holder.itemView.measure(
-                        View.MeasureSpec.makeMeasureSpec(recyclerView.getWidth(), View.MeasureSpec.EXACTLY),
-                        View.MeasureSpec.UNSPECIFIED
-                );
-                totalHeight += holder.itemView.getMeasuredHeight() + marginPx + size;
-            }
-        } else {
-            // измеряем только последний (новый) элемент
-            int position = adapter.getItemCount() - 1;
-            RecyclerView.ViewHolder holder = adapter.createViewHolder(recyclerView, adapter.getItemViewType(position));
-            adapter.onBindViewHolder(holder, position);
+        for (int i = 0; i < adapter.getItemCount(); i++) {
+            RecyclerView.ViewHolder holder = adapter.createViewHolder(recyclerView, adapter.getItemViewType(i));
+            adapter.onBindViewHolder(holder, i);
             holder.itemView.measure(
                     View.MeasureSpec.makeMeasureSpec(recyclerView.getWidth(), View.MeasureSpec.EXACTLY),
                     View.MeasureSpec.UNSPECIFIED
             );
-            totalHeight += holder.itemView.getMeasuredHeight() + marginPx + size;
+            totalHeight += holder.itemView.getMeasuredHeight() + marginPx;
         }
 
-        // применяем новую высоту
+        // добавляем небольшой запас, чтобы последний элемент точно помещался
+        totalHeight += (int) TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP,
+                19,
+                recyclerView.getResources().getDisplayMetrics()
+        );
+
         ViewGroup.LayoutParams params = recyclerView.getLayoutParams();
         params.height = totalHeight;
         recyclerView.setLayoutParams(params);
         recyclerView.requestLayout();
     }
-
 
 
 

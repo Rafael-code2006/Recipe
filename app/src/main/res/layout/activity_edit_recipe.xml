@@ -28,14 +28,8 @@
             android:layout_weight="1"
             android:fontFamily="@font/archivo_black"
             android:text="Edit Recipe"
-            android:textColor="@color/my_recipes_background"
+            android:textColor="@color/title_my_color"
             android:textSize="20sp" />
-
-        <ImageView
-            android:id="@+id/ImageViewBack"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:src="@android:drawable/ic_menu_revert" />
     </LinearLayout>
 
 
@@ -121,13 +115,14 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginTop="15dp"
+                android:fontFamily="@font/archivo_black"
                 android:shadowColor="#000000"
                 android:shadowDx="2"
                 android:shadowDy="2"
                 android:shadowRadius="4"
                 android:text="Name"
                 android:textColor="@color/title_my_color"
-                android:textSize="28sp"
+                android:textSize="18sp"
                 android:textStyle="bold" />
 
             <androidx.cardview.widget.CardView
@@ -168,25 +163,22 @@
                 android:layout_width="350dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:layout_marginTop="15dp"
-                android:fontFamily="@font/bakbak_one"
+                android:layout_marginTop="25dp"
+                android:fontFamily="@font/archivo_black"
                 android:shadowColor="#000000"
                 android:shadowDx="2"
                 android:shadowDy="2"
                 android:shadowRadius="4"
                 android:text="Ingredients"
                 android:textColor="@color/title_my_color"
-                android:textSize="28sp"
+                android:textSize="18sp"
                 android:textStyle="bold" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/RecyclerViewIngredients"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:nestedScrollingEnabled="false"
-                android:overScrollMode="never"
-                tools:listitem="@layout/ingredient_item"
-                tools:itemCount="2" />
+                android:nestedScrollingEnabled="false"/>
 
 
 
@@ -198,10 +190,11 @@
                 android:layout_width="350dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
+                android:layout_marginTop="10dp"
                 android:text="Instruction"
                 android:textColor="@color/title_my_color"
-                android:textSize="28sp"
-                android:fontFamily="@font/bakbak_one"
+                android:fontFamily="@font/archivo_black"
+                android:textSize="18sp"
                 android:textStyle="bold"
                 android:shadowColor="#000000"
                 android:shadowDx="2"

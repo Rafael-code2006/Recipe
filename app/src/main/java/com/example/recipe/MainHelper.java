@@ -7,13 +7,13 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
@@ -24,6 +24,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.example.recipe.activities.AddRecipe;
 import com.example.recipe.activities.MainActivity;
+import com.example.recipe.activities.SettingActivity;
 import com.example.recipe.activities.ShowRecipe;
 import com.example.recipe.adapters.AdapterRecipes;
 import com.example.recipe.model.Recipes;
@@ -31,6 +32,7 @@ import com.example.recipe.setting.MyApp;
 import com.example.recipe.viewmodel.MainViewModel;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 
@@ -270,5 +272,7 @@ public class MainHelper {
                 .show();
     }
 
-
+    public void reloadRecipe() {
+        viewModel.refreshList();
+    }
 }

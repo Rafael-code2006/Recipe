@@ -1,4 +1,4 @@
-package com.example.recipe.activities;
+package com.example.recipe.adapters;
 
 import android.view.LayoutInflater;
 import android.view.View;

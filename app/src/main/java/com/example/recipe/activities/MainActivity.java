@@ -46,6 +46,9 @@ public class MainActivity extends AppCompatActivity {
         helper.Swipe(); // Swipe
 
 
+
+
+
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
@@ -53,6 +56,11 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        helper.reloadRecipe();// если есть такой метод
+    }
 
     public static Intent getIntent(Context context){
         Intent intent = new Intent(context, MainActivity.class);
