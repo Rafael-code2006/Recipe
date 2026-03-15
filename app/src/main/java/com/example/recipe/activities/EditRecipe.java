@@ -38,6 +38,7 @@ import com.example.recipe.adapters.AdapterEditRecipes;
 import com.example.recipe.model.Descriptions;
 import com.example.recipe.model.Recipes;
 import com.example.recipe.setting.MyApp;
+import com.example.recipe.setting.TextKey;
 import com.example.recipe.viewmodel.EditRecipeViewModel;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -74,7 +75,7 @@ public class EditRecipe extends AppCompatActivity {
     private EditRecipeViewModel viewModel;
     private AdapterEditRecipes adapter;
 
-    private Recipes recipe = new Recipes();
+    private Recipes recipe;
 
     private static final int PICK_IMAGE_REQUEST = 101;
     private static final int REQUEST_PERMISSION = 102;
@@ -91,10 +92,22 @@ public class EditRecipe extends AppCompatActivity {
         setContentView(R.layout.activity_edit_recipe);
         initView();
 
+        showRecipe();
+
+
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+                Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+                v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+                return insets;
+            });
+        }
+
+    private void showRecipe() {
         Recipes recipes = (Recipes) getIntent().getSerializableExtra("Recipe");
         viewModel.loadRecipe(recipes);
         viewModel.getRecipe().observe(EditRecipe.this, recipeDB-> {
             recipe = recipeDB;
+
             setStarted(recipe);
 
             Swipe();
@@ -109,15 +122,7 @@ public class EditRecipe extends AppCompatActivity {
 
             imageView.setOnClickListener(v -> openGallery());
         });
-
-
-
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-                Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-                v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-                return insets;
-            });
-        }
+    }
 
 
     private void openGallery() {
@@ -365,30 +370,15 @@ public class EditRecipe extends AppCompatActivity {
     }
 
     private void changeLanguage() {
-        if(myApp.getBaseLanguage().equals("Рус")){
-            title.setText("Изменить Рецепт");
-            nameRecipeTitle.setText("Имя");
-            ingredientsTitle.setText("Ингредиенты");
-            instructionTitle.setText("Инструкция");
-            editTextRecipe.setHint("имя");
-            editTextInsctruction.setHint("инструкция");
-        }
-        if(myApp.getBaseLanguage().equals("Eng")){
-            title.setText("Edit Recipe");
-            nameRecipeTitle.setText("Name");
-            ingredientsTitle.setText("Ingredients");
-            instructionTitle.setText("Instruction");
-            editTextRecipe.setHint("name");
-            editTextInsctruction.setHint("insctruction");
-        }
-        if(myApp.getBaseLanguage().equals("Каз")){
-            title.setText("Рецептті Өңдеу");
-            nameRecipeTitle.setText("Атауы");
-            ingredientsTitle.setText("Құрамы");
-            instructionTitle.setText("Нұсқаулық");
-            editTextRecipe.setHint("атауы");
-            editTextInsctruction.setHint("нұсқаулық");
-        }
+        // Заголовки и подписи
+        title.setText(MyApp.text(TextKey.EDIT));                 // "Изменить Рецепт", "Edit Recipe", "Рецептті Өңдеу"
+        nameRecipeTitle.setText(MyApp.text(TextKey.NAME));       // "Имя", "Name", "Атауы"
+        ingredientsTitle.setText(MyApp.text(TextKey.INGREDIENTS));// "Ингредиенты", "Ingredients", "Құрамы"
+        instructionTitle.setText(MyApp.text(TextKey.INSTRUCTION));// "Инструкция", "Instruction", "Нұсқаулық"
+
+        // Хинты для EditText
+        editTextRecipe.setHint(MyApp.text(TextKey.NAME));        // "имя", "name", "атауы"
+        editTextInsctruction.setHint(MyApp.text(TextKey.INSTRUCTION)); // "инструкция", "insctruction", "нұсқаулық"
     }
 
     private void initView(){

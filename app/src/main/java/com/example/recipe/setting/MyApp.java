@@ -3,7 +3,6 @@ package com.example.recipe.setting;
 import android.app.Application;
 import android.content.SharedPreferences;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -11,7 +10,6 @@ public class MyApp extends Application {
 
     private static MyApp instance;
     private String baseLanguage;
-
     private List<String> rusUnit;
     private List<String> engUnit;
     private List<String> kazUnit;
@@ -67,4 +65,9 @@ public class MyApp extends Application {
     public List<String> getKazUnit() {
         return kazUnit;
     }
+
+    public static String text(TextKey key){
+        return key.getText(instance.getBaseLanguage());
+    }
+
 }

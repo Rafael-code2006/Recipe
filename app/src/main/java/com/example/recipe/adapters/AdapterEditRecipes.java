@@ -19,7 +19,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.recipe.R;
 import com.example.recipe.model.Descriptions;
-import com.example.recipe.setting.MyApp;
+import com.example.recipe.setting.MyApp;import com.example.recipe.setting.TextKey;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -76,20 +76,8 @@ public class AdapterEditRecipes extends RecyclerView.Adapter<AdapterEditRecipes.
         holder.isBinding = true; // начинаем биндинг
 
         // --- Язык ---
-        switch (myApp.getBaseLanguage()) {
-            case "Рус":
-                holder.editTextNameIngredient.setHint("имя");
-                holder.editTextWeight.setHint("вес");
-                break;
-            case "Eng":
-                holder.editTextNameIngredient.setHint("name");
-                holder.editTextWeight.setHint("weight");
-                break;
-            case "Каз":
-                holder.editTextNameIngredient.setHint("атауы");
-                holder.editTextWeight.setHint("салмағы");
-                break;
-        }
+        holder.editTextNameIngredient.setHint(MyApp.text(TextKey.NAME));
+        holder.editTextWeight.setHint(MyApp.text(TextKey.WEIGHT));
 
         // --- Spinner ---
         List<String> tempUnits = myApp.unit();

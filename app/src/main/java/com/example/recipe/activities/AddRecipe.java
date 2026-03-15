@@ -35,6 +35,7 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.recipe.setting.MyApp;
+import com.example.recipe.setting.TextKey;
 import com.example.recipe.viewmodel.AddRecipeModelView;
 import com.example.recipe.model.Descriptions;
 import com.example.recipe.R;
@@ -110,13 +111,17 @@ public class AddRecipe extends AppCompatActivity {
 
         SaveButtonClick(); // Нажатие кнопки сохранения рецепта
 
-        imageRecipe.setOnClickListener(v -> openGallery());
+        setImage();
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+    }
+
+    private void setImage() {
+        imageRecipe.setOnClickListener(v -> openGallery());
     }
 
     // Открываем галерею
@@ -190,32 +195,16 @@ public class AddRecipe extends AppCompatActivity {
     }
 
     private void changeLanguage() {
-        if(myApp.getBaseLanguage().equals("Рус")){
-            title.setText("Добавить Рецепт");
-            nameRecipeTitle.setText("Имя рецепта:");
-            titleIngredients.setText("Ингредиенты");
-            instructionTitle.setText("Инструкция:");
-            editTextRecipe.setHint("имя");
-            editTextInsctructionRecipe.setHint("инструкция");
-        }
-        if(myApp.getBaseLanguage().equals("Eng")){
-            title.setText("Add Recipe");
-            nameRecipeTitle.setText("Recipe name");
-            titleIngredients.setText("Ingredients");
-            instructionTitle.setText("Insctruction");
-            editTextRecipe.setHint("name");
-            editTextInsctructionRecipe.setHint("instruction");
-        }
-        if(myApp.getBaseLanguage().equals("Каз")){
-            title.setText("Рецепт Қосыңыз");
-            nameRecipeTitle.setText("Рецепт атауы");
-            titleIngredients.setText("Ингредиенттер");
-            instructionTitle.setText("Нұсқаулық");
-            editTextRecipe.setHint("атауы");
-            editTextInsctructionRecipe.setHint("нұсқаулық");
-        }
-    }
+        // Заголовки и подписи
+        title.setText(MyApp.text(TextKey.ADD));                  // "Добавить Рецепт", "Add Recipe", "Рецепт Қосыңыз"
+        nameRecipeTitle.setText(MyApp.text(TextKey.RECIPE_NAME)); // "Имя рецепта:", "Recipe name", "Рецепт атауы"
+        titleIngredients.setText(MyApp.text(TextKey.INGREDIENTS));// "Ингредиенты", "Ingredients", "Ингредиенттер"
+        instructionTitle.setText(MyApp.text(TextKey.INSTRUCTION));// "Инструкция:", "Instruction", "Нұсқаулық"
 
+        // Хинты для EditText
+        editTextRecipe.setHint(MyApp.text(TextKey.RECIPE_NAME));       // "имя", "name", "атауы"
+        editTextInsctructionRecipe.setHint(MyApp.text(TextKey.INSTRUCTION)); // "инструкция", "instruction", "нұсқаулық"
+    }
 
     private void InitViews() {
         editTextRecipe = findViewById(R.id.EditTextRecipe);

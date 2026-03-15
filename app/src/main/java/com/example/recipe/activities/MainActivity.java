@@ -18,7 +18,7 @@ import com.example.recipe.R;
 public class MainActivity extends AppCompatActivity {
 
 
-    private static final String TAG = "MainActivity1";
+
 
     private MainHelper helper;
 

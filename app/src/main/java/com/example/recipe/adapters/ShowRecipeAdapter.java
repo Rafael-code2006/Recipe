@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.recipe.R;
 import com.example.recipe.model.Descriptions;
-import com.example.recipe.setting.MyApp;
+import com.example.recipe.setting.MyApp;import com.example.recipe.setting.TextKey;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,21 +41,16 @@ public class ShowRecipeAdapter extends RecyclerView.Adapter<ShowRecipeAdapter.Vi
     @Override
     public void onBindViewHolder(@NonNull ShowRecipeAdapter.ViewHolder holder, int position) {
         Descriptions desc = data.get(position);
+
         holder.name.setText(desc.getName());
         holder.weight.setText(String.valueOf(desc.getWeight()));
 
-        List<String> units = myApp.unit();
-        String unit = desc.getUnit();
-        for (int i = 0; i < 3; i++) {
-            List<String> current;
-            if (i == 0) current = myApp.getRusUnit();
-            else if (i == 1) current = myApp.getEngUnit();
-            else current = myApp.getKazUnit();
-            for (int j = 0; j < current.size(); j++) {
-                if (unit.equals(current.get(j))) unit = units.get(j);
-            }
-        }
-        holder.unit.setText(unit);
+        String lang = myApp.getBaseLanguage();
+
+        // переводим любую единицу в текущий язык
+        String unitText = TextKey.unitTextByValue(desc.getUnit(), lang);
+
+        holder.unit.setText(unitText);
     }
 
     @Override

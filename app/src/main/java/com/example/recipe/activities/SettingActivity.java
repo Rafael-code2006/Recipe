@@ -23,6 +23,7 @@ import com.example.recipe.model.Descriptions;
 import com.example.recipe.model.ExportData;
 import com.example.recipe.model.Recipes;
 import com.example.recipe.setting.MyApp;
+import com.example.recipe.setting.TextKey;
 import com.example.recipe.viewmodel.SettingViewModel;
 import com.google.gson.Gson;
 
@@ -59,7 +60,6 @@ public class SettingActivity extends AppCompatActivity {
         setContentView(R.layout.activity_setting);
 
         initView();
-
         exportButton();
         importButton();
         clickSaveButton();
@@ -74,42 +74,40 @@ public class SettingActivity extends AppCompatActivity {
     }
 
     private void changeLanguage(){
+        if(myApp.getBaseLanguage().equals("Рус")){
+            language.setSelection(0);
+        } else if(myApp.getBaseLanguage().equals("Eng")){
+            language.setSelection(1);
+        } else {
+            language.setSelection(2);
+        }
+
+
         language.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                String selectedLanguage = parent.getItemAtPosition(position).toString();
+                    String selectedLanguage = parent.getItemAtPosition(position).toString();
 
                 if(selectedLanguage.equals("Рус")){
                     myApp.setBaseLanguage("Рус");
-                    Log.d("Setting111", myApp.toString());
-                    title.setText("Настройки");
-                    Log.d("Setting111", title.getText().toString());
                     imageCountry.setImageResource(R.drawable.russia_test);
-                    Log.d("Setting111", imageCountry.toString());
-                    buttonExport.setText("Экспорт");
-                    Log.d("Setting111", buttonExport.toString());
-                    buttonImport.setText("Импорт");
-                    Log.d("Setting111", buttonImport.toString());
-                    languageTitle.setText("Язык");
-                    Log.d("Setting111", languageTitle.toString());
-                    recipeSaveButton.setText("Сохранить");
-                } else if(selectedLanguage.equals("Eng")){
-                    myApp.setBaseLanguage("Eng");
-                    title.setText("Settings");
-                    imageCountry.setImageResource(R.drawable.america);
-                    buttonExport.setText("Export");
-                    buttonImport.setText("Import");
-                    languageTitle.setText("Language");
-                    recipeSaveButton.setText("Save");
-                } else {
-                    myApp.setBaseLanguage("Рус");
-                    title.setText("Параметрлер");
-                    imageCountry.setImageResource(R.drawable.kazakhstan);
-                    buttonExport.setText("Экспорт");
-                    buttonImport.setText("Импорт");
-                    languageTitle.setText("Тіл");
-                    recipeSaveButton.setText("Сақтау");
                 }
+                else if(selectedLanguage.equals("Eng")){
+                    myApp.setBaseLanguage("Eng");
+                    imageCountry.setImageResource(R.drawable.america);
+                }
+                else{
+                    myApp.setBaseLanguage("Каз");
+                    imageCountry.setImageResource(R.drawable.kazakhstan);
+                }
+
+                // обновляем тексты
+                title.setText(MyApp.text(TextKey.SETTINGS));
+                buttonExport.setText(MyApp.text(TextKey.EXPORT));
+                buttonImport.setText(MyApp.text(TextKey.IMPORT));
+                languageTitle.setText(MyApp.text(TextKey.LANGUAGE));
+                recipeSaveButton.setText(MyApp.text(TextKey.SAVE));
             }
 
             @Override

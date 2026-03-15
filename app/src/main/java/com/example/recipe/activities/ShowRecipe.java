@@ -1,7 +1,5 @@
 package com.example.recipe.activities;
 
-import static android.view.View.*;
-
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -18,7 +16,6 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -27,6 +24,7 @@ import com.example.recipe.R;
 import com.example.recipe.adapters.ShowRecipeAdapter;
 import com.example.recipe.model.Recipes;
 import com.example.recipe.setting.MyApp;
+import com.example.recipe.setting.TextKey;
 import com.example.recipe.viewmodel.RecipeShowViewModel;
 
 import java.io.File;
@@ -52,8 +50,16 @@ public class ShowRecipe extends AppCompatActivity {
 
         initViews();
 
-        recipe = (Recipes) getIntent().getSerializableExtra("Recipe");
+        showRecipe();
 
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            return insets;
+        });
+    }
+
+    private void showRecipe() {
         recipeShowViewModel.loadRecipe(recipe);
 
         // Наблюдаем recipe один раз
@@ -66,15 +72,10 @@ public class ShowRecipe extends AppCompatActivity {
             editButtonClick(recipe);
             checkLanguage();
         });
-
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
     }
 
     private void initViews() {
+        recipe = (Recipes) getIntent().getSerializableExtra("Recipe");
         title = findViewById(R.id.YourRecipeTextView);
         ingredientsTitle = findViewById(R.id.TextViewIngredients);
         instructionTitle = findViewById(R.id.TextViewInstruction);
@@ -103,21 +104,12 @@ public class ShowRecipe extends AppCompatActivity {
     }
 
     private void checkLanguage() {
-        String lang = myApp.getBaseLanguage();
-        if ("Рус".equals(lang)) {
-            title.setText("Рецепт");
-            ingredientsTitle.setText("Ингредиенты");
-            instructionTitle.setText("Инструкция");
-        } else if ("Eng".equals(lang)) {
-            title.setText("Recipe");
-            ingredientsTitle.setText("Ingredients");
-            instructionTitle.setText("Instruction");
-        } else if ("Каз".equals(lang)) {
-            title.setText("Рецепт");
-            ingredientsTitle.setText("Құрамы");
-            instructionTitle.setText("Нұсқаулық");
-        }
+        title.setText(MyApp.text(TextKey.SHOW));              // например, "Recipe"
+        ingredientsTitle.setText(MyApp.text(TextKey.INGREDIENTS));
+        instructionTitle.setText(MyApp.text(TextKey.INSTRUCTION));
     }
+
+
 
     private void showImage(Recipes recipe) {
         try {
