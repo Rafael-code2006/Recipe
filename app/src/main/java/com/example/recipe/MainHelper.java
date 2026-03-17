@@ -1,5 +1,7 @@
 package com.example.recipe;
 
+
+
 import static androidx.core.app.ActivityCompat.recreate;
 
 import android.content.Intent;
@@ -7,7 +9,6 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
-import android.net.Uri;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
@@ -18,6 +19,7 @@ import androidx.core.content.ContextCompat;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelStoreOwner;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -28,12 +30,12 @@ import com.example.recipe.activities.SettingActivity;
 import com.example.recipe.activities.ShowRecipe;
 import com.example.recipe.adapters.AdapterRecipes;
 import com.example.recipe.model.Recipes;
+import com.example.recipe.setting.GridSpacingItemDecoration;
 import com.example.recipe.setting.MyApp;
 import com.example.recipe.setting.TextKey;
 import com.example.recipe.viewmodel.MainViewModel;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 
@@ -55,7 +57,7 @@ public class MainHelper {
 
 
 
-    public MainHelper(MainActivity context){
+    public MainHelper(MainActivity context) {
         this.context = context;
         viewModel = new ViewModelProvider((ViewModelStoreOwner) context).get(MainViewModel.class);
         adapter = new AdapterRecipes();
@@ -63,9 +65,10 @@ public class MainHelper {
         RecyclerViewRecipes = context.findViewById(R.id.RecyclerViewRecipes);
         setting = context.findViewById(R.id.SettingButton);
         RecyclerViewRecipes.setAdapter(adapter);
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(context, 2);
+        RecyclerViewRecipes.setLayoutManager(gridLayoutManager);
         mainRecipeTextView = context.findViewById(R.id.main_RecipeTextView);
     }
-
     public void onClickFloatingButton(){
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override

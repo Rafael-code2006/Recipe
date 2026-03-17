@@ -5,6 +5,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -73,13 +74,15 @@ public class AdapterRecipes extends RecyclerView.Adapter<AdapterRecipes.RecipesV
     @NonNull
     @Override
     public RecipesViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        Log.d("Test123", "Зашел в onCreateViewHolder");
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.recipes_item, parent, false);
+                .inflate(R.layout.test_recipe_item, parent, false);
         return new RecipesViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull RecipesViewHolder holder, int position) {
+        Log.d("Test123", "Зашел в onBindViewHolder");
         Recipes recipe = recipes.get(position);
 
         // Название рецепта
@@ -148,7 +151,7 @@ public class AdapterRecipes extends RecyclerView.Adapter<AdapterRecipes.RecipesV
     static class RecipesViewHolder extends RecyclerView.ViewHolder {
         private final TextView recipeTitle;
         private final TextView ingredientsCount;
-        private final ConstraintLayout recipeCard;
+        private final FrameLayout recipeCard;
 
         private final ImageView imageRecipe;
 
@@ -156,11 +159,17 @@ public class AdapterRecipes extends RecyclerView.Adapter<AdapterRecipes.RecipesV
 
         public RecipesViewHolder(@NonNull View itemView) {
             super(itemView);
-            recipeTitle = itemView.findViewById(R.id.recipeTitle);
-            recipeCard = itemView.findViewById(R.id.recipeCard);
-            ingredientsCount = itemView.findViewById(R.id.ingredientsCount);
-            ingredientsLabel = itemView.findViewById(R.id.ingredientsLabel);
-            imageRecipe= itemView.findViewById(R.id.RecipeImageView);
+            Log.d("Test123", "Зашел в RecipesViewHolder");
+            recipeTitle = itemView.findViewById(R.id.recipeName);
+            Log.d("Test123", "Зашел в recipeTitle");
+            recipeCard = itemView.findViewById(R.id.frameCentral);
+            Log.d("Test123", "Зашел в recipeCard");
+            ingredientsCount = itemView.findViewById(R.id.count);
+            Log.d("Test123", "Зашел в ingredientsCount");
+            ingredientsLabel = itemView.findViewById(R.id.ingredients);
+            Log.d("Test123", "Зашел в ingredientsLabel");
+            imageRecipe= itemView.findViewById(R.id.imageRecipe);
+            Log.d("Test123", "Зашел в imageRecipe");
         }
     }
 

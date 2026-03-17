@@ -202,7 +202,7 @@ public class AddRecipe extends AppCompatActivity {
         instructionTitle.setText(MyApp.text(TextKey.INSTRUCTION));// "Инструкция:", "Instruction", "Нұсқаулық"
 
         // Хинты для EditText
-        editTextRecipe.setHint(MyApp.text(TextKey.RECIPE_NAME));       // "имя", "name", "атауы"
+        editTextRecipe.setHint(MyApp.text(TextKey.NAME));       // "имя", "name", "атауы"
         editTextInsctructionRecipe.setHint(MyApp.text(TextKey.INSTRUCTION)); // "инструкция", "instruction", "нұсқаулық"
     }
 
