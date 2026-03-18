@@ -13,6 +13,8 @@ import com.example.recipe.model.Descriptions;
 import com.example.recipe.model.Recipes;
 import com.example.recipe.database.RecipeDataBase;
 
+import java.util.concurrent.Callable;
+
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.core.Single;
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
@@ -43,6 +45,7 @@ public class AddRecipeModelView extends AndroidViewModel {
 
 
 
+
     // Конструктор
     public AddRecipeModelView(@NonNull Application application) {
         super(application);
@@ -65,6 +68,11 @@ public class AddRecipeModelView extends AndroidViewModel {
                     Log.e(TAG, "Ошибка добавления рецепта", throwable);
                 });
         compositeDisposable.add(disposable);
+    }
+
+    @SuppressLint("CheckResult")
+    public Single<Long> TestAddRecipe(Recipes recipe){
+        return Single.fromCallable(()-> recipeDataBase.recipesDAO().add(recipe));
     }
 
 

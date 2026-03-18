@@ -4,6 +4,7 @@ import static android.view.View.INVISIBLE;
 import static android.view.View.VISIBLE;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.ContentValues;
 import android.content.Context;
@@ -13,14 +14,18 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -50,6 +55,10 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.functions.Consumer;
+import io.reactivex.rxjava3.schedulers.Schedulers;
 
 public class AddRecipe extends AppCompatActivity {
 
@@ -208,11 +217,13 @@ public class AddRecipe extends AppCompatActivity {
 
     private void InitViews() {
         editTextRecipe = findViewById(R.id.EditTextRecipe);
+        setTextChanged(editTextRecipe);
         RecipeSaveButton = findViewById(R.id.RecipeSaveButton);
         linearLayoutDescription = findViewById(R.id.linearLayoutDescription);
         floatingActionButton = findViewById(R.id.floatingActionButton);
         addRecipeModelView = new ViewModelProvider(this).get(AddRecipeModelView.class);
         editTextInsctructionRecipe = findViewById(R.id.EditTextInsctructionRecipe);
+        setTextChanged(editTextInsctructionRecipe);
         myApp = MyApp.getInstance();
         title = findViewById(R.id.CreateRecipeTextView);
         nameRecipeTitle = findViewById(R.id.TextViewRecipeName);
@@ -237,9 +248,13 @@ public class AddRecipe extends AppCompatActivity {
         }
         Log.d("AddRecipe2123", "Сработал флоатинг");
         View view = getLayoutInflater().inflate(R.layout.ingredient_item, linearLayoutDescription, false);
+        TextView name = view.findViewById(R.id.EditTextNameIngredient);
         Button test = view.findViewById(R.id.ButtonDelete);
         Spinner spinnerUnit = view.findViewById(R.id.SpinnerUnit);
         TextView UnitTextView = view.findViewById(R.id.TextViewUnit);
+
+        setTextChanged(name);
+
         test.setId(View.generateViewId());
 
         List<String> list = checkLanguage();
@@ -289,6 +304,37 @@ public class AddRecipe extends AppCompatActivity {
         linearLayoutDescription.addView(view);
     }
 
+    private static void setTextChanged(TextView name) {
+        name.addTextChangedListener(new TextWatcher() {
+                    private boolean isEditing = false;
+
+                    @Override
+                    public void afterTextChanged(Editable s) {
+                        if (isEditing) return;
+                        if (s.length() == 0) return;
+
+                        isEditing = true;
+
+                        // Первая буква заглавная
+                        String firstChar = s.subSequence(0,1).toString().toUpperCase();
+                        String rest = s.length() > 1 ? s.subSequence(1, s.length()).toString().toLowerCase() : "";
+
+                        s.replace(0, s.length(), firstChar + rest);
+
+                        isEditing = false;
+                    }
+
+                    @Override
+                    public void beforeTextChanged(CharSequence s, int i, int i1, int i2) {
+
+                    }
+
+                    @Override
+                    public void onTextChanged(CharSequence s, int i, int i1, int i2) {
+                    }
+                });
+    }
+
     private List<String> checkLanguage() {
         List<String> result = new ArrayList<>();
         if(myApp.getBaseLanguage().equals("Рус")){
@@ -321,6 +367,7 @@ public class AddRecipe extends AppCompatActivity {
         RecipeSaveButton.setOnClickListener(v -> saveRecipe());
     }
 
+    @SuppressLint("CheckResult")
     private void saveRecipe() {
 
         String title = editTextRecipe.getText().toString().trim();
@@ -383,31 +430,50 @@ public class AddRecipe extends AppCompatActivity {
         recipe.setIngredient_count(descriptionsList.size());
 
         // Сохраняем рецепт
-        addRecipeModelView.addRecipe(recipe);
+//        addRecipeModelView.addRecipe(recipe);
 
+        addRecipeModelView.TestAddRecipe(recipe)
+                        .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribe(aLong -> {
+                                    if (aLong == null) return;
 
-        // Получаем ID один раз
-        addRecipeModelView.getIdRecipes().observe(this, recipeId -> {
-            Log.d("TesTest", "Выполняю переход");
-            startActivity(MainActivity.getIntent(AddRecipe.this));
-            finish();
-            if (recipeId == null) return;
+                                    // Сохраняем ингредиенты с правильным recipeId
+                                    for (Descriptions desc : descriptionsList) {
+                                        desc.setRecipe_id(aLong);
+                                        addRecipeModelView.addDescription(desc);
+                                    }
 
-            // Сохраняем ингредиенты с правильным recipeId
-            for (Descriptions desc : descriptionsList) {
-                desc.setRecipe_id(recipeId);
-                addRecipeModelView.addDescription(desc);
-            }
+                                    Intent intent = MainActivity.getIntent(AddRecipe.this);
+                                    startActivity(intent);
+                                    finish();
 
-            // Удаляем observer
-            addRecipeModelView.getIdRecipes().removeObservers(this);
-            Log.d("TesTest", "Выполняю переход");
+                                    Toast.makeText(AddRecipe.this, "Рецепт сохранён", Toast.LENGTH_SHORT).show();
 
-            Toast.makeText(this, "Рецепт сохранён", Toast.LENGTH_SHORT).show();
+                                });
 
-            Log.d("TesTest", "Выполняю переход");
-            // Переход
-        });
+//        // Получаем ID один раз
+//        addRecipeModelView.getIdRecipes().observe(this, recipeId -> {
+//            Log.d("TesTest", "Выполняю переход");
+//            startActivity(MainActivity.getIntent(AddRecipe.this));
+//            finish();
+//            if (recipeId == null) return;
+//
+//            // Сохраняем ингредиенты с правильным recipeId
+//            for (Descriptions desc : descriptionsList) {
+//                desc.setRecipe_id(recipeId);
+//                addRecipeModelView.addDescription(desc);
+//            }
+//
+//            // Удаляем observer
+//            addRecipeModelView.getIdRecipes().removeObservers(this);
+//            Log.d("TesTest", "Выполняю переход");
+//
+//            Toast.makeText(this, "Рецепт сохранён", Toast.LENGTH_SHORT).show();
+//
+//            Log.d("TesTest", "Выполняю переход");
+//            // Переход
+//        });
 
     }
 

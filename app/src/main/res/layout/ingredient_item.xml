@@ -42,10 +42,9 @@
             android:layout_marginStart="20dp"
             android:ellipsize="none"
             android:hint="name"
-            android:inputType="text"
             android:paddingTop="15dp"
+            android:inputType="textCapSentences"
             android:scrollHorizontally="true"
-            android:singleLine="true"
             android:textColor="@color/my_text_view_back"
             android:textColorHint="@android:color/darker_gray"
             android:textSize="13sp" />

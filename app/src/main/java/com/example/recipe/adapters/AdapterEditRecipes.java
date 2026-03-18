@@ -73,6 +73,8 @@ public class AdapterEditRecipes extends RecyclerView.Adapter<AdapterEditRecipes.
         holder.buttonDelete.setVisibility(INVISIBLE);
         Descriptions ingredient = ingredients.get(position);
 
+        setTextChanged(holder.editTextNameIngredient);
+
         holder.isBinding = true; // начинаем биндинг
 
         // --- Язык ---
@@ -165,7 +167,36 @@ public class AdapterEditRecipes extends RecyclerView.Adapter<AdapterEditRecipes.
 
 
 
+    private static void setTextChanged(TextView name) {
+        name.addTextChangedListener(new TextWatcher() {
+            private boolean isEditing = false;
 
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (isEditing) return;
+                if (s.length() == 0) return;
+
+                isEditing = true;
+
+                // Первая буква заглавная
+                String firstChar = s.subSequence(0,1).toString().toUpperCase();
+                String rest = s.length() > 1 ? s.subSequence(1, s.length()).toString().toLowerCase() : "";
+
+                s.replace(0, s.length(), firstChar + rest);
+
+                isEditing = false;
+            }
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int i, int i1, int i2) {
+            }
+        });
+    }
 
 
     private String checkLanguage(String unit, List<String> units) {

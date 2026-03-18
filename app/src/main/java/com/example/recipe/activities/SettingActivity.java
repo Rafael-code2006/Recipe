@@ -192,20 +192,34 @@ public class SettingActivity extends AppCompatActivity {
     private void openFilePicker() {
         Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
         intent.addCategory(Intent.CATEGORY_OPENABLE);
-        intent.setType("application/json");
+        intent.setType("*/*");
+        intent.putExtra(Intent.EXTRA_MIME_TYPES,
+                new String[]{"application/json", "text/plain"});
         startActivityForResult(intent, PICK_JSON_FILE);
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (data == null || data.getData() == null) {
+            Log.e("IMPORT", "Data is null");
+            return;
+        }
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == PICK_JSON_FILE && resultCode == RESULT_OK) {
 
             Uri uri = data.getData();
 
+            getContentResolver().takePersistableUriPermission(
+                    uri,
+                    Intent.FLAG_GRANT_READ_URI_PERMISSION
+            );
+
             try (InputStream is = getContentResolver().openInputStream(uri);
-                 BufferedReader reader = new BufferedReader(new InputStreamReader(is))) {
+                 BufferedReader reader = new BufferedReader(
+                         new InputStreamReader(is, StandardCharsets.UTF_8)
+                 )) {
+
 
                 StringBuilder builder = new StringBuilder();
                 String line;

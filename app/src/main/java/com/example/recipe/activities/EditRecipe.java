@@ -9,6 +9,8 @@ import android.graphics.Canvas;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
@@ -124,6 +126,37 @@ public class EditRecipe extends AppCompatActivity {
         });
     }
 
+    private static void setTextChanged(TextView name) {
+        name.addTextChangedListener(new TextWatcher() {
+            private boolean isEditing = false;
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (isEditing) return;
+                if (s.length() == 0) return;
+
+                isEditing = true;
+
+                // Первая буква заглавная
+                String firstChar = s.subSequence(0,1).toString().toUpperCase();
+                String rest = s.length() > 1 ? s.subSequence(1, s.length()).toString().toLowerCase() : "";
+
+                s.replace(0, s.length(), firstChar + rest);
+
+                isEditing = false;
+            }
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int i, int i1, int i2) {
+            }
+        });
+    }
+
 
     private void openGallery() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -220,22 +253,18 @@ public class EditRecipe extends AppCompatActivity {
     }
 
     private void addNewIngredient(Recipes recipes) {
-        addIngredient.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                List<Descriptions> newDescriptions = adapter.getIngredients();
-                Descriptions desc = new Descriptions();
-                desc.setRecipe_id(recipes.getId());
-                desc.setName("");
-                desc.setUnit("kg");
-                desc.setWeight(1f);
-                recyclerView.post(() -> setRecyclerViewHeightBasedOnChildren(recyclerView));
-                newDescriptions.add(desc);
-                adapter.setIngredient(newDescriptions);
-                adapter.notifyDataSetChanged();
-                sizeIngedient = adapter.getItemCount();
-                Log.d("Testovich", "size: " + sizeIngedient);
-            }
+        addIngredient.setOnClickListener(v -> {
+            List<Descriptions> newDescriptions = adapter.getIngredients();
+            Descriptions desc = new Descriptions();
+            desc.setRecipe_id(recipes.getId());
+            desc.setName("");
+            desc.setUnit("kg");
+            recyclerView.post(() -> setRecyclerViewHeightBasedOnChildren(recyclerView));
+            newDescriptions.add(desc);
+            adapter.setIngredient(newDescriptions);
+            adapter.notifyDataSetChanged();
+            sizeIngedient = adapter.getItemCount();
+            Log.d("Testovich", "size: " + sizeIngedient);
         });
     }
 
@@ -384,6 +413,7 @@ public class EditRecipe extends AppCompatActivity {
     private void initView(){
         recyclerView = findViewById(R.id.RecyclerViewIngredients);
         editTextRecipe = findViewById(R.id.EditTextRecipe);
+        setTextChanged(editTextRecipe);
         adapter = new AdapterEditRecipes();
         editTextInsctruction = findViewById(R.id.EditTextInsctructionRecipe);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));

@@ -20,7 +20,6 @@ public enum TextKey {
         NAME("Название", "Name", "Атауы"),
         WEIGHT("Вес", "Weight", "Салмақ"),
 
-
         KG("кг", "kg", "кг"),
         GR("гр", "gr", "гр"),
         L("л", "l", "л"),
