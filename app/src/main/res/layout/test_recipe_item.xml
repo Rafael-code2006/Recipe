@@ -1,4 +1,4 @@
-<androidx.cardview.widget.CardView
+<com.google.android.material.card.MaterialCardView
     android:id="@+id/cardViewMain"
     android:layout_width="match_parent"
     android:layout_height="200dp"
@@ -7,15 +7,16 @@
     android:layout_marginEnd="10dp"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android"
-    app:cardCornerRadius="20dp"
-    app:cardElevation="6dp">
+    app:cardCornerRadius="10dp"
+    app:cardElevation="6dp"
+    app:cardBackgroundColor="@android:color/transparent"
+    app:strokeWidth="0dp">
 
     <FrameLayout
         android:id="@+id/frameCentral"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <!-- КАРТИНКА -->
         <ImageView
             android:id="@+id/imageRecipe"
             android:layout_width="match_parent"
@@ -23,20 +24,17 @@
             android:src="@drawable/steak"
             android:scaleType="centerCrop"/>
 
-        <!-- ЛЁГКОЕ ЗАТЕМНЕНИЕ ВСЕЙ КАРТИНКИ -->
         <View
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="#22000000"/>
 
-        <!-- ТЕНЬ СНИЗУ -->
         <View
             android:layout_width="match_parent"
             android:layout_height="100dp"
             android:layout_gravity="bottom"
             android:background="@drawable/gradient_dark_bottom"/>
 
-        <!-- ТЕКСТ -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -44,7 +42,6 @@
             android:orientation="vertical"
             android:padding="12dp">
 
-            <!-- Название -->
             <TextView
                 android:id="@+id/recipeName"
                 android:layout_width="match_parent"
@@ -60,7 +57,6 @@
                 android:shadowDy="1"
                 android:shadowRadius="3"/>
 
-            <!-- Ингредиенты -->
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -91,4 +87,4 @@
 
     </FrameLayout>
 
-</androidx.cardview.widget.CardView>
+</com.google.android.material.card.MaterialCardView>

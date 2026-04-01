@@ -9,7 +9,7 @@ import androidx.room.RoomDatabase;
 import com.example.recipe.model.Descriptions;
 import com.example.recipe.model.Recipes;
 
-@Database(entities = {Recipes.class, Descriptions.class}, version = 2, exportSchema = false)
+@Database(entities = {Recipes.class, Descriptions.class}, version = 4, exportSchema = false)
 public abstract class RecipeDataBase extends RoomDatabase {
 
     private static final String DB_NAME = "recipe.db";
