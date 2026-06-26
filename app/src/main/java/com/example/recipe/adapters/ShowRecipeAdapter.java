@@ -1,8 +1,18 @@
 package com.example.recipe.adapters;
 
+import static android.view.View.INVISIBLE;
+import static android.view.View.VISIBLE;
+
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.text.InputType;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -14,6 +24,11 @@ import com.example.recipe.setting.MyApp;import com.example.recipe.setting.TextKe
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
+
+import kotlin.jvm.functions.Function2;
+import kotlin.jvm.functions.Function3;
+import kotlin.jvm.functions.Function4;
 
 public class ShowRecipeAdapter extends RecyclerView.Adapter<ShowRecipeAdapter.ViewHolder> {
 
@@ -32,18 +47,44 @@ public class ShowRecipeAdapter extends RecyclerView.Adapter<ShowRecipeAdapter.Vi
 
     @NonNull
     @Override
-    public ShowRecipeAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.show_ingredient_item, parent, false);
         return new ViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ShowRecipeAdapter.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Descriptions desc = data.get(position);
 
         holder.name.setText(desc.getName());
-        holder.weight.setText(String.valueOf(desc.getWeight()));
+
+        String oldWeight = String.valueOf(desc.getWeight());
+        Log.d("AdapterShowRecipe", "Изначальный вес: " + oldWeight);
+        holder.weight.setText(oldWeight);
+
+        holder.weight.setOnClickListener((view) -> {
+
+            Function3<Float, Float, Float, Float> recalculation = (W_old, W_new, X_old) -> {
+                float X_new = X_old * (W_new / W_old);
+                return X_new;
+            };
+
+            EditText tempWeight = new EditText(holder.itemView.getContext());
+            tempWeight.setInputType(InputType.TYPE_NUMBER_FLAG_DECIMAL);
+            tempWeight.setHint("Введите новый вес");
+
+            new AlertDialog.Builder(view.getContext())
+                    .setTitle("Перерасчет рецепта")
+                    .setMessage("Введите новый вес ингредиента")
+                    .setView(tempWeight)
+                    .setPositiveButton("OК", (dialogInterface, i) -> {
+
+                    })
+                    .setNegativeButton("Отмена", (dialogInterface, i) -> {
+
+                    });
+        });
 
         String lang = myApp.getBaseLanguage();
 

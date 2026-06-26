@@ -30,25 +30,38 @@
         android:singleLine="false"
         android:maxLines="4" />
 
-    <!-- Вес -->
-    <TextView
-        android:id="@+id/ingredientWeight"
+    <FrameLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="500"
-        android:textColor="#FFFFFF"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        android:layout_marginStart="10dp" />
+        android:layout_marginStart="10dp"
+        android:minWidth="30dp">
+
+        <TextView
+            android:id="@+id/ingredientWeight"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:maxWidth="60dp"
+            android:maxLines="2"
+            android:layout_gravity="right"
+            android:includeFontPadding="false"
+            android:text="500"
+            android:textColor="#FFFFFF"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+    </FrameLayout>
 
     <!-- Тип веса -->
     <TextView
         android:id="@+id/ingredientWeightType"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:includeFontPadding="false"
         android:text="г"
         android:textColor="#FFFFFF"
         android:textSize="18sp"
         android:textStyle="bold"
         android:layout_marginStart="4dp" />
+
 </LinearLayout>

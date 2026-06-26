@@ -9,23 +9,26 @@ import androidx.room.RoomDatabase;
 import com.example.recipe.model.Descriptions;
 import com.example.recipe.model.Recipes;
 
-@Database(entities = {Recipes.class, Descriptions.class}, version = 4, exportSchema = false)
+@Database(entities = {Recipes.class, Descriptions.class}, version = 2, exportSchema = false)
 public abstract class RecipeDataBase extends RoomDatabase {
 
     private static final String DB_NAME = "recipe.db";
-    private static RecipeDataBase instance = null;
+    private static volatile RecipeDataBase instance = null; // volatile для thread-safety
 
     public static synchronized RecipeDataBase getInstance(Application app) {
         if (instance == null) {
             instance = Room.databaseBuilder(
-                    app,
-                    RecipeDataBase.class,
-                    DB_NAME
-            ).build();
+                            app.getApplicationContext(), // безопаснее использовать applicationContext
+                            RecipeDataBase.class,
+                            DB_NAME
+                    )
+                    // .allowMainThreadQueries() — УБРАНО, используй async (LiveData/Flow/suspend)
+                    .fallbackToDestructiveMigration() // опционально: при смене версии пересоздаёт БД
+                    .build();
         }
         return instance;
     }
 
-    public abstract recipesDAO recipesDAO();
+    public abstract RecipesDAO recipesDAO();     // RecipesDAO с заглавной R
     public abstract DescriptionDao descriptionDao();
 }
