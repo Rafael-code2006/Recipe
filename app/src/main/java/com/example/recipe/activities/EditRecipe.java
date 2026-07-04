@@ -15,6 +15,8 @@ import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowInsets;
+import android.view.WindowInsetsAnimation;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -26,6 +28,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -95,6 +98,30 @@ public class EditRecipe extends AppCompatActivity {
         initView();
 
         showRecipe();
+
+        FloatingActionButton floatingActionButton = findViewById(R.id.floatingActionButton);
+        CardView cardView = findViewById(R.id.CardView);
+
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R) {
+            getWindow().getDecorView().setWindowInsetsAnimationCallback(
+                    new WindowInsetsAnimation.Callback(WindowInsetsAnimation.Callback.DISPATCH_MODE_STOP) {
+                        @Override
+                        public WindowInsets onProgress(WindowInsets insets, List<WindowInsetsAnimation> runningAnimations) {
+                            int imeHeight = insets.getInsets(WindowInsets.Type.ime()).bottom;
+                            int navBar = insets.getInsets(WindowInsets.Type.navigationBars()).bottom;
+                            int offset = imeHeight - navBar;
+
+                            // Не двигаем вниз — только вверх
+                            int translation = offset > 0 ? -offset : 0;
+
+                            floatingActionButton.setTranslationY(translation);
+                            cardView.setTranslationY(translation);
+
+                            return insets;
+                        }
+                    }
+            );
+        }
 
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
@@ -408,6 +435,8 @@ public class EditRecipe extends AppCompatActivity {
         // Хинты для EditText
         editTextRecipe.setHint(MyApp.text(TextKey.NAME));        // "имя", "name", "атауы"
         editTextInsctruction.setHint(MyApp.text(TextKey.INSTRUCTION)); // "инструкция", "insctruction", "нұсқаулық"
+
+        saveButton.setText(MyApp.text(TextKey.SAVE));
     }
 
     private void initView(){

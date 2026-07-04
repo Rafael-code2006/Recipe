@@ -1,5 +1,7 @@
 package com.example.recipe.activities;
 
+import static android.view.View.INVISIBLE;
+
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -70,7 +72,7 @@ public class ShowRecipe extends AppCompatActivity {
             showImage(recipe);
             showRecipeContent(recipe);
             editButtonClick(recipe);
-            checkLanguage();
+            changeLanguage();
         });
     }
 
@@ -103,10 +105,12 @@ public class ShowRecipe extends AppCompatActivity {
         ingredientsRecyclerView.setAdapter(ingredientsAdapter);
     }
 
-    private void checkLanguage() {
+    private void changeLanguage() {
         title.setText(MyApp.text(TextKey.SHOW));              // например, "Recipe"
         ingredientsTitle.setText(MyApp.text(TextKey.INGREDIENTS));
         instructionTitle.setText(MyApp.text(TextKey.INSTRUCTION));
+
+        editButton.setText(MyApp.text(TextKey.EDIT));
     }
 
 
@@ -137,7 +141,13 @@ public class ShowRecipe extends AppCompatActivity {
 
     private void showRecipeContent(Recipes recipe) {
         recipeNameTextView.setText(recipe.getName());
-        instructionTextView.setText(recipe.getInsctruction());
+
+        if(instructionTextView.getText() != ""){
+            instructionTextView.setText(recipe.getInsctruction());
+        } else {
+            instructionTitle.setVisibility(INVISIBLE);
+        }
+
 
         // обновляем ингредиенты
         recipeShowViewModel.refreshDescriptions(recipe);

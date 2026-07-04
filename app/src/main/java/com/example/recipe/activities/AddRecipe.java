@@ -11,6 +11,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
+import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -18,6 +20,8 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowInsets;
+import android.view.WindowInsetsAnimation;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -33,6 +37,8 @@ import android.widget.Toast;
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -121,6 +127,30 @@ public class AddRecipe extends AppCompatActivity {
         SaveButtonClick(); // Нажатие кнопки сохранения рецепта
 
         setImage();
+
+        CardView cardView = findViewById(R.id.CardView);
+        boolean[] isKeyboardOpen = {false};
+
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R) {
+            getWindow().getDecorView().setWindowInsetsAnimationCallback(
+                    new WindowInsetsAnimation.Callback(WindowInsetsAnimation.Callback.DISPATCH_MODE_STOP) {
+                        @Override
+                        public WindowInsets onProgress(WindowInsets insets, List<WindowInsetsAnimation> runningAnimations) {
+                            int imeHeight = insets.getInsets(WindowInsets.Type.ime()).bottom;
+                            int navBar = insets.getInsets(WindowInsets.Type.navigationBars()).bottom;
+                            int offset = imeHeight - navBar;
+
+                            // Не двигаем вниз — только вверх
+                            int translation = offset > 0 ? -offset : 0;
+
+                            floatingActionButton.setTranslationY(translation);
+                            cardView.setTranslationY(translation);
+
+                            return insets;
+                        }
+                    }
+            );
+        }
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
@@ -402,6 +432,15 @@ public class AddRecipe extends AppCompatActivity {
                 return;
             }
 
+            if(name.length() > 32){
+                setToast("Слишком длинное название ингредиента Позиция: " + i);
+                return;
+            } else
+            if(weightText.length() > 32){
+                Toast.makeText(this, "Превышен лимит по значению веса", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
             float weight;
             try {
                 weight = Float.parseFloat(weightText);
@@ -428,9 +467,6 @@ public class AddRecipe extends AppCompatActivity {
         // Создаем рецепт
         Recipes recipe = new Recipes(title, instruction, image);
         recipe.setIngredient_count(descriptionsList.size());
-
-        // Сохраняем рецепт
-//        addRecipeModelView.addRecipe(recipe);
 
         addRecipeModelView.TestAddRecipe(recipe)
                         .subscribeOn(Schedulers.io())
@@ -477,6 +513,19 @@ public class AddRecipe extends AppCompatActivity {
 
     }
 
+    private void setToast(String text){
+        TextView toastText = new TextView(AddRecipe.this);
+        toastText.setText(text);
+        toastText.setTextColor(Color.WHITE);
+        toastText.setTextSize(14);
+        toastText.setPadding(40, 24, 40, 24);
+        toastText.setBackgroundResource(android.R.drawable.toast_frame);
+
+        Toast toast = new Toast(AddRecipe.this);
+        toast.setDuration(Toast.LENGTH_LONG);
+        toast.setView(toastText);
+        toast.show();
+    }
 
     public static Intent newIntent(Context context) {
         return new Intent(context, AddRecipe.class);

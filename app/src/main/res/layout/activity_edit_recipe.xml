@@ -182,16 +182,12 @@
                 tools:listitem="@layout/ingredient_item"/>
 
 
-
-
-
-
             <TextView
                 android:id="@+id/TextViewInstruction"
                 android:layout_width="350dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="20dp"
                 android:text="Instruction"
                 android:textColor="@color/title_my_color"
                 android:fontFamily="@font/archivo_black"
@@ -258,7 +254,7 @@
     <androidx.cardview.widget.CardView
         android:id="@+id/CardView"
         android:layout_width="350dp"
-        android:layout_height="wrap_content"
+        android:layout_height="55dp"
         android:layout_gravity="center"
         android:layout_marginTop="20dp"
         android:layout_marginBottom="30dp"
@@ -268,6 +264,9 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
+
+
+
 
         <Button
             android:id="@+id/RecipeEditButton"

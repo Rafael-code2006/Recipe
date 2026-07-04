@@ -40,14 +40,14 @@
             android:id="@+id/ingredientWeight"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:maxWidth="60dp"
-            android:maxLines="2"
+            android:maxWidth="100dp"
+            android:maxLines="1"
             android:layout_gravity="right"
             android:includeFontPadding="false"
             android:text="500"
             android:textColor="#FFFFFF"
             android:textSize="18sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"/>
 
     </FrameLayout>
 

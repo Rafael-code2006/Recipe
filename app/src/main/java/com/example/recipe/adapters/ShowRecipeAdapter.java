@@ -1,34 +1,38 @@
 package com.example.recipe.adapters;
 
-import static android.view.View.INVISIBLE;
-import static android.view.View.VISIBLE;
-
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
+import android.graphics.Typeface;
 import android.text.InputType;
 import android.util.Log;
+import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
+import android.widget.LinearLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.recipe.R;
 import com.example.recipe.model.Descriptions;
 import com.example.recipe.setting.MyApp;import com.example.recipe.setting.TextKey;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Consumer;
 
 import kotlin.jvm.functions.Function2;
 import kotlin.jvm.functions.Function3;
-import kotlin.jvm.functions.Function4;
 
 public class ShowRecipeAdapter extends RecyclerView.Adapter<ShowRecipeAdapter.ViewHolder> {
 
@@ -55,35 +59,108 @@ public class ShowRecipeAdapter extends RecyclerView.Adapter<ShowRecipeAdapter.Vi
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+        Context context = holder.itemView.getContext();
         Descriptions desc = data.get(position);
 
         holder.name.setText(desc.getName());
 
-        String oldWeight = String.valueOf(desc.getWeight());
+        float oldWeight = desc.getWeight();
         Log.d("AdapterShowRecipe", "Изначальный вес: " + oldWeight);
-        holder.weight.setText(oldWeight);
 
-        holder.weight.setOnClickListener((view) -> {
+        if(oldWeight % 1 == 0) {
+            holder.weight.setText(String.format("%.0f", oldWeight));
+        } else{
+            holder.weight.setText(String.format("%.1f", oldWeight));
+        }
 
-            Function3<Float, Float, Float, Float> recalculation = (W_old, W_new, X_old) -> {
-                float X_new = X_old * (W_new / W_old);
-                return X_new;
-            };
+        holder.itemView.setOnLongClickListener(view -> {
+            
+            BottomSheetDialog mainDialog = new BottomSheetDialog(context);
 
-            EditText tempWeight = new EditText(holder.itemView.getContext());
-            tempWeight.setInputType(InputType.TYPE_NUMBER_FLAG_DECIMAL);
-            tempWeight.setHint("Введите новый вес");
 
-            new AlertDialog.Builder(view.getContext())
-                    .setTitle("Перерасчет рецепта")
-                    .setMessage("Введите новый вес ингредиента")
-                    .setView(tempWeight)
-                    .setPositiveButton("OК", (dialogInterface, i) -> {
+            LinearLayout mainLayout = new LinearLayout(context);
+            mainLayout.setOrientation(LinearLayout.VERTICAL);
+            mainLayout.setPadding(0, 16, 0, 32);
 
-                    })
-                    .setNegativeButton("Отмена", (dialogInterface, i) -> {
+            TextView title = new TextView(context);
+            title.setText("Мясо");
+            title.setTextSize(16);
+            title.setTypeface(null, Typeface.BOLD);
+            title.setPadding(48, 10, 48, 8);
+            mainLayout.addView(title);
 
+            addSheetItem(mainLayout, context, "Информация", () -> {
+                BottomSheetDialog infoDialog = new BottomSheetDialog(context);
+
+                LinearLayout infoLayout = new LinearLayout(context);
+                infoLayout.setOrientation(LinearLayout.VERTICAL); // было mainLayout
+                infoLayout.setPadding(0, 16, 0, 32);              // было mainLayout
+
+                TextView infoTitle = new TextView(context);
+                infoTitle.setText("Информация об ингредиенте");   // было title
+                infoTitle.setTextSize(16);                         // было title
+                infoTitle.setTypeface(null, Typeface.BOLD);        // было title
+                infoTitle.setPadding(48, 10, 48, 8);               // было title
+                infoLayout.addView(infoTitle);
+
+                addSheetItem(infoLayout, context, "Название: " + desc.getName(), null);   // было mainLayout
+                addSheetItem(infoLayout, context, "Вес: " + desc.getWeight() + " " + desc.getUnit(), null); // было mainLayout
+
+                infoDialog.setContentView(infoLayout);
+                infoDialog.show();
+            });
+
+            addSheetItem(mainLayout, context, "Перерасчитать", () -> {
+                BottomSheetDialog recalculateDialog = new BottomSheetDialog(context);
+
+                LinearLayout linear = new LinearLayout(context);
+                linear.setOrientation(LinearLayout.VERTICAL);
+                linear.setPadding(48, 32, 48, 32);
+
+                TextView titleView = new TextView(context);
+                titleView.setText("Новое значение: " + desc.getName());
+                titleView.setTextSize(14);
+                titleView.setPadding(0, 0, 0, 16);
+                linear.addView(titleView);
+
+                EditText editWeight = new EditText(context);
+                editWeight.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+                editWeight.setHint("Введите значение");
+                linear.addView(editWeight);
+
+                // Кнопка подтверждения
+                Button confirmBtn = new Button(context);
+                confirmBtn.setText("Перерасчитать");
+                confirmBtn.setOnClickListener(v -> {
+                    float value = Float.valueOf(String.valueOf(editWeight.getText()));
+                    Log.d("MainActivity1000", "value: " + value);
+                    Log.d("MainActivity1000", "Старое: "+ desc.getWeight() +" / Новое: " + value);
+                    recalculateDialog.dismiss();
+                    mainDialog.dismiss();
+
+                    Function3<Float, Float, Float, Float> recalculation = (W_old, W_new, X_old) -> X_old * (W_new / W_old);
+
+                    float newWeight = Float.parseFloat(editWeight.getText().toString().trim());
+
+                    data.stream().forEach(descriptions -> {
+                        float recalculatedWeight = recalculation.invoke(Float.valueOf(oldWeight), newWeight, descriptions.getWeight());
+                        descriptions.setWeight(recalculatedWeight); // сохраняем новый вес
                     });
+
+                    notifyDataSetChanged();
+
+                    Toast.makeText(context, "Перерасчёт выполнен", Toast.LENGTH_SHORT);
+                });
+                linear.addView(confirmBtn);
+
+                recalculateDialog.setContentView(linear);
+                recalculateDialog.show();
+            });
+
+            mainDialog.setContentView(mainLayout);
+            mainDialog.show();
+
+            return true;
         });
 
         String lang = myApp.getBaseLanguage();
@@ -92,6 +169,21 @@ public class ShowRecipeAdapter extends RecyclerView.Adapter<ShowRecipeAdapter.Vi
         String unitText = TextKey.unitTextByValue(desc.getUnit(), lang);
 
         holder.unit.setText(unitText);
+    }
+
+    private void addSheetItem(LinearLayout parent, Context context, String text, Runnable action) {
+        TextView item = new TextView(context);
+        item.setText(text);
+        item.setTextSize(15);
+        item.setPadding(48, 32, 48, 32);
+
+        // Фон при нажатии
+        TypedValue value = new TypedValue();
+        context.getTheme().resolveAttribute(android.R.attr.selectableItemBackground, value, true);
+        item.setBackgroundResource(value.resourceId);
+
+        item.setOnClickListener(v -> action.run());
+        parent.addView(item);
     }
 
     @Override
