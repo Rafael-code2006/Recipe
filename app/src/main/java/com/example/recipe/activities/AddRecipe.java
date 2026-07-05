@@ -128,8 +128,18 @@ public class AddRecipe extends AppCompatActivity {
 
         setImage();
 
+        AdjustToTheKeyboard();
+
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            return insets;
+        });
+    }
+
+
+    private void AdjustToTheKeyboard(){
         CardView cardView = findViewById(R.id.CardView);
-        boolean[] isKeyboardOpen = {false};
 
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R) {
             getWindow().getDecorView().setWindowInsetsAnimationCallback(
@@ -151,12 +161,6 @@ public class AddRecipe extends AppCompatActivity {
                     }
             );
         }
-
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
     }
 
     private void setImage() {

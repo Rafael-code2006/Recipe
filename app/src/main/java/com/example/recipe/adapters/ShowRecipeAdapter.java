@@ -20,6 +20,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.recipe.R;
@@ -83,7 +84,7 @@ public class ShowRecipeAdapter extends RecyclerView.Adapter<ShowRecipeAdapter.Vi
             mainLayout.setPadding(0, 16, 0, 32);
 
             TextView title = new TextView(context);
-            title.setText("Мясо");
+            title.setText(desc.getName());
             title.setTextSize(16);
             title.setTypeface(null, Typeface.BOLD);
             title.setPadding(48, 10, 48, 8);
@@ -126,12 +127,20 @@ public class ShowRecipeAdapter extends RecyclerView.Adapter<ShowRecipeAdapter.Vi
                 EditText editWeight = new EditText(context);
                 editWeight.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
                 editWeight.setHint("Введите значение");
+                editWeight.setTextSize(1, 20);
                 linear.addView(editWeight);
+
+
 
                 // Кнопка подтверждения
                 Button confirmBtn = new Button(context);
                 confirmBtn.setText("Перерасчитать");
                 confirmBtn.setOnClickListener(v -> {
+
+                    if(editWeight.getText().toString().isEmpty()){
+                        editWeight.setHintTextColor(ContextCompat.getColor(context, android.R.color.holo_red_dark));
+                        return;
+                    }
                     float value = Float.valueOf(String.valueOf(editWeight.getText()));
                     Log.d("MainActivity1000", "value: " + value);
                     Log.d("MainActivity1000", "Старое: "+ desc.getWeight() +" / Новое: " + value);
@@ -142,10 +151,12 @@ public class ShowRecipeAdapter extends RecyclerView.Adapter<ShowRecipeAdapter.Vi
 
                     float newWeight = Float.parseFloat(editWeight.getText().toString().trim());
 
+
                     data.stream().forEach(descriptions -> {
-                        float recalculatedWeight = recalculation.invoke(Float.valueOf(oldWeight), newWeight, descriptions.getWeight());
-                        descriptions.setWeight(recalculatedWeight); // сохраняем новый вес
-                    });
+                            float recalculatedWeight = recalculation.invoke(Float.valueOf(oldWeight), newWeight, descriptions.getWeight());
+                            descriptions.setWeight(recalculatedWeight); // сохраняем новый вес
+                        });
+
 
                     notifyDataSetChanged();
 
