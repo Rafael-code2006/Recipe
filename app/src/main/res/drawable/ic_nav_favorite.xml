@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Положить в res/drawable/ic_nav_favorite.xml -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24"
+    android:tint="?attr/colorControlNormal">
+    <path
+        android:fillColor="#FF000000"
+        android:pathData="M12,2l2.9,6.26L21.8,9l-5.1,4.62L18.2,21 12,17.3 5.8,21l1.5,-7.38L2.2,9l6.9,-0.74z"/>
+</vector>

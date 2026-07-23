@@ -11,6 +11,7 @@ import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -18,7 +19,6 @@ import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.lifecycle.ViewModelStoreOwner;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
@@ -29,12 +29,11 @@ import com.example.recipe.activities.MainActivity;
 import com.example.recipe.activities.SettingActivity;
 import com.example.recipe.activities.ShowRecipe;
 import com.example.recipe.adapters.AdapterRecipes;
+import com.example.recipe.model.BottomMenu;
 import com.example.recipe.model.Recipes;
-import com.example.recipe.setting.GridSpacingItemDecoration;
 import com.example.recipe.setting.MyApp;
 import com.example.recipe.setting.TextKey;
 import com.example.recipe.viewmodel.MainViewModel;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.HashMap;
 import java.util.List;
@@ -48,10 +47,10 @@ public class MainHelper {
     private ImageView setting;
 
     private MainActivity context;
+    
+    private ImageView addRecipeButton;
 
     private RecyclerView RecyclerViewRecipes;
-
-    private FloatingActionButton floatingActionButton;
 
     private TextView mainRecipeTextView;
 
@@ -59,25 +58,15 @@ public class MainHelper {
 
     public MainHelper(MainActivity context) {
         this.context = context;
-        viewModel = new ViewModelProvider((ViewModelStoreOwner) context).get(MainViewModel.class);
+        viewModel = new ViewModelProvider(context).get(MainViewModel.class);
         adapter = new AdapterRecipes();
-        floatingActionButton = context.findViewById(R.id.floatingActionButton);
         RecyclerViewRecipes = context.findViewById(R.id.RecyclerViewRecipes);
         setting = context.findViewById(R.id.SettingButton);
         RecyclerViewRecipes.setAdapter(adapter);
         GridLayoutManager gridLayoutManager = new GridLayoutManager(context, 2);
         RecyclerViewRecipes.setLayoutManager(gridLayoutManager);
         mainRecipeTextView = context.findViewById(R.id.main_RecipeTextView);
-    }
-    public void onClickFloatingButton(){
-        floatingActionButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.d("Rafa", "onClickButtonFloating сработал");
-                Intent intent = AddRecipe.newIntent(context);
-                context.startActivity(intent);
-            }
-        });
+        addRecipeButton = context.findViewById(R.id.AddRecipeButton);
     }
 
 
@@ -85,8 +74,31 @@ public class MainHelper {
         mainRecipeTextView.setText(MyApp.text(TextKey.MAIN));
     }
 
+    
+    
+    public void managementBottomMenu(){
+        View menu = context.findViewById(R.id.bottomMenu);
+        BottomMenu bottom = new BottomMenu(menu);
+        
+        ImageButton img = bottom.getAddRecipe(menu);
+
+        
+        clickAddRecipeButton(img);
+    }
+    
+    
+    private void clickAddRecipeButton(ImageButton button){
+        if(button != null){
+            button.setOnClickListener(view -> {
+                Intent intent = AddRecipe.newIntent(context);
+                context.startActivity(intent);
+            });
+        }
+    }
 
 
+   
+    
     public void onClickSetting(){
         setting.setOnClickListener(new View.OnClickListener() {
             @Override

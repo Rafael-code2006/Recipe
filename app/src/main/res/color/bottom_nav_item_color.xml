@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Положить в res/color/bottom_nav_item_color.xml -->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:color="@color/my_text_view_back" android:state_checked="true" />
+    <item android:color="#9E9E9E" android:state_checked="false" />
+</selector>

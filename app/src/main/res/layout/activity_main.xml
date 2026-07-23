@@ -1,86 +1,78 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:adjustViewBounds="true"
     android:background="@drawable/my_background"
-    android:scaleType="centerCrop"
     tools:context=".activities.MainActivity">
 
-
     <!-- Заголовок -->
-
     <TextView
         android:id="@+id/main_RecipeTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:maxWidth="300dp"
-        android:layout_marginTop="48dp"
         android:layout_marginStart="25dp"
-        android:layout_marginEnd="8dp"
+        android:layout_marginTop="25dp"
         android:fontFamily="@font/open_sans_bold"
-        android:gravity="start|center_vertical"
         android:text="@string/text_my_recipes"
-        android:textColor="@color/my_text_view_back"
+        android:textColor="@color/white"
         android:textSize="35sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/lineUnderText"/>
 
+    <!-- Настройки -->
     <ImageView
         android:id="@+id/SettingButton"
         android:layout_width="40dp"
         android:layout_height="35dp"
-        android:scaleType="fitXY"
+        android:layout_marginEnd="12dp"
         android:src="@drawable/setting"
-        android:layout_marginEnd="8dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/main_RecipeTextView"
-        app:layout_constraintBottom_toBottomOf="@+id/main_RecipeTextView" />
+        app:layout_constraintTop_toTopOf="@id/main_RecipeTextView"
+        app:layout_constraintBottom_toBottomOf="@id/main_RecipeTextView"
+        app:layout_constraintEnd_toEndOf="parent"/>
 
+    <!-- Линия -->
     <View
         android:id="@+id/lineUnderText"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="1dp"
-        android:background="#888888"
+        android:background="@color/white"
         app:layout_constraintTop_toBottomOf="@id/main_RecipeTextView"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
 
-
+    <!-- Список -->
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/swipeRefreshLayout"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintTop_toBottomOf="@id/lineUnderText"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/bottomMenu"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
-    <!-- Список рецептов -->
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/RecyclerViewRecipes"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:clipToPadding="false"
-            tools:listitem="@layout/test_recipe_item" />
+            android:paddingBottom="16dp"
+            tools:listitem="@layout/test_recipe_item"/>
+
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
-
-    <!-- Кнопка закреплена внизу и не скроллится -->
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/floatingActionButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="20dp"
-        android:layout_marginBottom="60dp"
-        android:clickable="true"
-        android:contentDescription="@string/app_name"
-        app:layout_constraintBottom_toBottomOf="parent"
+    <!-- Нижнее меню -->
+    <include
+        android:id="@+id/bottomMenu"
+        layout="@layout/bottom_menu"
+        android:layout_width="0dp"
+        android:layout_height="100dp"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:backgroundTint="@color/background_floatingButton"
-        app:srcCompat="@drawable/ic_add_recipe"
-        app:tint="@color/black" />
+        app:layout_constraintBottom_toBottomOf="parent"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

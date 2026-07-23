@@ -14,22 +14,22 @@
         android:id="@+id/CreateRecipeTextView"
         android:layout_width="wrap_content"
         android:layout_height="62dp"
-        android:layout_marginTop="50dp"
+        android:layout_marginTop="25dp"
         android:layout_marginStart="30dp"
         android:fontFamily="@font/open_sans_bold"
         android:gravity="left"
         android:text="Add Recipe"
-        android:textColor="@color/my_text_view_back"
+        android:textColor="@color/white"
         android:textSize="35sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <!-- Линия под заголовком (фиксированная) -->
+    <!-- Линия -->
     <View
         android:id="@+id/lineUnderText"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="1dp"
-        android:background="#888888"
+        android:background="@color/white"
         app:layout_constraintTop_toBottomOf="@id/CreateRecipeTextView"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
@@ -114,23 +114,25 @@
                     android:background="@null"/>
             </androidx.cardview.widget.CardView>
 
+
             <TextView
                 android:id="@+id/TextViewIngredient"
                 android:layout_width="350dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="15dp"
+                android:layout_weight="1"
                 android:fontFamily="@font/archivo_black"
                 android:text="Ingredients"
-                android:visibility="invisible"
+                android:layout_gravity="center"
                 android:textColor="@color/title_my_color"
                 android:textSize="19sp"
                 android:textStyle="bold"
-                android:layout_gravity="center" />
+                app:tint="@android:color/white" />
+
 
             <LinearLayout
                 android:id="@+id/linearLayoutDescription"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="50dp"
                 android:orientation="vertical"
                 tools:listitem="@layout/ingredient_item"/>
 
@@ -179,21 +181,27 @@
         </LinearLayout>
     </ScrollView>
 
-    <!-- FAB закреплён справа снизу -->
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/floatingActionButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="20dp"
-        android:layout_marginBottom="30dp"
-        android:contentDescription="@string/app_name"
-        app:layout_constraintBottom_toTopOf="@id/CardView"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:backgroundTint="@color/background_floatingButton"
-        app:srcCompat="@drawable/ic_add_recipe"
-        app:tint="@color/black" />
-
     <!-- Кнопка Save закреплена внизу -->
+
+    <ImageButton
+        android:id="@+id/addIngredientButton"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_gravity="end"
+        android:layout_marginStart="12dp"
+        android:layout_marginEnd="25dp"
+        android:layout_marginBottom="25dp"
+        android:background="@drawable/bg_add_button"
+        android:clickable="true"
+        android:contentDescription="@string/app_name"
+        android:focusable="true"
+        android:foreground="?attr/selectableItemBackgroundBorderless"
+        android:padding="12dp"
+        android:scaleType="centerInside"
+        android:src="@drawable/ic_add"
+        app:layout_constraintBottom_toTopOf="@+id/CardView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:tint="@color/white" />
 
     <androidx.cardview.widget.CardView
         android:id="@+id/CardView"
@@ -204,7 +212,7 @@
         app:cardCornerRadius="120dp"
         android:layout_marginBottom="30dp"
         app:cardBackgroundColor="@android:color/transparent"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/bottomMenuAdd"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
@@ -214,8 +222,18 @@
             android:layout_height="56dp"
             android:text="Save"
             android:elevation="8dp"
-            android:backgroundTint="@color/background_floatingButton"
+            android:backgroundTint="@color/white"
             android:textColor="@color/black"/>
     </androidx.cardview.widget.CardView>
+
+    <!-- Нижнее меню -->
+    <include
+        android:id="@+id/bottomMenuAdd"
+        layout="@layout/bottom_menu"
+        android:layout_width="0dp"
+        android:layout_height="100dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

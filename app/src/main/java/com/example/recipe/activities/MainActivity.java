@@ -3,16 +3,21 @@ package com.example.recipe.activities;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.widget.ImageButton;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 
 import com.example.recipe.MainHelper;
 import com.example.recipe.R;
+import com.example.recipe.model.BottomMenu;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -26,10 +31,11 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
 
         helper = new MainHelper(this);
+
+        helper.managementBottomMenu();
 
         helper.refreshActivity();
 
@@ -38,8 +44,6 @@ public class MainActivity extends AppCompatActivity {
         helper.showRecipes(); // Показ рецептов
 
         helper.onClickSetting();
-
-        helper.onClickFloatingButton(); // Клик кнопки добавления
 
         helper.ClickButton(); // Клик кнопок
 
@@ -51,7 +55,14 @@ public class MainActivity extends AppCompatActivity {
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+
+            v.setPadding(
+                    systemBars.left,
+                    systemBars.top,
+                    systemBars.right,
+                    0
+            );
+
             return insets;
         });
     }

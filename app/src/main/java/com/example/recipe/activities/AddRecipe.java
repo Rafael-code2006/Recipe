@@ -5,14 +5,10 @@ import static android.view.View.VISIBLE;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.app.AlertDialog;
-import android.content.ContentValues;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
-import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -22,14 +18,13 @@ import android.util.Log;
 import android.view.View;
 import android.view.WindowInsets;
 import android.view.WindowInsetsAnimation;
-import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -38,13 +33,12 @@ import androidx.activity.EdgeToEdge;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.example.recipe.model.BottomMenu;
 import com.example.recipe.setting.MyApp;
 import com.example.recipe.setting.TextKey;
 import com.example.recipe.viewmodel.AddRecipeModelView;
@@ -59,11 +53,9 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
-import io.reactivex.rxjava3.functions.Consumer;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 
 public class AddRecipe extends AppCompatActivity {
@@ -91,7 +83,7 @@ public class AddRecipe extends AppCompatActivity {
 
 
     // FloatingActionButton
-    private FloatingActionButton floatingActionButton;
+    private ImageButton addIngredientButton;
 
 
     // LinearLayout
@@ -120,6 +112,12 @@ public class AddRecipe extends AppCompatActivity {
 
         InitViews(); // Инициализация
 
+
+        View menu = findViewById(R.id.bottomMenuAdd);
+        BottomMenu bottom = new BottomMenu(menu);
+
+
+
         changeLanguage();
 
         FloatingClickButton(); // Добавление поле для ингридиента
@@ -132,7 +130,14 @@ public class AddRecipe extends AppCompatActivity {
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+
+            v.setPadding(
+                    systemBars.left,
+                    systemBars.top,
+                    systemBars.right,
+                    0
+            );
+
             return insets;
         });
     }
@@ -153,7 +158,7 @@ public class AddRecipe extends AppCompatActivity {
                             // Не двигаем вниз — только вверх
                             int translation = offset > 0 ? -offset : 0;
 
-                            floatingActionButton.setTranslationY(translation);
+                            addIngredientButton.setTranslationY(translation);
                             cardView.setTranslationY(translation);
 
                             return insets;
@@ -254,7 +259,7 @@ public class AddRecipe extends AppCompatActivity {
         setTextChanged(editTextRecipe);
         RecipeSaveButton = findViewById(R.id.RecipeSaveButton);
         linearLayoutDescription = findViewById(R.id.linearLayoutDescription);
-        floatingActionButton = findViewById(R.id.floatingActionButton);
+        addIngredientButton = findViewById(R.id.addIngredientButton);
         addRecipeModelView = new ViewModelProvider(this).get(AddRecipeModelView.class);
         editTextInsctructionRecipe = findViewById(R.id.EditTextInsctructionRecipe);
         setTextChanged(editTextInsctructionRecipe);
@@ -267,12 +272,9 @@ public class AddRecipe extends AppCompatActivity {
     }
 
     private void FloatingClickButton(){
-        floatingActionButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                counter_ingredients += 1;
-                showDescriptions();
-            }
+        addIngredientButton.setOnClickListener(v -> {
+            counter_ingredients += 1;
+            showDescriptions();
         });
     }
 
@@ -283,13 +285,13 @@ public class AddRecipe extends AppCompatActivity {
         Log.d("AddRecipe2123", "Сработал флоатинг");
         View view = getLayoutInflater().inflate(R.layout.ingredient_item, linearLayoutDescription, false);
         TextView name = view.findViewById(R.id.EditTextNameIngredient);
-        Button test = view.findViewById(R.id.ButtonDelete);
+        Button deleteButton = view.findViewById(R.id.ButtonDelete);
         Spinner spinnerUnit = view.findViewById(R.id.SpinnerUnit);
         TextView UnitTextView = view.findViewById(R.id.TextViewUnit);
 
         setTextChanged(name);
 
-        test.setId(View.generateViewId());
+        deleteButton.setId(View.generateViewId());
 
         List<String> list = checkLanguage();
 
@@ -315,7 +317,7 @@ public class AddRecipe extends AppCompatActivity {
             }
         });
 
-        test.setOnClickListener(v -> {
+        deleteButton.setOnClickListener(v -> {
             new MaterialAlertDialogBuilder(AddRecipe.this)
                     .setTitle("Удалить ингредиент?")
                     .setMessage("Вы уверены, что хотите удалить этот ингредиент?")

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Положить в res/menu/bottom_nav_menu.xml -->
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/nav_recipes"
+        android:icon="@drawable/ic_nav_recipes"
+        android:title="Рецепты" />
+
+    <item
+        android:id="@+id/nav_favorites"
+        android:icon="@drawable/ic_nav_favorite"
+        android:title="Избранное" />
+
+    <item
+        android:id="@+id/nav_categories"
+        android:icon="@drawable/ic_nav_categories"
+        android:title="Категории" />
+
+    <item
+        android:id="@+id/nav_profile"
+        android:icon="@drawable/ic_nav_profile"
+        android:title="Профиль" />
+
+</menu>
