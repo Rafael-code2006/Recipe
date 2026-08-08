@@ -1,4 +1,4 @@
-package com.example.recipe;
+package com.example.recipe.activityHelpers;
 
 
 
@@ -24,6 +24,7 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.example.recipe.R;
 import com.example.recipe.activities.AddRecipe;
 import com.example.recipe.activities.MainActivity;
 import com.example.recipe.activities.SettingActivity;
@@ -112,24 +113,16 @@ public class MainHelper {
     public void showRecipes() {
 
         // Подписываемся на коллекцию рецептов из базы
-        viewModel.getRecipes().observe(context, new Observer<List<Recipes>>() {
-            @Override
-            public void onChanged(List<Recipes> recipes) {
+        viewModel.getRecipes().observe(context, recipes -> {
 
-                loadRecipeToAdapter(recipes);
+            loadRecipeToAdapter(recipes);
 
-                // Счетчик ингридиентов для рецепта
-                IngredientCounter();
+            // Счетчик ингридиентов для рецепта
+            IngredientCounter();
 
 
-                adapter.setRecipeOnClickListener(new AdapterRecipes.RecipeOnClickListener() {
-                    @Override
-                    public void OnClickRecipe(Recipes recipe) {
-                        clickRecipe(recipe);
-                    }
-                });
+            adapter.setRecipeOnClickListener(recipe -> clickRecipe(recipe));
 
-            }
         });
 
 
@@ -137,21 +130,15 @@ public class MainHelper {
     }
 
     private void IngredientCounter() {
-        adapter.setCountIngredients(new AdapterRecipes.CountIngredients() {
-            @Override
-            public void CountIngredients(Recipes recipe, TextView targetView) {
-                viewModel.loadIngredients(recipe);
-                viewModel.getCountIngredients().observe(context, new Observer<HashMap<Recipes, Integer>>() {
-                    @Override
-                    public void onChanged(HashMap<Recipes, Integer> map) {
-                        Integer counter = map.get(recipe);
-                        if(counter != null){
-                            targetView.setText(String.valueOf(counter));
-                        }
-                    }
-                });
+        adapter.setCountIngredients((recipe, targetView) -> {
+            viewModel.loadIngredients(recipe);
+            viewModel.getCountIngredients().observe(context, map -> {
+                Integer counter = map.get(recipe);
+                if(counter != null){
+                    targetView.setText(String.valueOf(counter));
+                }
+            });
 
-            }
         });
     }
 
@@ -163,12 +150,7 @@ public class MainHelper {
     }
 
     public void ClickButton() {
-        adapter.setRecipeOnClickListener(new AdapterRecipes.RecipeOnClickListener() {
-            @Override
-            public void OnClickRecipe(Recipes recipe) {
-                clickRecipe(recipe);
-            }
-        });
+        adapter.setRecipeOnClickListener(recipe -> clickRecipe(recipe));
     }
 
     private void clickRecipe(Recipes recipe) {

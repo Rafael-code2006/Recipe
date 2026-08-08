@@ -32,7 +32,6 @@ import androidx.cardview.widget.CardView;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -40,7 +39,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.recipe.R;
 import com.example.recipe.adapters.AdapterEditRecipes;
-import com.example.recipe.model.Descriptions;
+import com.example.recipe.model.Ingredient;
 import com.example.recipe.model.Recipes;
 import com.example.recipe.setting.MyApp;
 import com.example.recipe.setting.TextKey;
@@ -281,9 +280,9 @@ public class EditRecipe extends AppCompatActivity {
 
     private void addNewIngredient(Recipes recipes) {
         addIngredient.setOnClickListener(v -> {
-            List<Descriptions> newDescriptions = adapter.getIngredients();
-            Descriptions desc = new Descriptions();
-            desc.setRecipe_id(recipes.getId());
+            List<Ingredient> newDescriptions = adapter.getIngredients();
+            Ingredient desc = new Ingredient();
+            desc.setRecipeId(recipes.getId());
             desc.setName("");
             desc.setUnit("kg");
             recyclerView.post(() -> setRecyclerViewHeightBasedOnChildren(recyclerView));
@@ -312,7 +311,7 @@ public class EditRecipe extends AppCompatActivity {
 
                 // Если позиция существует
                 if (position != RecyclerView.NO_POSITION) {
-                    Descriptions ingredient = adapter.getIngredients().get(position); // Берем рецепт по позиции из адаптера
+                    Ingredient ingredient = adapter.getIngredients().get(position); // Берем рецепт по позиции из адаптера
                     deletedIngredient(position, ingredient);
                     recyclerView.post(() -> setRecyclerViewHeightBasedOnChildren(recyclerView));
                 }
@@ -333,7 +332,7 @@ public class EditRecipe extends AppCompatActivity {
     }
 
 
-    private void deletedIngredient(int position, Descriptions ingredient) {
+    private void deletedIngredient(int position, Ingredient ingredient) {
         adapter.notifyItemChanged(position); // Указываем перепроверить позицию
 
         // Диалог подтверждения
@@ -358,7 +357,7 @@ public class EditRecipe extends AppCompatActivity {
         saveButton.setOnClickListener(v -> {
             boolean success = false;
 
-                List<Descriptions> descriptions = adapter.getIngredients();
+                List<Ingredient> descriptions = adapter.getIngredients();
 
                 recipes.setName(editTextRecipe.getText().toString());
                 recipes.setInsctruction(editTextInsctruction.getText().toString());
@@ -367,7 +366,7 @@ public class EditRecipe extends AppCompatActivity {
                 recipes.setImage(image);
             }
 
-                for (Descriptions x : descriptions) {
+                for (Ingredient x : descriptions) {
                     if (x.getName() == null || x.getName().isEmpty()) {
                         success = false;
                         break;
@@ -413,15 +412,12 @@ public class EditRecipe extends AppCompatActivity {
         editTextInsctruction.setText(recipes.getInsctruction());
 
         viewModel.loadIngredients(recipes);
-        viewModel.getIngredients().observe(this, new Observer<List<Descriptions>>() {
-            @Override
-            public void onChanged(List<Descriptions> descriptions) {
-                adapter.setIngredient(descriptions);
-                sizeIngedient = descriptions.size();
+        viewModel.getIngredients().observe(this, descriptions -> {
+            adapter.setIngredient(descriptions);
+            sizeIngedient = descriptions.size();
 
-                // Пересчитываем высоту RecyclerView после обновления данных
-                recyclerView.post(() -> setRecyclerViewHeightBasedOnChildren(recyclerView));
-            }
+            // Пересчитываем высоту RecyclerView после обновления данных
+            recyclerView.post(() -> setRecyclerViewHeightBasedOnChildren(recyclerView));
         });
     }
 

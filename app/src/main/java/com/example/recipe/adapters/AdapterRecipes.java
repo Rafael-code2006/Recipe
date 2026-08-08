@@ -10,7 +10,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.recipe.R;
@@ -76,7 +75,7 @@ public class AdapterRecipes extends RecyclerView.Adapter<AdapterRecipes.RecipesV
     public RecipesViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         Log.d("Test123", "Зашел в onCreateViewHolder");
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.test_recipe_item, parent, false);
+                .inflate(R.layout.recipe_item, parent, false);
         return new RecipesViewHolder(view);
     }
 

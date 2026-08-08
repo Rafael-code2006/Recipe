@@ -9,7 +9,7 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
-import com.example.recipe.model.Descriptions;
+import com.example.recipe.model.Ingredient;
 import com.example.recipe.model.Recipes;
 import com.example.recipe.database.RecipeDataBase;
 
@@ -33,7 +33,7 @@ public class RecipeShowViewModel extends AndroidViewModel {
     // MutableLiveData
     private MutableLiveData<List<Recipes>> recipes = new MutableLiveData<>();
     private MutableLiveData<Recipes> recipe = new MutableLiveData<>();
-    private MutableLiveData<List<Descriptions>> descriptions = new MutableLiveData<>();
+    private MutableLiveData<List<Ingredient>> descriptions = new MutableLiveData<>();
 
 
     // CompositeDisposable
@@ -48,7 +48,7 @@ public class RecipeShowViewModel extends AndroidViewModel {
     public LiveData<Recipes> getRecipe() {
         return recipe;
     }
-    public LiveData<List<Descriptions>> getDesriptions(){
+    public LiveData<List<Ingredient>> getDesriptions(){
         return descriptions;
     }
 
@@ -71,9 +71,9 @@ public class RecipeShowViewModel extends AndroidViewModel {
                         Log.d("ShowRecipeViewModel", throwable.getMessage());
                     }
                 })
-                .subscribe(new Consumer<List<Descriptions>>() {
+                .subscribe(new Consumer<List<Ingredient>>() {
                     @Override
-                    public void accept(List<Descriptions> getDescriptions) throws Throwable {
+                    public void accept(List<Ingredient> getDescriptions) throws Throwable {
                         descriptions.setValue(getDescriptions);
                     }
                 });

@@ -5,46 +5,39 @@ import android.graphics.Typeface;
 import android.text.InputType;
 import android.util.Log;
 import android.util.TypedValue;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.FrameLayout;
 import android.widget.LinearLayout;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.recipe.R;
-import com.example.recipe.model.Descriptions;
+import com.example.recipe.model.Ingredient;
 import com.example.recipe.setting.MyApp;import com.example.recipe.setting.TextKey;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Consumer;
 
-import kotlin.jvm.functions.Function2;
 import kotlin.jvm.functions.Function3;
 
 public class ShowRecipeAdapter extends RecyclerView.Adapter<ShowRecipeAdapter.ViewHolder> {
 
-    private List<Descriptions> data = new ArrayList<>();
+    private List<Ingredient> data = new ArrayList<>();
     private MyApp myApp;
 
     public ShowRecipeAdapter(MyApp myApp) {
         this.myApp = myApp;
     }
 
-    public void setData(List<Descriptions> list) {
+    public void setData(List<Ingredient> list) {
         data.clear();
         if (list != null) data.addAll(list);
         notifyDataSetChanged();
@@ -61,11 +54,11 @@ public class ShowRecipeAdapter extends RecyclerView.Adapter<ShowRecipeAdapter.Vi
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Context context = holder.itemView.getContext();
-        Descriptions desc = data.get(position);
+        Ingredient desc = data.get(position);
 
         holder.name.setText(desc.getName());
 
-        float oldWeight = desc.getWeight();
+        float oldWeight = desc.getQuantity();
         Log.d("AdapterShowRecipe", "Изначальный вес: " + oldWeight);
 
         if(oldWeight % 1 == 0) {
@@ -105,7 +98,7 @@ public class ShowRecipeAdapter extends RecyclerView.Adapter<ShowRecipeAdapter.Vi
                 infoLayout.addView(infoTitle);
 
                 addSheetItem(infoLayout, context, "Название: " + desc.getName(), null);   // было mainLayout
-                addSheetItem(infoLayout, context, "Вес: " + desc.getWeight() + " " + desc.getUnit(), null); // было mainLayout
+                addSheetItem(infoLayout, context, "Вес: " + desc.getQuantity() + " " + desc.getUnit(), null); // было mainLayout
 
                 infoDialog.setContentView(infoLayout);
                 infoDialog.show();
@@ -143,7 +136,7 @@ public class ShowRecipeAdapter extends RecyclerView.Adapter<ShowRecipeAdapter.Vi
                     }
                     float value = Float.valueOf(String.valueOf(editWeight.getText()));
                     Log.d("MainActivity1000", "value: " + value);
-                    Log.d("MainActivity1000", "Старое: "+ desc.getWeight() +" / Новое: " + value);
+                    Log.d("MainActivity1000", "Старое: "+ desc.getQuantity() +" / Новое: " + value);
                     recalculateDialog.dismiss();
                     mainDialog.dismiss();
 
@@ -153,8 +146,8 @@ public class ShowRecipeAdapter extends RecyclerView.Adapter<ShowRecipeAdapter.Vi
 
 
                     data.stream().forEach(descriptions -> {
-                            float recalculatedWeight = recalculation.invoke(Float.valueOf(oldWeight), newWeight, descriptions.getWeight());
-                            descriptions.setWeight(recalculatedWeight); // сохраняем новый вес
+                            float recalculatedWeight = recalculation.invoke(Float.valueOf(oldWeight), newWeight, descriptions.getQuantity());
+                            descriptions.setQuantity(recalculatedWeight); // сохраняем новый вес
                         });
 
 

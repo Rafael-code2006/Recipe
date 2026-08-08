@@ -1,3 +1,8 @@
+import org.gradle.kotlin.dsl.annotationProcessor
+import org.gradle.kotlin.dsl.compileOnly
+import org.gradle.kotlin.dsl.testAnnotationProcessor
+import org.gradle.kotlin.dsl.testCompileOnly
+
 plugins {
     alias(libs.plugins.android.application)
 }
@@ -53,8 +58,10 @@ dependencies {
     implementation("io.reactivex.rxjava3:rxandroid:3.0.2")
     implementation("io.reactivex.rxjava3:rxjava:3.1.5")
     implementation("com.pierfrancescosoffritti.androidyoutubeplayer:core:13.0.0")
-
     implementation("com.google.android.material:material:1.10.0")
+
+    compileOnly("org.projectlombok:lombok:1.18.42")
+    annotationProcessor("org.projectlombok:lombok:1.18.42")
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)

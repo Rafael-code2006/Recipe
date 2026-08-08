@@ -3,21 +3,15 @@ package com.example.recipe.activities;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
-import android.widget.ImageButton;
 
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 
-import com.example.recipe.MainHelper;
+import com.example.recipe.activityHelpers.MainHelper;
 import com.example.recipe.R;
-import com.example.recipe.model.BottomMenu;
 
 
 public class MainActivity extends AppCompatActivity {

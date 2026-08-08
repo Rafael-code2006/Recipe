@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+
+    android:layout_marginStart="20dp"
+    android:layout_marginEnd="20dp"
+    android:layout_marginTop="10dp"
+    android:layout_marginBottom="10dp"
+
+    app:cardBackgroundColor="#263B8C"
+    app:cardCornerRadius="16dp"
+
+    app:cardElevation="8dp"
+
+    app:strokeColor="#344B9D"
+    app:strokeWidth="1dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="10dp">
+
+
+        <!-- =============================== -->
+        <!-- ЗАГОЛОВОК -->
+        <!-- =============================== -->
+
+        <TextView
+            android:id="@+id/basicInformationTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Основная информация"
+            android:textColor="@color/title_my_color"
+            android:textSize="17sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="10dp" />
+
+
+        <!-- =============================== -->
+        <!-- НАЗВАНИЕ ИНГРЕДИЕНТА -->
+        <!-- =============================== -->
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="top">
+
+            <!-- Иконка -->
+
+            <FrameLayout
+                android:layout_width="55dp"
+                android:layout_height="55dp"
+                android:layout_marginEnd="8dp"
+                android:layout_gravity="bottom"
+                android:background="@drawable/bg_ingredient_icon">
+
+                <ImageView
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/ic_leaf"
+                    android:contentDescription="@null" />
+
+            </FrameLayout>
+
+
+            <!-- Подпись + поле -->
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+
+                <!-- Поле названия -->
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/nameInputLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+
+                    app:boxBackgroundMode="outline"
+                    app:boxStrokeColor="@color/stroke"
+                    app:boxStrokeWidth="1dp"
+                    app:boxStrokeWidthFocused="1dp"
+
+                    android:textColorHint="#C9D2EA"
+
+                    app:boxCornerRadiusTopStart="9dp"
+                    app:boxCornerRadiusTopEnd="9dp"
+                    app:boxCornerRadiusBottomStart="9dp"
+                    app:boxCornerRadiusBottomEnd="9dp">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/editIngredientName"
+                        android:layout_width="match_parent"
+                        android:layout_height="55dp"
+
+                        android:inputType="textCapSentences"
+                        android:gravity="center_vertical"
+
+                        android:paddingStart="10dp"
+                        android:paddingEnd="10dp"
+                        android:paddingTop="0dp"
+                        android:paddingBottom="0dp"
+
+                        android:hint="Название ингредиента"
+
+                        android:textColor="@color/white"
+                        android:textColorHint="#C9D2EA"
+                        android:textSize="13sp" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+
+        <!-- =============================== -->
+        <!-- КАТЕГОРИЯ -->
+        <!-- =============================== -->
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+
+            android:orientation="horizontal"
+            android:gravity="top"
+
+            android:layout_marginTop="9dp"
+            android:layout_marginBottom="7dp">
+
+
+            <!-- Иконка -->
+
+            <FrameLayout
+                android:layout_width="55dp"
+                android:layout_height="55dp"
+                android:layout_marginEnd="8dp"
+                android:layout_gravity="bottom"
+                android:background="@drawable/bg_category_icon">
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/ic_category"
+                    android:contentDescription="@null" />
+
+            </FrameLayout>
+
+
+            <!-- Подпись + поле -->
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+
+                <!-- Выпадающий список -->
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/categoryInputLayout"
+                    style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+
+                    app:boxStrokeColor="@color/stroke"
+                    app:boxStrokeWidth="1dp"
+                    app:boxStrokeWidthFocused="2dp"
+
+                    app:endIconTint="@color/white"
+
+                    android:textColorHint="#C9D2EA"
+
+                    app:boxCornerRadiusTopStart="9dp"
+                    app:boxCornerRadiusTopEnd="9dp"
+                    app:boxCornerRadiusBottomStart="9dp"
+                    app:boxCornerRadiusBottomEnd="9dp">
+
+                    <AutoCompleteTextView
+                        android:id="@+id/autoCompleteGroup"
+                        android:layout_width="match_parent"
+                        android:layout_height="55dp"
+
+                        android:inputType="none"
+
+                        android:background="@android:color/transparent"
+
+                        android:paddingStart="10dp"
+                        android:paddingEnd="10dp"
+
+                        android:hint="Группа"
+
+                        android:textColor="@color/white"
+                        android:textColorHint="#C9D2EA"
+                        android:textSize="12sp" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</com.google.android.material.card.MaterialCardView>

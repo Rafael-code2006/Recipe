@@ -3,7 +3,6 @@ package com.example.recipe.activities;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.util.Base64;
 import android.util.Log;
@@ -19,7 +18,7 @@ import androidx.core.view.WindowInsetsCompat;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.recipe.R;
-import com.example.recipe.model.Descriptions;
+import com.example.recipe.model.Ingredient;
 import com.example.recipe.model.ExportData;
 import com.example.recipe.model.Recipes;
 import com.example.recipe.setting.MyApp;
@@ -47,7 +46,7 @@ public class SettingActivity extends AppCompatActivity {
     private SettingViewModel viewModel;
 
     private List<Recipes> importRecipes;
-    private List<Descriptions> importIngredients;
+    private List<Ingredient> importIngredients;
 
     private MyApp myApp;
 
@@ -287,11 +286,11 @@ public class SettingActivity extends AppCompatActivity {
                     recipe.setImage(newPath);
                 }
 
-                List<Descriptions> ingredientsForRecipe = new ArrayList<>();
+                List<Ingredient> ingredientsForRecipe = new ArrayList<>();
                 if (importIngredients != null) {
-                    for (Descriptions ing : importIngredients) {
-                        if (ing.getRecipe_id() == oldId) {
-                            ing.setId_description(0);
+                    for (Ingredient ing : importIngredients) {
+                        if (ing.getRecipeId() == oldId) {
+                            ing.setId(0);
                             ingredientsForRecipe.add(ing);
                         }
                     }
@@ -303,8 +302,8 @@ public class SettingActivity extends AppCompatActivity {
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(newId -> {
-                            for (Descriptions ing : ingredientsForRecipe) {
-                                ing.setRecipe_id(newId);
+                            for (Ingredient ing : ingredientsForRecipe) {
+                                ing.setRecipeId(newId);
                             }
                             viewModel.saveAllIngredients(ingredientsForRecipe);
                         }, throwable -> {

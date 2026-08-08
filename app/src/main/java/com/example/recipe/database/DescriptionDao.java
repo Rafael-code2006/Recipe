@@ -6,7 +6,7 @@ import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 import androidx.room.Update;
 
-import com.example.recipe.model.Descriptions;
+import com.example.recipe.model.Ingredient;
 
 import java.util.List;
 
@@ -16,36 +16,38 @@ import io.reactivex.rxjava3.core.Single;
 @Dao
 public interface DescriptionDao{
 
-    @Insert
-    Completable add(Descriptions description);
+    String tableName = "ingredients";
 
     @Insert
-    Completable addList(List<Descriptions> desc);
+    Completable add(Ingredient description);
+
+    @Insert
+    Completable addList(List<Ingredient> desc);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    Completable saveIngredient(Descriptions description);
+    Completable saveIngredient(Ingredient description);
 
-    @Query("DELETE FROM descriptions WHERE id_description = :id_description")
+    @Query("DELETE FROM " + tableName + " WHERE id = :id_description")
     Completable remove(long id_description);
 
-    @Query("DELETE FROM descriptions WHERE recipe_id = :id_recipe")
+    @Query("DELETE FROM " + tableName + " WHERE recipeId = :id_recipe")
     Completable removeForRecipe(long id_recipe);
 
-    @Query("SELECT * FROM descriptions")
-    Single<List<Descriptions>> getDescriptions();
+    @Query("SELECT * FROM " + tableName)
+    Single<List<Ingredient>> getDescriptions();
 
-    @Query("SELECT * FROM descriptions WHERE recipe_id = :recipe_id")
-    Single<List<Descriptions>> getDescriptionForRecipe(long recipe_id);
+    @Query("SELECT * FROM " + tableName + " WHERE recipeId = :recipe_id")
+    Single<List<Ingredient>> getDescriptionForRecipe(long recipe_id);
 
-    @Query("SELECT * FROM descriptions WHERE id_description = :id_description")
-    Single<Descriptions> getDescription(long id_description);
+    @Query("SELECT * FROM " + tableName + " WHERE id = :id_description")
+    Single<Ingredient> getDescription(long id_description);
 
-    @Query("UPDATE descriptions SET name = :name, weight = :weight, unit = :unit WHERE recipe_id = :recipeId")
+    @Query("UPDATE " + tableName + " SET name = :name, weight = :weight, unit = :unit WHERE recipeId = :recipeId")
     Completable updateAllByRecipeId(long recipeId, String name, float weight, String unit);
 
 
     @Update
-    void updateAllIngredients(List<Descriptions> ingredients);
+    void updateAllIngredients(List<Ingredient> ingredients);
     @Update
-    Completable updateIngredients(Descriptions ingredients);
+    Completable updateIngredients(Ingredient ingredients);
 }

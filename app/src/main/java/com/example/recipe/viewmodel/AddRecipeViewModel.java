@@ -9,11 +9,9 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
-import com.example.recipe.model.Descriptions;
+import com.example.recipe.model.Ingredient;
 import com.example.recipe.model.Recipes;
 import com.example.recipe.database.RecipeDataBase;
-
-import java.util.concurrent.Callable;
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.core.Single;
@@ -21,7 +19,7 @@ import io.reactivex.rxjava3.disposables.CompositeDisposable;
 import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 
-public class AddRecipeModelView extends AndroidViewModel {
+public class AddRecipeViewModel extends AndroidViewModel {
 
     private static final String TAG = "AddRecipeViewModel1";
 
@@ -47,7 +45,7 @@ public class AddRecipeModelView extends AndroidViewModel {
 
 
     // Конструктор
-    public AddRecipeModelView(@NonNull Application application) {
+    public AddRecipeViewModel(@NonNull Application application) {
         super(application);
         shouldCloseScreen.setValue(false);
     }
@@ -84,7 +82,7 @@ public class AddRecipeModelView extends AndroidViewModel {
 
     // Добавление игридиента
     @SuppressLint("CheckResult")
-    public void addDescription(Descriptions description) {
+    public void addDescription(Ingredient description) {
         Disposable disposable = recipeDataBase.descriptionDao().add(description)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

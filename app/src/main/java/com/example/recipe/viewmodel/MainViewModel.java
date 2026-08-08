@@ -8,7 +8,7 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
-import com.example.recipe.model.Descriptions;
+import com.example.recipe.model.Ingredient;
 import com.example.recipe.model.Recipes;
 import com.example.recipe.database.RecipeDataBase;
 
@@ -27,7 +27,7 @@ public class MainViewModel extends AndroidViewModel {
     private RecipeDataBase recipeDataBase = RecipeDataBase.getInstance(getApplication());
 
     private MutableLiveData<List<Recipes>> recipes = new MutableLiveData<>();
-    private MutableLiveData<List<Descriptions>> descriptions = new MutableLiveData<>();
+    private MutableLiveData<List<Ingredient>> descriptions = new MutableLiveData<>();
     private MutableLiveData<HashMap<Recipes, Integer>> countIngredients = new MutableLiveData<>();
     private MutableLiveData<Recipes> recipe = new MutableLiveData<>();
 
@@ -41,7 +41,7 @@ public class MainViewModel extends AndroidViewModel {
         return countIngredients;
     }
 
-    public LiveData<List<Descriptions>> getDescriptions() {
+    public LiveData<List<Ingredient>> getDescriptions() {
         return descriptions;
     }
 

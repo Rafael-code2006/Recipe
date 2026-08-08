@@ -104,7 +104,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
                     android:layout_marginBottom="7dp"
-                    android:text="Категории"
+                    android:text="Поиск"
                     android:textColor="#111111"
                     android:textSize="12sp"/>
 

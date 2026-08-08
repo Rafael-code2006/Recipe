@@ -18,16 +18,15 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.recipe.R;
-import com.example.recipe.model.Descriptions;
+import com.example.recipe.model.Ingredient;
 import com.example.recipe.setting.MyApp;import com.example.recipe.setting.TextKey;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class AdapterEditRecipes extends RecyclerView.Adapter<AdapterEditRecipes.IngredientViewHolder> {
 
-    private List<Descriptions> ingredients = new ArrayList<>();
+    private List<Ingredient> ingredients = new ArrayList<>();
 
 
 
@@ -42,7 +41,7 @@ public class AdapterEditRecipes extends RecyclerView.Adapter<AdapterEditRecipes.
     }
 
     public interface CheckIngredient {
-        void getIngredient(Descriptions ingredient);
+        void getIngredient(Ingredient ingredient);
     }
 
     private CheckIngredient checkIngredient;
@@ -51,12 +50,12 @@ public class AdapterEditRecipes extends RecyclerView.Adapter<AdapterEditRecipes.
         this.checkIngredient = checkIngredient;
     }
 
-    public void setIngredient(List<Descriptions> ingredients) {
+    public void setIngredient(List<Ingredient> ingredients) {
         this.ingredients = ingredients;
         notifyDataSetChanged();
     }
 
-    public List<Descriptions> getIngredients() {
+    public List<Ingredient> getIngredients() {
         return ingredients;
     }
 
@@ -71,7 +70,7 @@ public class AdapterEditRecipes extends RecyclerView.Adapter<AdapterEditRecipes.
     @Override
     public void onBindViewHolder(@NonNull IngredientViewHolder holder, int position) {
         holder.buttonDelete.setVisibility(INVISIBLE);
-        Descriptions ingredient = ingredients.get(position);
+        Ingredient ingredient = ingredients.get(position);
 
         setTextChanged(holder.editTextNameIngredient);
 
@@ -119,7 +118,7 @@ public class AdapterEditRecipes extends RecyclerView.Adapter<AdapterEditRecipes.
         // --- Заполняем EditText ---
         holder.editTextNameIngredient.setText(ingredient.getName());
         holder.editTextWeight.setText(
-                ingredient.getWeight() == 0 ? "" : String.valueOf(ingredient.getWeight())
+                ingredient.getQuantity() == 0 ? "" : String.valueOf(ingredient.getQuantity())
         );
 
         // --- TextWatcher NAME ---
@@ -155,7 +154,7 @@ public class AdapterEditRecipes extends RecyclerView.Adapter<AdapterEditRecipes.
                 if (holder.isBinding) return; // игнорируем при биндинге
                 float weight = 0;
                 try { weight = Float.parseFloat(s.toString()); } catch (NumberFormatException ignored) {}
-                ingredient.setWeight(weight);
+                ingredient.setQuantity(weight);
                 if (checkIngredient != null) checkIngredient.getIngredient(ingredient);
             }
         };

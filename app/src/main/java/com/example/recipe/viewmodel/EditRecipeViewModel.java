@@ -2,7 +2,6 @@ package com.example.recipe.viewmodel;
 
 import android.annotation.SuppressLint;
 import android.app.Application;
-import android.util.EventLogTags;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -11,7 +10,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.recipe.database.RecipeDataBase;
-import com.example.recipe.model.Descriptions;
+import com.example.recipe.model.Ingredient;
 import com.example.recipe.model.Recipes;
 
 import java.util.ArrayList;
@@ -21,20 +20,19 @@ import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.core.Completable;
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
 import io.reactivex.rxjava3.disposables.Disposable;
-import io.reactivex.rxjava3.functions.Action;
 import io.reactivex.rxjava3.functions.Consumer;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 
 public class EditRecipeViewModel extends AndroidViewModel {
 
     private RecipeDataBase recipeDataBase = RecipeDataBase.getInstance(getApplication());
-    private MutableLiveData<List<Descriptions>> ingredients = new MutableLiveData<>();
+    private MutableLiveData<List<Ingredient>> ingredients = new MutableLiveData<>();
 
     private MutableLiveData<Recipes> recipe = new MutableLiveData<>();
 
     private CompositeDisposable compositeDisposable = new CompositeDisposable();
 
-    public LiveData<List<Descriptions>> getIngredients() {
+    public LiveData<List<Ingredient>> getIngredients() {
         return ingredients;
     }
 
@@ -51,9 +49,9 @@ public class EditRecipeViewModel extends AndroidViewModel {
        Disposable disposable = recipeDataBase.descriptionDao().getDescriptionForRecipe(recipes.getId())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Consumer<List<Descriptions>>() {
+                .subscribe(new Consumer<List<Ingredient>>() {
                     @Override
-                    public void accept(List<Descriptions> descriptions) throws Throwable {
+                    public void accept(List<Ingredient> descriptions) throws Throwable {
                         ingredients.setValue(descriptions);
                     }
                 }, new Consumer<Throwable>() {
@@ -72,8 +70,8 @@ public class EditRecipeViewModel extends AndroidViewModel {
                 .subscribeOn(Schedulers.io());
     }
 
-    public void deleteIngredient(Descriptions ingredient){
-        Disposable disposable = recipeDataBase.descriptionDao().remove(ingredient.getId_description())
+    public void deleteIngredient(Ingredient ingredient){
+        Disposable disposable = recipeDataBase.descriptionDao().remove(ingredient.getId())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnError(new Consumer<Throwable>() {
@@ -88,11 +86,11 @@ public class EditRecipeViewModel extends AndroidViewModel {
 
 
 
-    public Completable saveAllIngredients(List<Descriptions> list) {
+    public Completable saveAllIngredients(List<Ingredient> list) {
 
         List<Completable> completableList = new ArrayList<>();
 
-        for (Descriptions desc : list) {
+        for (Ingredient desc : list) {
             completableList.add(
                     recipeDataBase.descriptionDao()
                             .saveIngredient(desc)
