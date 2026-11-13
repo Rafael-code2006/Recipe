@@ -4,6 +4,7 @@ import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
+import com.google.gson.JsonObject;
 import com.google.gson.annotations.SerializedName;
 
 import lombok.Setter;
@@ -24,10 +25,10 @@ public class Ingredient {
      * Основная инфомация
      */
     @SerializedName("name")
-    private String name;
+    private String name; // Название
 
     @SerializedName("group")
-    private String group;
+    private String group; // Группа
 
 
 
@@ -35,17 +36,11 @@ public class Ingredient {
      * Количество
      */
 
-    @SerializedName("quantity")
-    private float quantity;
+    @SerializedName("weight")
+    private float weight; // Вес
 
     @SerializedName("unit")
-    private String unit;
-
-    @SerializedName("weight")
-    private boolean weight;
-
-    @SerializedName("volume")
-    private boolean volume;
+    private String unit; // Тип веса
 
 
     /**
@@ -53,16 +48,16 @@ public class Ingredient {
      */
 
     @SerializedName("calories")
-    private long calories;
+    private float calories;
 
     @SerializedName("proteins")
-    private int proteins;
+    private float proteins;
 
     @SerializedName("fats")
-    private int fats;
+    private float fats;
 
     @SerializedName("carbohydrates")
-    private int carbohydrates;
+    private float carbohydrates;
 
 
     /**
@@ -76,15 +71,13 @@ public class Ingredient {
     private String notes;
 
 
-    public Ingredient(long id, long recipeId, String name, String group, float quantity, String unit, boolean weight, boolean volume, long calories, int proteins, int fats, int carbohydrates, String brand, String notes) {
+    public Ingredient(long id, long recipeId, String name, String group, float quantity, String unit, float calories, float proteins, float fats, float carbohydrates, String brand, String notes) {
         this.id = id;
         this.recipeId = recipeId;
         this.name = name;
         this.group = group;
-        this.quantity = quantity;
+        this.weight = quantity;
         this.unit = unit;
-        this.weight = weight;
-        this.volume = volume;
         this.calories = calories;
         this.proteins = proteins;
         this.fats = fats;
@@ -100,10 +93,29 @@ public class Ingredient {
     public Ingredient(long recipe_id, String name, float weight, String unit) {
         this.recipeId = recipe_id;
         this.name = name;
-        this.quantity = weight;
+        this.weight = weight;
         this.unit = unit;
     }
 
+
+    @Override
+    public String toString() {
+        JsonObject json = new JsonObject();
+        json.addProperty("id", id);
+        json.addProperty("recipeId", recipeId);
+        json.addProperty("name", name);
+        json.addProperty("group", group);
+        json.addProperty("weight", weight);
+        json.addProperty("unit", unit);
+        json.addProperty("calories", calories);
+        json.addProperty("proteins", proteins);
+        json.addProperty("fats", fats);
+        json.addProperty("carbohydrates", carbohydrates);
+        json.addProperty("brand", brand);
+        json.addProperty("notes", notes);
+
+        return json.toString();
+    }
 
     public void setId(long id) {
         this.id = id;
@@ -121,35 +133,27 @@ public class Ingredient {
         this.group = group;
     }
 
-    public void setQuantity(float quantity) {
-        this.quantity = quantity;
+    public void setWeight(float weight) {
+        this.weight = weight;
     }
 
     public void setUnit(String unit) {
         this.unit = unit;
     }
 
-    public void setWeight(boolean weight) {
-        this.weight = weight;
-    }
-
-    public void setVolume(boolean volume) {
-        this.volume = volume;
-    }
-
-    public void setCalories(long calories) {
+    public void setCalories(float calories) {
         this.calories = calories;
     }
 
-    public void setProteins(int proteins) {
+    public void setProteins(float proteins) {
         this.proteins = proteins;
     }
 
-    public void setFats(int fats) {
+    public void setFats(float fats) {
         this.fats = fats;
     }
 
-    public void setCarbohydrates(int carbohydrates) {
+    public void setCarbohydrates(float carbohydrates) {
         this.carbohydrates = carbohydrates;
     }
 
@@ -181,35 +185,27 @@ public class Ingredient {
         return group;
     }
 
-    public float getQuantity() {
-        return quantity;
+    public float getWeight() {
+        return weight;
     }
 
     public String getUnit() {
         return unit;
     }
 
-    public boolean isWeight() {
-        return weight;
-    }
-
-    public boolean isVolume() {
-        return volume;
-    }
-
-    public long getCalories() {
+    public float getCalories() {
         return calories;
     }
 
-    public int getProteins() {
+    public float getProteins() {
         return proteins;
     }
 
-    public int getFats() {
+    public float getFats() {
         return fats;
     }
 
-    public int getCarbohydrates() {
+    public float getCarbohydrates() {
         return carbohydrates;
     }
 
@@ -219,17 +215,6 @@ public class Ingredient {
 
     public String getNotes() {
         return notes;
-    }
-
-    @Override
-    public String toString() {
-        return "Ingredient{" +
-                "id_description=" + id +
-                ", recipe_id=" + recipeId +
-                ", name='" + name + '\'' +
-                ", weight=" + quantity +
-                ", unit='" + unit + '\'' +
-                '}';
     }
 }
 

@@ -360,7 +360,7 @@ public class EditRecipe extends AppCompatActivity {
                 List<Ingredient> descriptions = adapter.getIngredients();
 
                 recipes.setName(editTextRecipe.getText().toString());
-                recipes.setInsctruction(editTextInsctruction.getText().toString());
+                recipes.setInstructions(editTextInsctruction.getText().toString());
             if(image != null){
                 Log.d("Testtest", image);
                 recipes.setImage(image);
@@ -409,7 +409,7 @@ public class EditRecipe extends AppCompatActivity {
 
     private void setStarted(Recipes recipes) {
         editTextRecipe.setText(recipes.getName());
-        editTextInsctruction.setText(recipes.getInsctruction());
+        editTextInsctruction.setText(recipes.getInstructions());
 
         viewModel.loadIngredients(recipes);
         viewModel.getIngredients().observe(this, descriptions -> {

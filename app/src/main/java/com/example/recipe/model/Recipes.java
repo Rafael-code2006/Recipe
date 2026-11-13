@@ -5,6 +5,7 @@ import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
+import com.google.gson.JsonObject;
 import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
@@ -17,8 +18,8 @@ public class Recipes implements Serializable {
     private long id;
     @SerializedName("name")
     private String name;
-    @SerializedName("insctruction")
-    private String insctruction;
+    @SerializedName("instructions")
+    private String instructions;
     @Ignore
     @SerializedName("ingredient_count")
     private int ingredient_count;
@@ -27,10 +28,10 @@ public class Recipes implements Serializable {
 
 
 
-    public Recipes(long id, String name, String insctruction, String image) {
+    public Recipes(long id, String name, String instructions, String image) {
         this.id = id;
         this.name = name;
-        this.insctruction = insctruction;
+        this.instructions = instructions;
         this.image = image;
     }
 
@@ -38,10 +39,22 @@ public class Recipes implements Serializable {
     }
 
     @Ignore
-    public Recipes(String name, String insctruction, String image) {
+    public Recipes(String name, String instructions, String image) {
         this.name = name;
-        this.insctruction = insctruction;
+        this.instructions = instructions;
         this.image = image;
+    }
+
+    @Override
+    public String toString() {
+        JsonObject json = new JsonObject();
+        json.addProperty("id", id);
+        json.addProperty("name", name);
+        json.addProperty("instructions", instructions);
+        json.addProperty("ingredient_count", ingredient_count);
+        json.addProperty("image", image);
+
+        return json.toString();
     }
 
     public long getId() {
@@ -56,16 +69,16 @@ public class Recipes implements Serializable {
         return name;
     }
 
-    public String getInsctruction() {
-        return insctruction;
+    public String getInstructions() {
+        return instructions;
     }
 
     public void setName(String name) {
         this.name = name;
     }
 
-    public void setInsctruction(String insctruction) {
-        this.insctruction = insctruction;
+    public void setInstructions(String instructions) {
+        this.instructions = instructions;
     }
 
     @Ignore
@@ -84,15 +97,5 @@ public class Recipes implements Serializable {
 
     public void setImage(String image) {
        this.image = image;
-    }
-
-    @Override
-    public String toString() {
-        return "Recipes{" +
-                "\nid=" + id +
-                "\n, name='" + name + '\'' +
-                "\n, insctruction='" + insctruction + '\'' +
-                "\n, ingredient_count=" + ingredient_count +
-                '}';
     }
 }

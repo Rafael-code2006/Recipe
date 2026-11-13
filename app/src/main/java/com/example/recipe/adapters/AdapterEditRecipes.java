@@ -118,7 +118,7 @@ public class AdapterEditRecipes extends RecyclerView.Adapter<AdapterEditRecipes.
         // --- Заполняем EditText ---
         holder.editTextNameIngredient.setText(ingredient.getName());
         holder.editTextWeight.setText(
-                ingredient.getQuantity() == 0 ? "" : String.valueOf(ingredient.getQuantity())
+                ingredient.getWeight() == 0 ? "" : String.valueOf(ingredient.getWeight())
         );
 
         // --- TextWatcher NAME ---
@@ -154,7 +154,7 @@ public class AdapterEditRecipes extends RecyclerView.Adapter<AdapterEditRecipes.
                 if (holder.isBinding) return; // игнорируем при биндинге
                 float weight = 0;
                 try { weight = Float.parseFloat(s.toString()); } catch (NumberFormatException ignored) {}
-                ingredient.setQuantity(weight);
+                ingredient.setWeight(weight);
                 if (checkIngredient != null) checkIngredient.getIngredient(ingredient);
             }
         };

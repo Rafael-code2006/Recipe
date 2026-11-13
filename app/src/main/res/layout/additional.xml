@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+
+    android:layout_marginStart="20dp"
+    android:layout_marginEnd="20dp"
+    android:layout_marginTop="10dp"
+    android:layout_marginBottom="10dp"
+
+    app:cardBackgroundColor="#263B8C"
+    app:cardCornerRadius="16dp"
+    app:cardElevation="8dp"
+
+    app:strokeColor="#344B9D"
+    app:strokeWidth="1dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="10dp">
+
+
+        <!-- =============================== -->
+        <!-- ЗАГОЛОВОК -->
+        <!-- =============================== -->
+
+        <TextView
+            android:id="@+id/additionalTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Дополнительно"
+            android:textColor="@color/title_my_color"
+            android:textSize="17sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="10dp" />
+
+
+        <!-- =============================== -->
+        <!-- БРЕНД -->
+        <!-- =============================== -->
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="top">
+
+            <FrameLayout
+                android:layout_width="55dp"
+                android:layout_height="55dp"
+                android:layout_marginEnd="8dp"
+                android:layout_gravity="center_vertical"
+                android:background="@drawable/bg_weight_icon">
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/ic_tag"
+                    android:contentDescription="@null" />
+            </FrameLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/brandInputLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+
+                    android:hint="Бренд (необязательно)"
+                    android:textColorHint="#C9D2EA"
+
+                    app:boxBackgroundMode="outline"
+                    app:boxStrokeColor="@color/stroke"
+                    app:boxStrokeWidth="1dp"
+                    app:boxStrokeWidthFocused="1dp"
+                    app:hintTextColor="#91A8FF"
+
+                    app:placeholderText="Например: Простоквашино"
+
+                    app:boxCornerRadiusTopStart="9dp"
+                    app:boxCornerRadiusTopEnd="9dp"
+                    app:boxCornerRadiusBottomStart="9dp"
+                    app:boxCornerRadiusBottomEnd="9dp">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/editBrand"
+                        android:layout_width="match_parent"
+                        android:layout_height="55dp"
+
+                        android:inputType="textCapWords"
+                        android:gravity="center_vertical"
+
+                        android:paddingStart="10dp"
+                        android:paddingEnd="10dp"
+
+                        android:textColor="@color/white"
+                        android:textColorHint="#7182C0"
+                        android:textSize="13sp" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+
+        <!-- =============================== -->
+        <!-- ЗАМЕТКА -->
+        <!-- =============================== -->
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="top"
+            android:layout_marginTop="9dp">
+
+            <FrameLayout
+                android:layout_width="55dp"
+                android:layout_height="55dp"
+                android:layout_marginEnd="8dp"
+                android:background="@drawable/bg_weight_icon">
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/ic_note"
+                    android:contentDescription="@null" />
+            </FrameLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/noteInputLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+
+                    android:hint="Заметка (необязательно)"
+                    android:textColorHint="#C9D2EA"
+
+                    app:boxBackgroundMode="outline"
+                    app:boxStrokeColor="@color/stroke"
+                    app:boxStrokeWidth="1dp"
+                    app:boxStrokeWidthFocused="1dp"
+                    app:hintTextColor="#91A8FF"
+
+                    app:placeholderText="Любая дополнительная информация об ингредиенте"
+
+                    app:counterEnabled="true"
+                    app:counterMaxLength="200"
+
+                    app:boxCornerRadiusTopStart="9dp"
+                    app:boxCornerRadiusTopEnd="9dp"
+                    app:boxCornerRadiusBottomStart="9dp"
+                    app:boxCornerRadiusBottomEnd="9dp">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/editNote"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:minHeight="90dp"
+
+                        android:gravity="top|start"
+                        android:inputType="textMultiLine|textCapSentences"
+                        android:maxLength="200"
+                        android:overScrollMode="always"
+                        android:scrollbars="vertical"
+
+                        android:padding="10dp"
+
+                        android:textColor="@color/white"
+                        android:textColorHint="#7182C0"
+                        android:textSize="13sp" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</com.google.android.material.card.MaterialCardView>

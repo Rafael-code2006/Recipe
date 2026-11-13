@@ -142,11 +142,11 @@ public class ShowRecipe extends AppCompatActivity {
     private void showRecipeContent(Recipes recipe) {
         recipeNameTextView.setText(recipe.getName());
 
-        String instruction = recipe.getInsctruction();
+        String instruction = recipe.getInstructions();
 
-        Log.d("Instruction1", "инструкция рецепта: " + recipe.getInsctruction());
+        Log.d("Instruction1", "инструкция рецепта: " + recipe.getInstructions());
         if(!instruction.isEmpty()){
-            instructionTextView.setText(recipe.getInsctruction());
+            instructionTextView.setText(recipe.getInstructions());
         } else {
             instructionTitle.setVisibility(INVISIBLE);
         }

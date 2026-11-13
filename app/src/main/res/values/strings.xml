@@ -20,4 +20,29 @@
         <item>Каз</item>
 
     </string-array>
+
+
+    <string-array name="ingredient_groups">
+        <item>Овощи</item>
+        <item>Фрукты</item>
+        <item>Мясо</item>
+        <item>Молочное</item>
+    </string-array>
+
+    <!-- Единицы измерения (единый список) -->
+    <string-array name="unit_all">
+        <item>г</item>
+        <item>кг</item>
+        <item>мг</item>
+        <item>мл</item>
+        <item>л</item>
+        <item>ст. л.</item>
+        <item>ч. л.</item>
+        <item>стакан</item>
+        <item>шт</item>
+        <item>упак.</item>
+        <item>зубчик</item>
+        <item>щепотка</item>
+        <item>по вкусу</item>
+    </string-array>
 </resources>

@@ -58,7 +58,7 @@ public class ShowRecipeAdapter extends RecyclerView.Adapter<ShowRecipeAdapter.Vi
 
         holder.name.setText(desc.getName());
 
-        float oldWeight = desc.getQuantity();
+        float oldWeight = desc.getWeight();
         Log.d("AdapterShowRecipe", "Изначальный вес: " + oldWeight);
 
         if(oldWeight % 1 == 0) {
@@ -98,7 +98,7 @@ public class ShowRecipeAdapter extends RecyclerView.Adapter<ShowRecipeAdapter.Vi
                 infoLayout.addView(infoTitle);
 
                 addSheetItem(infoLayout, context, "Название: " + desc.getName(), null);   // было mainLayout
-                addSheetItem(infoLayout, context, "Вес: " + desc.getQuantity() + " " + desc.getUnit(), null); // было mainLayout
+                addSheetItem(infoLayout, context, "Вес: " + desc.getWeight() + " " + desc.getUnit(), null); // было mainLayout
 
                 infoDialog.setContentView(infoLayout);
                 infoDialog.show();
@@ -136,7 +136,7 @@ public class ShowRecipeAdapter extends RecyclerView.Adapter<ShowRecipeAdapter.Vi
                     }
                     float value = Float.valueOf(String.valueOf(editWeight.getText()));
                     Log.d("MainActivity1000", "value: " + value);
-                    Log.d("MainActivity1000", "Старое: "+ desc.getQuantity() +" / Новое: " + value);
+                    Log.d("MainActivity1000", "Старое: "+ desc.getWeight() +" / Новое: " + value);
                     recalculateDialog.dismiss();
                     mainDialog.dismiss();
 
@@ -146,8 +146,8 @@ public class ShowRecipeAdapter extends RecyclerView.Adapter<ShowRecipeAdapter.Vi
 
 
                     data.stream().forEach(descriptions -> {
-                            float recalculatedWeight = recalculation.invoke(Float.valueOf(oldWeight), newWeight, descriptions.getQuantity());
-                            descriptions.setQuantity(recalculatedWeight); // сохраняем новый вес
+                            float recalculatedWeight = recalculation.invoke(oldWeight, newWeight, descriptions.getWeight());
+                            descriptions.setWeight(recalculatedWeight); // сохраняем новый вес
                         });
 
 
