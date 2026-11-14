@@ -10,7 +10,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.recipe.model.Ingredient;
-import com.example.recipe.model.Recipes;
+import com.example.recipe.model.Recipe;
 import com.example.recipe.database.RecipeDataBase;
 
 import java.util.List;
@@ -31,8 +31,8 @@ public class RecipeShowViewModel extends AndroidViewModel {
 
 
     // MutableLiveData
-    private MutableLiveData<List<Recipes>> recipes = new MutableLiveData<>();
-    private MutableLiveData<Recipes> recipe = new MutableLiveData<>();
+    private MutableLiveData<List<Recipe>> recipes = new MutableLiveData<>();
+    private MutableLiveData<Recipe> recipe = new MutableLiveData<>();
     private MutableLiveData<List<Ingredient>> descriptions = new MutableLiveData<>();
 
 
@@ -41,11 +41,11 @@ public class RecipeShowViewModel extends AndroidViewModel {
 
 
     // Getters
-    public LiveData<List<Recipes>> getRecipes(){
+    public LiveData<List<Recipe>> getRecipes(){
         Log.d("ViewModelTest", "Количество обьектов: ");
         return recipes;
     }
-    public LiveData<Recipes> getRecipe() {
+    public LiveData<Recipe> getRecipe() {
         return recipe;
     }
     public LiveData<List<Ingredient>> getDesriptions(){
@@ -61,8 +61,8 @@ public class RecipeShowViewModel extends AndroidViewModel {
 
 
     // Обновление списка ингридиентов по id рецепта
-    public void refreshDescriptions(Recipes recipes){
-        Disposable disposable = recipeDataBase.descriptionDao().getDescriptionForRecipe(recipes.getId())
+    public void refreshDescriptions(Recipe recipe){
+        Disposable disposable = recipeDataBase.ingredientDao().getDescriptionForRecipe(recipe.getId())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnError(new Consumer<Throwable>() {
@@ -82,7 +82,7 @@ public class RecipeShowViewModel extends AndroidViewModel {
 
     // Возврат рецепта по id
     @SuppressLint("CheckResult")
-    public void loadRecipe(Recipes recipeUser){
+    public void loadRecipe(Recipe recipeUser){
         recipeDataBase.recipesDAO().getRecipe(recipeUser.getId())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -92,9 +92,9 @@ public class RecipeShowViewModel extends AndroidViewModel {
                         Log.d("RecipeShowViewModel1", throwable.getMessage());
                     }
                 })
-                .subscribe(new Consumer<Recipes>() {
+                .subscribe(new Consumer<Recipe>() {
                     @Override
-                    public void accept(Recipes getRecipe) throws Throwable {
+                    public void accept(Recipe getRecipe) throws Throwable {
                         recipe.setValue(getRecipe);
                     }
                 });

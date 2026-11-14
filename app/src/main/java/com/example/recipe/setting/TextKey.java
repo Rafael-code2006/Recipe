@@ -2,7 +2,7 @@ package com.example.recipe.setting;
 
 public enum TextKey {
 
-        MAIN("Рецепты", "Recipes", "Рецепттер"),
+        MAIN("Рецепты", "Recipe", "Рецепттер"),
         ADD("Добавить рецепт", "Add Recipe", "Рецепт қосу"),
         SHOW("Рецепт", "Recipe", "Рецепт"),
         EDIT("Изменить", "Edit", "Өзгерту"),

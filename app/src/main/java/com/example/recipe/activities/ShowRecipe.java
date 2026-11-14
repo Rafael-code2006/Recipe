@@ -24,7 +24,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.example.recipe.R;
 import com.example.recipe.adapters.ShowRecipeAdapter;
-import com.example.recipe.model.Recipes;
+import com.example.recipe.model.Recipe;
 import com.example.recipe.setting.MyApp;
 import com.example.recipe.setting.TextKey;
 import com.example.recipe.viewmodel.RecipeShowViewModel;
@@ -39,7 +39,7 @@ public class ShowRecipe extends AppCompatActivity {
     private Button editButton;
     private RecyclerView ingredientsRecyclerView;
 
-    private Recipes recipe;
+    private Recipe recipe;
     private RecipeShowViewModel recipeShowViewModel;
     private MyApp myApp;
     private ShowRecipeAdapter ingredientsAdapter;
@@ -77,7 +77,7 @@ public class ShowRecipe extends AppCompatActivity {
     }
 
     private void initViews() {
-        recipe = (Recipes) getIntent().getSerializableExtra("Recipe");
+        recipe = (Recipe) getIntent().getSerializableExtra("Recipe");
         title = findViewById(R.id.YourRecipeTextView);
         ingredientsTitle = findViewById(R.id.TextViewIngredients);
         instructionTitle = findViewById(R.id.TextViewInstruction);
@@ -115,7 +115,7 @@ public class ShowRecipe extends AppCompatActivity {
 
 
 
-    private void showImage(Recipes recipe) {
+    private void showImage(Recipe recipe) {
         try {
             String imagePath = recipe.getImage();
             if (imagePath == null || imagePath.isEmpty()) {
@@ -139,7 +139,7 @@ public class ShowRecipe extends AppCompatActivity {
         }
     }
 
-    private void showRecipeContent(Recipes recipe) {
+    private void showRecipeContent(Recipe recipe) {
         recipeNameTextView.setText(recipe.getName());
 
         String instruction = recipe.getInstructions();
@@ -200,7 +200,7 @@ public class ShowRecipe extends AppCompatActivity {
         recyclerView.requestLayout();
     }
 
-    private void editButtonClick(Recipes recipe) {
+    private void editButtonClick(Recipe recipe) {
         editButton.setOnClickListener(v -> {
             Intent intent = EditRecipe.getIntent(ShowRecipe.this, recipe);
             startActivity(intent);
@@ -208,7 +208,7 @@ public class ShowRecipe extends AppCompatActivity {
         });
     }
 
-    public static Intent newIntent(Context context, Recipes recipe) {
+    public static Intent newIntent(Context context, Recipe recipe) {
         Intent intent = new Intent(context, ShowRecipe.class);
         intent.putExtra("Recipe", recipe);
         return intent;

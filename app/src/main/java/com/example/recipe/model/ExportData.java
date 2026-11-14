@@ -6,22 +6,22 @@ import java.util.List;
 
 public class ExportData {
     @SerializedName("recipes")
-    private List<Recipes> recipes;
+    private List<Recipe> recipes;
 
     @SerializedName("ingredients")
     private List<Ingredient> ingredients;
 
 
-    public ExportData(List<Recipes> recipes, List<Ingredient> ingredients) {
+    public ExportData(List<Recipe> recipes, List<Ingredient> ingredients) {
         this.recipes = recipes;
         this.ingredients = ingredients;
     }
 
-    public List<Recipes> getRecipes() {
+    public List<Recipe> getRecipes() {
         return recipes;
     }
 
-    public void setRecipes(List<Recipes> recipes) {
+    public void setRecipes(List<Recipe> recipes) {
         this.recipes = recipes;
     }
 

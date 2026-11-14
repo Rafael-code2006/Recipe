@@ -10,8 +10,8 @@ import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
 
-@Entity(tableName = "recipes")
-public class Recipes implements Serializable {
+@Entity(tableName = "recipe")
+public class Recipe implements Serializable {
 
     @PrimaryKey(autoGenerate = true)
     @SerializedName("id")
@@ -28,18 +28,18 @@ public class Recipes implements Serializable {
 
 
 
-    public Recipes(long id, String name, String instructions, String image) {
+    public Recipe(long id, String name, String instructions, String image) {
         this.id = id;
         this.name = name;
         this.instructions = instructions;
         this.image = image;
     }
 
-    public Recipes() {
+    public Recipe() {
     }
 
     @Ignore
-    public Recipes(String name, String instructions, String image) {
+    public Recipe(String name, String instructions, String image) {
         this.name = name;
         this.instructions = instructions;
         this.image = image;

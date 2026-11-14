@@ -7,9 +7,9 @@ import androidx.room.Room;
 import androidx.room.RoomDatabase;
 
 import com.example.recipe.model.Ingredient;
-import com.example.recipe.model.Recipes;
+import com.example.recipe.model.Recipe;
 
-@Database(entities = {Recipes.class, Ingredient.class}, version = 2, exportSchema = false)
+@Database(entities = {Recipe.class, Ingredient.class}, version = 2, exportSchema = false)
 public abstract class RecipeDataBase extends RoomDatabase {
 
     private static final String DB_NAME = "recipe.db";
@@ -29,6 +29,6 @@ public abstract class RecipeDataBase extends RoomDatabase {
         return instance;
     }
 
-    public abstract RecipesDAO recipesDAO();     // RecipesDAO с заглавной R
-    public abstract DescriptionDao descriptionDao();
+    public abstract RecipeDAO recipesDAO();     // RecipeDAO с заглавной R
+    public abstract IngredientDao ingredientDao();
 }

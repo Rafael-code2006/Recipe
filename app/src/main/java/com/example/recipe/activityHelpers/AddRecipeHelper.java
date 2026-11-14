@@ -34,12 +34,11 @@ import com.example.recipe.activities.AddIngredient;
 import com.example.recipe.activities.AddRecipe;
 import com.example.recipe.activities.MainActivity;
 import com.example.recipe.model.Ingredient;
-import com.example.recipe.model.Recipes;
+import com.example.recipe.model.Recipe;
 import com.example.recipe.setting.MyApp;
 import com.example.recipe.setting.TextKey;
 import com.example.recipe.viewmodel.AddRecipeViewModel;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -85,6 +84,8 @@ public class AddRecipeHelper {
     private AddRecipeViewModel addRecipeViewModel;
 
     private MyApp myApp;
+
+    private Recipe result;
 
 
     static final int PICK_IMAGE_REQUEST = 101;
@@ -378,7 +379,7 @@ public class AddRecipeHelper {
             image = "";
         }
         // Создаем рецепт
-        Recipes recipe = new Recipes(title, instruction, image);
+        Recipe recipe = new Recipe(title, instruction, image);
         recipe.setIngredient_count(descriptionsList.size());
 
         addRecipeViewModel.TestAddRecipe(recipe)

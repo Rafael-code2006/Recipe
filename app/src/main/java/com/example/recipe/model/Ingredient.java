@@ -7,11 +7,13 @@ import androidx.room.PrimaryKey;
 import com.google.gson.JsonObject;
 import com.google.gson.annotations.SerializedName;
 
+import java.io.Serializable;
+
 import lombok.Setter;
 
 @Setter
 @Entity(tableName = "ingredients")
-public class Ingredient {
+public class Ingredient implements Serializable {
 
     @PrimaryKey(autoGenerate = true)
     @SerializedName("id")

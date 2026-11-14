@@ -19,11 +19,13 @@ import androidx.core.view.WindowInsetsCompat;
 import com.example.recipe.activityHelpers.AddRecipeHelper;
 import com.example.recipe.model.BottomMenu;
 import com.example.recipe.R;
+import com.example.recipe.model.Ingredient;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.Serializable;
 
 public class AddRecipe extends AppCompatActivity {
     private AddRecipeHelper helper;
@@ -126,6 +128,12 @@ public class AddRecipe extends AppCompatActivity {
 
     public static Intent newIntent(Context context) {
         return new Intent(context, AddRecipe.class);
+    }
+
+    public static Intent newIntent(Context context, Ingredient ingredient) {
+        Intent intent = new Intent(context, AddRecipe.class);
+        intent.putExtra("Ingredient", (Serializable) ingredient);
+        return intent;
     }
 
 

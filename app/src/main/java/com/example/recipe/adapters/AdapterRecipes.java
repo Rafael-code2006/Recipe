@@ -13,7 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.recipe.R;
-import com.example.recipe.model.Recipes;
+import com.example.recipe.model.Recipe;
 import com.example.recipe.setting.MyApp;
 
 import java.io.File;
@@ -25,7 +25,7 @@ public class AdapterRecipes extends RecyclerView.Adapter<AdapterRecipes.RecipesV
 
 
     // ArrayList
-    private List<Recipes> recipes = new ArrayList<>();
+    private List<Recipe> recipes = new ArrayList<>();
 
     private MyApp myApp = MyApp.getInstance();
 
@@ -35,8 +35,8 @@ public class AdapterRecipes extends RecyclerView.Adapter<AdapterRecipes.RecipesV
     private RecipeOnClickListener recipeOnClickListener;
 
 
-    // Recipes
-    private Recipes selectedRecipe;
+    // Recipe
+    private Recipe selectedRecipe;
 
 
     // Setters
@@ -46,10 +46,10 @@ public class AdapterRecipes extends RecyclerView.Adapter<AdapterRecipes.RecipesV
     public void setCountIngredients(CountIngredients countIngredients) {
         this.countIngredients = countIngredients;
     }
-    public void setSelectedRecipe(Recipes recipe) {
+    public void setSelectedRecipe(Recipe recipe) {
         this.selectedRecipe = recipe;
     }
-    public void setRecipes(List<Recipes> recipes) {
+    public void setRecipes(List<Recipe> recipes) {
         this.recipes = recipes;
         notifyDataSetChanged();
     }
@@ -59,10 +59,10 @@ public class AdapterRecipes extends RecyclerView.Adapter<AdapterRecipes.RecipesV
 
 
     // Getters
-    public Recipes getSelectedRecipe() {
+    public Recipe getSelectedRecipe() {
         return selectedRecipe;
     }
-    public List<Recipes> getRecipes() {
+    public List<Recipe> getRecipes() {
         return recipes;
     }
 
@@ -82,7 +82,7 @@ public class AdapterRecipes extends RecyclerView.Adapter<AdapterRecipes.RecipesV
     @Override
     public void onBindViewHolder(@NonNull RecipesViewHolder holder, int position) {
         Log.d("Test123", "Зашел в onBindViewHolder");
-        Recipes recipe = recipes.get(position);
+        Recipe recipe = recipes.get(position);
 
         // Название рецепта
         holder.recipeTitle.setText(recipe.getName());
@@ -102,7 +102,7 @@ public class AdapterRecipes extends RecyclerView.Adapter<AdapterRecipes.RecipesV
         }
 
         if(countIngredients != null){
-            Recipes recipeCounter = recipes.get(position);
+            Recipe recipeCounter = recipes.get(position);
             countIngredients.CountIngredients(recipeCounter, holder.ingredientsCount);
         }
 
@@ -114,7 +114,7 @@ public class AdapterRecipes extends RecyclerView.Adapter<AdapterRecipes.RecipesV
         });
     }
 
-    private void showImage(ImageView imageView, Recipes recipe) {
+    private void showImage(ImageView imageView, Recipe recipe) {
         try {
             String imagePath = recipe.getImage();
             Log.d("ShowRecipe", "URI из базы: " + imagePath);
@@ -175,12 +175,12 @@ public class AdapterRecipes extends RecyclerView.Adapter<AdapterRecipes.RecipesV
 
     // Interface
     public interface RecipeOnClickListener {
-        void OnClickRecipe(Recipes recipe);
+        void OnClickRecipe(Recipe recipe);
     }
 
 
     public interface CountIngredients{
-        void CountIngredients(Recipes recipe, TextView targetView);
+        void CountIngredients(Recipe recipe, TextView targetView);
     }
 
 

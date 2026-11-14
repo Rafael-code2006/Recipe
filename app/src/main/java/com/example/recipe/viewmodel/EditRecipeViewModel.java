@@ -11,7 +11,7 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.example.recipe.database.RecipeDataBase;
 import com.example.recipe.model.Ingredient;
-import com.example.recipe.model.Recipes;
+import com.example.recipe.model.Recipe;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,7 +28,7 @@ public class EditRecipeViewModel extends AndroidViewModel {
     private RecipeDataBase recipeDataBase = RecipeDataBase.getInstance(getApplication());
     private MutableLiveData<List<Ingredient>> ingredients = new MutableLiveData<>();
 
-    private MutableLiveData<Recipes> recipe = new MutableLiveData<>();
+    private MutableLiveData<Recipe> recipe = new MutableLiveData<>();
 
     private CompositeDisposable compositeDisposable = new CompositeDisposable();
 
@@ -36,7 +36,7 @@ public class EditRecipeViewModel extends AndroidViewModel {
         return ingredients;
     }
 
-    public LiveData<Recipes> getRecipe() {
+    public LiveData<Recipe> getRecipe() {
         return recipe;
     }
 
@@ -45,8 +45,8 @@ public class EditRecipeViewModel extends AndroidViewModel {
     }
 
     @SuppressLint("CheckResult")
-    public void loadIngredients(Recipes recipes){
-       Disposable disposable = recipeDataBase.descriptionDao().getDescriptionForRecipe(recipes.getId())
+    public void loadIngredients(Recipe recipe){
+       Disposable disposable = recipeDataBase.ingredientDao().getDescriptionForRecipe(recipe.getId())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Consumer<List<Ingredient>>() {
@@ -64,14 +64,14 @@ public class EditRecipeViewModel extends AndroidViewModel {
     }
 
 
-    public Completable editRecipe(Recipes recipe){
+    public Completable editRecipe(Recipe recipe){
         return recipeDataBase.recipesDAO()
                 .update(recipe)
                 .subscribeOn(Schedulers.io());
     }
 
     public void deleteIngredient(Ingredient ingredient){
-        Disposable disposable = recipeDataBase.descriptionDao().remove(ingredient.getId())
+        Disposable disposable = recipeDataBase.ingredientDao().remove(ingredient.getId())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnError(new Consumer<Throwable>() {
@@ -92,7 +92,7 @@ public class EditRecipeViewModel extends AndroidViewModel {
 
         for (Ingredient desc : list) {
             completableList.add(
-                    recipeDataBase.descriptionDao()
+                    recipeDataBase.ingredientDao()
                             .saveIngredient(desc)
                             .subscribeOn(Schedulers.io())
             );
@@ -113,8 +113,8 @@ public class EditRecipeViewModel extends AndroidViewModel {
         compositeDisposable.dispose();
     }
 
-    public void loadRecipe(Recipes recipes) {
-        recipeDataBase.recipesDAO().getRecipe(recipes.getId())
+    public void loadRecipe(Recipe recipe) {
+        recipeDataBase.recipesDAO().getRecipe(recipe.getId())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnError(new Consumer<Throwable>() {
@@ -123,10 +123,10 @@ public class EditRecipeViewModel extends AndroidViewModel {
                         Log.d("EditRecipeViewModel", throwable.getMessage());
                     }
                 })
-                .subscribe(new Consumer<Recipes>() {
+                .subscribe(new Consumer<Recipe>() {
                     @Override
-                    public void accept(Recipes recipes) throws Throwable {
-                        recipe.setValue(recipes);
+                    public void accept(Recipe recipe) throws Throwable {
+                        EditRecipeViewModel.this.recipe.setValue(recipe);
                     }
                 });
     }

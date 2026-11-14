@@ -10,7 +10,7 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.example.recipe.database.RecipeDataBase;
 import com.example.recipe.model.Ingredient;
-import com.example.recipe.model.Recipes;
+import com.example.recipe.model.Recipe;
 
 import java.util.List;
 
@@ -22,13 +22,13 @@ import io.reactivex.rxjava3.schedulers.Schedulers;
 
 public class SettingViewModel extends AndroidViewModel {
 
-    private MutableLiveData<List<Recipes>> recipes = new MutableLiveData<>();
+    private MutableLiveData<List<Recipe>> recipes = new MutableLiveData<>();
 
     private MutableLiveData<List<Ingredient>> ingredients = new MutableLiveData<>();
 
     private CompositeDisposable compositeDisposable = new CompositeDisposable();
 
-    public LiveData<List<Recipes>> getRecipes() {
+    public LiveData<List<Recipe>> getRecipes() {
         return recipes;
     }
 
@@ -51,7 +51,7 @@ public class SettingViewModel extends AndroidViewModel {
     }
 
     public void updateAllDescription() {
-        Disposable disposable = recipeDataBase.descriptionDao().getDescriptions()
+        Disposable disposable = recipeDataBase.ingredientDao().getDescriptions()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(descriptions -> ingredients.setValue(descriptions));
@@ -60,7 +60,7 @@ public class SettingViewModel extends AndroidViewModel {
 
 
     public void saveAllIngredients(List<Ingredient> ingredient) {
-        Disposable disposable = recipeDataBase.descriptionDao().addList(ingredient)
+        Disposable disposable = recipeDataBase.ingredientDao().addList(ingredient)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnError(throwable -> Log.d("SettingViewModel1", throwable.getMessage()))
@@ -75,7 +75,7 @@ public class SettingViewModel extends AndroidViewModel {
         compositeDisposable.dispose();
     }
 
-    public Single<Long> addRecipeRX(Recipes recipe){
+    public Single<Long> addRecipeRX(Recipe recipe){
         return Single.fromCallable(() -> recipeDataBase.recipesDAO().add(recipe));
     }
 }

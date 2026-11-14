@@ -9,16 +9,24 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.example.recipe.R;
 import com.example.recipe.model.Ingredient;
+import com.example.recipe.model.Recipe;
+import com.example.recipe.viewmodel.AddIngredientViewModel;
+import com.example.recipe.viewmodel.MainViewModel;
 import com.google.android.material.textfield.TextInputEditText;
+
+import java.io.Serializable;
 
 public class AddIngredient extends AppCompatActivity {
 
@@ -28,6 +36,11 @@ public class AddIngredient extends AppCompatActivity {
     private static final String LOG_NUTRITION = "Nutrition";
     private static final String LOG_ADDITION = "Addition";
     private static final String LOG_SAVE = "SaveIngredient";
+
+    /**
+     * View Model
+     */
+    private AddIngredientViewModel viewModel;
 
     /**
      * Основная Информация
@@ -78,6 +91,7 @@ public class AddIngredient extends AppCompatActivity {
         setContentView(R.layout.activity_add_ingredient);
 
         setViews();
+
         updateAll();
 
         clickUpQuantity();
@@ -293,11 +307,22 @@ public class AddIngredient extends AppCompatActivity {
         saveButton.setOnClickListener((view) -> {
             updateAll();
             Ingredient ingredient = this.result;
-            Log.d(LOG_SAVE, "Сохраняем результат: " + ingredient.toString());
+
+            if(result.getName().isEmpty()){
+                Log.d(LOG_SAVE, "Ошибка при сохранение ингредиента: {'name'=''}");
+                Toast.makeText(this, "Необходимо ввести название ингредиента", Toast.LENGTH_SHORT).show();
+            } else {
+                Log.d(LOG_SAVE, "Сохраняем результат: " + ingredient);
+                viewModel.addIngredient(ingredient);
+                Intent intent = AddRecipe.newIntent(this, ingredient);
+                startActivity(intent);
+            }
+
         });
     }
 
     private void setViews(){
+        viewModel = new ViewModelProvider(this).get(AddIngredientViewModel.class);
         result = new Ingredient();
         editIngredientName = findViewById(R.id.editIngredientName);
         autoCompleteGroup = findViewById(R.id.autoCompleteGroup);
@@ -319,6 +344,7 @@ public class AddIngredient extends AppCompatActivity {
     }
 
     public static Intent newIntent(Context context) {
-        return new Intent(context, AddIngredient.class);
+        Intent intent = new Intent(context, AddIngredient.class);
+        return intent;
     }
 }

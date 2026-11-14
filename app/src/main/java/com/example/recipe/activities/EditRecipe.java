@@ -40,7 +40,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.recipe.R;
 import com.example.recipe.adapters.AdapterEditRecipes;
 import com.example.recipe.model.Ingredient;
-import com.example.recipe.model.Recipes;
+import com.example.recipe.model.Recipe;
 import com.example.recipe.setting.MyApp;
 import com.example.recipe.setting.TextKey;
 import com.example.recipe.viewmodel.EditRecipeViewModel;
@@ -69,6 +69,10 @@ public class EditRecipe extends AppCompatActivity {
     private TextView ingredientsTitle;
     private TextView instructionTitle;
 
+    private CardView cardView;
+
+    private FloatingActionButton floatingActionButton;
+
     private FloatingActionButton addIngredient;
 
     private ImageView imageView;
@@ -79,7 +83,7 @@ public class EditRecipe extends AppCompatActivity {
     private EditRecipeViewModel viewModel;
     private AdapterEditRecipes adapter;
 
-    private Recipes recipe;
+    private Recipe recipe;
 
     private static final int PICK_IMAGE_REQUEST = 101;
     private static final int REQUEST_PERMISSION = 102;
@@ -98,10 +102,17 @@ public class EditRecipe extends AppCompatActivity {
 
         showRecipe();
 
-        FloatingActionButton floatingActionButton = findViewById(R.id.floatingActionButton);
-        CardView cardView = findViewById(R.id.CardView);
+        setWindowInsets(cardView);
 
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R) {
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+                Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+                v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+                return insets;
+            });
+        }
+
+    private void setWindowInsets(CardView cardView) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             getWindow().getDecorView().setWindowInsetsAnimationCallback(
                     new WindowInsetsAnimation.Callback(WindowInsetsAnimation.Callback.DISPATCH_MODE_STOP) {
                         @Override
@@ -121,32 +132,25 @@ public class EditRecipe extends AppCompatActivity {
                     }
             );
         }
-
-
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-                Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-                v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-                return insets;
-            });
-        }
+    }
 
     private void showRecipe() {
-        Recipes recipes = (Recipes) getIntent().getSerializableExtra("Recipe");
-        viewModel.loadRecipe(recipes);
+        Recipe recipe = (Recipe) getIntent().getSerializableExtra("Recipe");
+        viewModel.loadRecipe(recipe);
         viewModel.getRecipe().observe(EditRecipe.this, recipeDB-> {
-            recipe = recipeDB;
+            this.recipe = recipeDB;
 
-            setStarted(recipe);
+            setStarted(this.recipe);
 
             Swipe();
 
-            showImage(recipe);
+            showImage(this.recipe);
 
-            clickSaveButton(recipe);
+            clickSaveButton(this.recipe);
 
             changeLanguage();
 
-            addNewIngredient(recipe);
+            addNewIngredient(this.recipe);
 
             imageView.setOnClickListener(v -> openGallery());
         });
@@ -253,7 +257,7 @@ public class EditRecipe extends AppCompatActivity {
         }
     }
 
-    private void showImage(Recipes recipe) {
+    private void showImage(Recipe recipe) {
         try {
             String imagePath = recipe.getImage();
             Log.d("ShowRecipe", "URI из базы: " + imagePath);
@@ -278,11 +282,11 @@ public class EditRecipe extends AppCompatActivity {
         }
     }
 
-    private void addNewIngredient(Recipes recipes) {
+    private void addNewIngredient(Recipe recipe) {
         addIngredient.setOnClickListener(v -> {
             List<Ingredient> newDescriptions = adapter.getIngredients();
             Ingredient desc = new Ingredient();
-            desc.setRecipeId(recipes.getId());
+            desc.setRecipeId(recipe.getId());
             desc.setName("");
             desc.setUnit("kg");
             recyclerView.post(() -> setRecyclerViewHeightBasedOnChildren(recyclerView));
@@ -353,17 +357,17 @@ public class EditRecipe extends AppCompatActivity {
 
 
 
-    private void clickSaveButton(Recipes recipes) {
+    private void clickSaveButton(Recipe recipe) {
         saveButton.setOnClickListener(v -> {
             boolean success = false;
 
                 List<Ingredient> descriptions = adapter.getIngredients();
 
-                recipes.setName(editTextRecipe.getText().toString());
-                recipes.setInstructions(editTextInsctruction.getText().toString());
+                recipe.setName(editTextRecipe.getText().toString());
+                recipe.setInstructions(editTextInsctruction.getText().toString());
             if(image != null){
                 Log.d("Testtest", image);
-                recipes.setImage(image);
+                recipe.setImage(image);
             }
 
                 for (Ingredient x : descriptions) {
@@ -378,7 +382,7 @@ public class EditRecipe extends AppCompatActivity {
                 if(success || sizeIngedient == 0) {
 
                     Disposable disposable = viewModel.saveAllIngredients(descriptions)
-                            .andThen(viewModel.editRecipe(recipes))
+                            .andThen(viewModel.editRecipe(recipe))
                             .observeOn(AndroidSchedulers.mainThread())
                             .doOnError(new Consumer<Throwable>() {
                                 @Override
@@ -388,7 +392,7 @@ public class EditRecipe extends AppCompatActivity {
                             })
                             .subscribe(() -> {
 
-                                Intent intent = ShowRecipe.newIntent(EditRecipe.this, recipes);
+                                Intent intent = ShowRecipe.newIntent(EditRecipe.this, recipe);
                                 startActivity(intent);
                                 finish();
 
@@ -407,11 +411,11 @@ public class EditRecipe extends AppCompatActivity {
     }
 
 
-    private void setStarted(Recipes recipes) {
-        editTextRecipe.setText(recipes.getName());
-        editTextInsctruction.setText(recipes.getInstructions());
+    private void setStarted(Recipe recipe) {
+        editTextRecipe.setText(recipe.getName());
+        editTextInsctruction.setText(recipe.getInstructions());
 
-        viewModel.loadIngredients(recipes);
+        viewModel.loadIngredients(recipe);
         viewModel.getIngredients().observe(this, descriptions -> {
             adapter.setIngredient(descriptions);
             sizeIngedient = descriptions.size();
@@ -436,6 +440,8 @@ public class EditRecipe extends AppCompatActivity {
     }
 
     private void initView(){
+        cardView = findViewById(R.id.CardView);
+        floatingActionButton = findViewById(R.id.floatingActionButton);
         recyclerView = findViewById(R.id.RecyclerViewIngredients);
         editTextRecipe = findViewById(R.id.EditTextRecipe);
         setTextChanged(editTextRecipe);
@@ -495,9 +501,9 @@ public class EditRecipe extends AppCompatActivity {
 
 
 
-    public static Intent getIntent(Context context, Recipes recipes){
+    public static Intent getIntent(Context context, Recipe recipe){
      Intent intent = new Intent(context, EditRecipe.class);
-        intent.putExtra("Recipe", (Serializable) recipes);
+        intent.putExtra("Recipe", (Serializable) recipe);
      return intent;
     }
 }

@@ -17,7 +17,6 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.ItemTouchHelper;
@@ -31,12 +30,11 @@ import com.example.recipe.activities.SettingActivity;
 import com.example.recipe.activities.ShowRecipe;
 import com.example.recipe.adapters.AdapterRecipes;
 import com.example.recipe.model.BottomMenu;
-import com.example.recipe.model.Recipes;
+import com.example.recipe.model.Recipe;
 import com.example.recipe.setting.MyApp;
 import com.example.recipe.setting.TextKey;
 import com.example.recipe.viewmodel.MainViewModel;
 
-import java.util.HashMap;
 import java.util.List;
 
 public class MainHelper {
@@ -142,7 +140,7 @@ public class MainHelper {
         });
     }
 
-    private void loadRecipeToAdapter(List<Recipes> recipes) {
+    private void loadRecipeToAdapter(List<Recipe> recipes) {
         adapter.setRecipes(recipes); // Добавляем коллекцию в адаптер
         adapter.setRecipeOnClickListener(recipe -> {// Запускаем подсчёт
             adapter.setSelectedRecipe(recipe); // Сохраняем выбранный рецепт в адаптер
@@ -153,7 +151,7 @@ public class MainHelper {
         adapter.setRecipeOnClickListener(recipe -> clickRecipe(recipe));
     }
 
-    private void clickRecipe(Recipes recipe) {
+    private void clickRecipe(Recipe recipe) {
         Log.d("Rafa", "ClickButton сработал");
         Intent intent = ShowRecipe.newIntent(context, recipe);
         context.startActivity(intent);
@@ -177,7 +175,7 @@ public class MainHelper {
 
                 // Если позиция существует
                 if (position != RecyclerView.NO_POSITION) {
-                    Recipes recipeDB = adapter.getRecipes().get(position); // Берем рецепт по позиции из адаптера
+                    Recipe recipeDB = adapter.getRecipes().get(position); // Берем рецепт по позиции из адаптера
 
                     deletedRecipe(position, recipeDB);
                 }
@@ -242,7 +240,7 @@ public class MainHelper {
         });
     }
 
-    private void deletedRecipe(int position, Recipes recipeDB) {
+    private void deletedRecipe(int position, Recipe recipeDB) {
         adapter.notifyItemChanged(position); // Указываем перепроверить позицию
 
         // Диалог подтверждения

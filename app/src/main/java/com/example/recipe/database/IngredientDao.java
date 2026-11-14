@@ -14,12 +14,12 @@ import io.reactivex.rxjava3.core.Completable;
 import io.reactivex.rxjava3.core.Single;
 
 @Dao
-public interface DescriptionDao{
+public interface IngredientDao {
 
     String tableName = "ingredients";
 
     @Insert
-    Completable add(Ingredient description);
+    long add(Ingredient ingredient);
 
     @Insert
     Completable addList(List<Ingredient> desc);

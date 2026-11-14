@@ -10,7 +10,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.recipe.model.Ingredient;
-import com.example.recipe.model.Recipes;
+import com.example.recipe.model.Recipe;
 import com.example.recipe.database.RecipeDataBase;
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
@@ -54,7 +54,7 @@ public class AddRecipeViewModel extends AndroidViewModel {
 
     // Добавление рецепта
     @SuppressLint("CheckResult")
-    public void addRecipe(Recipes recipe){
+    public void addRecipe(Recipe recipe){
         Disposable disposable = addRecipeRX(recipe)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -69,13 +69,13 @@ public class AddRecipeViewModel extends AndroidViewModel {
     }
 
     @SuppressLint("CheckResult")
-    public Single<Long> TestAddRecipe(Recipes recipe){
+    public Single<Long> TestAddRecipe(Recipe recipe){
         return Single.fromCallable(()-> recipeDataBase.recipesDAO().add(recipe));
     }
 
 
     // Single метод для добавления рецепта
-    private Single<Long> addRecipeRX(Recipes recipe){
+    private Single<Long> addRecipeRX(Recipe recipe){
         return Single.fromCallable(() -> recipeDataBase.recipesDAO().add(recipe));
     }
 
@@ -83,19 +83,19 @@ public class AddRecipeViewModel extends AndroidViewModel {
     // Добавление игридиента
     @SuppressLint("CheckResult")
     public void addDescription(Ingredient description) {
-        Disposable disposable = recipeDataBase.descriptionDao().add(description)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(() -> {
-                    Log.d(TAG, "Ингредиент добавлен: " + description.getName());
-                }, throwable -> {
-                    Log.e(TAG, "Ошибка добавления ингредиента", throwable);
-                });
-        compositeDisposable.add(disposable);
+//        Disposable disposable = recipeDataBase.ingredientDao().add(description)
+//                .subscribeOn(Schedulers.io())
+//                .observeOn(AndroidSchedulers.mainThread())
+//                .subscribe(() -> {
+//                    Log.d(TAG, "Ингредиент добавлен: " + description.getName());
+//                }, throwable -> {
+//                    Log.e(TAG, "Ошибка добавления ингредиента", throwable);
+//                });
+//        compositeDisposable.add(disposable);
     }
 
-    public void deleteRecipe(Recipes recipes){
-        recipeDataBase.recipesDAO().remove(recipes.getId())
+    public void deleteRecipe(Recipe recipe){
+        recipeDataBase.recipesDAO().remove(recipe.getId())
                 .observeOn(Schedulers.io())
                 .subscribeOn(AndroidSchedulers.mainThread())
                 .subscribe();

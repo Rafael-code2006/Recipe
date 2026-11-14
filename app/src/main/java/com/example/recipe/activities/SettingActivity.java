@@ -20,7 +20,7 @@ import androidx.lifecycle.ViewModelProvider;
 import com.example.recipe.R;
 import com.example.recipe.model.Ingredient;
 import com.example.recipe.model.ExportData;
-import com.example.recipe.model.Recipes;
+import com.example.recipe.model.Recipe;
 import com.example.recipe.setting.MyApp;
 import com.example.recipe.setting.TextKey;
 import com.example.recipe.viewmodel.SettingViewModel;
@@ -45,7 +45,7 @@ public class SettingActivity extends AppCompatActivity {
 
     private SettingViewModel viewModel;
 
-    private List<Recipes> importRecipes;
+    private List<Recipe> importRecipes;
     private List<Ingredient> importIngredients;
 
     private MyApp myApp;
@@ -128,7 +128,7 @@ public class SettingActivity extends AppCompatActivity {
                 viewModel.getIngredients().observe(this, ingredients -> {
 
                     // Кодируем изображения в Base64
-                    for (Recipes recipe : recipes) {
+                    for (Recipe recipe : recipes) {
                         if (recipe.getImage() != null) {
                             String base64 = encodeImage(recipe.getImage());
                             recipe.setImage(base64);
@@ -268,15 +268,15 @@ public class SettingActivity extends AppCompatActivity {
         recipeSaveButton.setOnClickListener(v -> {
 
             // Создаём список рецептов для сохранения
-            List<Recipes> recipesToSave = new ArrayList<>();
+            List<Recipe> recipeToSave = new ArrayList<>();
 
             // Если импортированные есть, добавляем их
             if (importRecipes != null) {
-                recipesToSave.addAll(importRecipes);
+                recipeToSave.addAll(importRecipes);
             }
 
             // Сохраняем каждый рецепт
-            for (Recipes recipe : recipesToSave) {
+            for (Recipe recipe : recipeToSave) {
 
                 long oldId = recipe.getId();
 

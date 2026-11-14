@@ -9,7 +9,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.recipe.model.Ingredient;
-import com.example.recipe.model.Recipes;
+import com.example.recipe.model.Recipe;
 import com.example.recipe.database.RecipeDataBase;
 
 import java.util.HashMap;
@@ -26,18 +26,18 @@ public class MainViewModel extends AndroidViewModel {
 
     private RecipeDataBase recipeDataBase = RecipeDataBase.getInstance(getApplication());
 
-    private MutableLiveData<List<Recipes>> recipes = new MutableLiveData<>();
+    private MutableLiveData<List<Recipe>> recipes = new MutableLiveData<>();
     private MutableLiveData<List<Ingredient>> descriptions = new MutableLiveData<>();
-    private MutableLiveData<HashMap<Recipes, Integer>> countIngredients = new MutableLiveData<>();
-    private MutableLiveData<Recipes> recipe = new MutableLiveData<>();
+    private MutableLiveData<HashMap<Recipe, Integer>> countIngredients = new MutableLiveData<>();
+    private MutableLiveData<Recipe> recipe = new MutableLiveData<>();
 
     private CompositeDisposable compositeDisposable = new CompositeDisposable();
 
-    public LiveData<Recipes> getRecipe() {
+    public LiveData<Recipe> getRecipe() {
         return recipe;
     }
 
-    public LiveData<HashMap<Recipes, Integer>> getCountIngredients() {
+    public LiveData<HashMap<Recipe, Integer>> getCountIngredients() {
         return countIngredients;
     }
 
@@ -45,7 +45,7 @@ public class MainViewModel extends AndroidViewModel {
         return descriptions;
     }
 
-    public LiveData<List<Recipes>> getRecipes() {
+    public LiveData<List<Recipe>> getRecipes() {
         return recipes;
     }
 
@@ -70,7 +70,7 @@ public class MainViewModel extends AndroidViewModel {
     }
 
     // ================== Удаление рецепта ==================
-    public void remove(Recipes recipe) {
+    public void remove(Recipe recipe) {
         Disposable disposableRemove = recipeDataBase.recipesDAO().remove(recipe.getId())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -82,8 +82,8 @@ public class MainViewModel extends AndroidViewModel {
     }
 
     // ================== Удаление ингредиентов для рецепта ==================
-    public void removeDescriptionForRecipe(Recipes recipe) {
-        Disposable disposable = recipeDataBase.descriptionDao().removeForRecipe(recipe.getId())
+    public void removeDescriptionForRecipe(Recipe recipe) {
+        Disposable disposable = recipeDataBase.ingredientDao().removeForRecipe(recipe.getId())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
@@ -94,16 +94,16 @@ public class MainViewModel extends AndroidViewModel {
     }
 
     // ================== Загрузка ингредиентов ==================
-    public void loadIngredients(Recipes recipesItem) {
-        Disposable disposable = recipeDataBase.descriptionDao().getDescriptionForRecipe(recipesItem.getId())
+    public void loadIngredients(Recipe recipeItem) {
+        Disposable disposable = recipeDataBase.ingredientDao().getDescriptionForRecipe(recipeItem.getId())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         getDescriptions -> {
                             int count = getDescriptions.size();
-                            HashMap<Recipes, Integer> map = countIngredients.getValue();
+                            HashMap<Recipe, Integer> map = countIngredients.getValue();
                             if (map == null) map = new HashMap<>();
-                            map.put(recipesItem, count);
+                            map.put(recipeItem, count);
                             countIngredients.setValue(map);
                         },
                         throwable -> Log.e(TAG, "Ошибка при загрузке ингредиентов", throwable)
@@ -112,7 +112,7 @@ public class MainViewModel extends AndroidViewModel {
     }
 
     // ================== Получение рецепта по id ==================
-    public void getRecipeForId(Recipes recipeDB) {
+    public void getRecipeForId(Recipe recipeDB) {
         Disposable disposable = recipeDataBase.recipesDAO().getRecipe(recipeDB.getId())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
